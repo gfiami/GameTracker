@@ -1,12 +1,12 @@
 <template>
-  <div>
-    <h1>Home</h1>
+  <div class="login-container">
+    <h1>Login</h1>
   </div>
 </template>
 
 <script>
 export default {
-  name: "HomeView",
+  name: "LoginView",
 };
 </script>
 

@@ -1,9 +1,9 @@
 <template>
   <div id="nav">
-    <router-link id="website-name" to="/about">GameTracker</router-link>
-    <router-link class="nav-link" to="/about">Games</router-link>
-    <router-link class="nav-link" to="/">Login</router-link>
-    <router-link class="nav-link" to="/">Register</router-link>
+    <router-link id="website-name" to="/">GameTracker</router-link>
+    <router-link class="nav-link" to="/">Games</router-link>
+    <router-link class="nav-link" to="/login">Login</router-link>
+    <router-link class="nav-link" to="/register">Register</router-link>
   </div>
 </template>
 
