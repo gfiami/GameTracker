@@ -22,6 +22,12 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "testApi" */ "../views/TestApiView.vue"),
   },
+  {
+    path: "/testGame/:id",
+    name: "specificGame",
+    component: () =>
+      import(/* webpackChunkName: "specificGame" */ "../views/TestGame.vue"),
+  },
 ];
 
 const router = createRouter({

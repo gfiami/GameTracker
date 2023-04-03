@@ -33,4 +33,16 @@ class GamesController extends Controller
         $games = $response->json();
         return compact('games');
     }
+    public function specificGameInfo($gameId){
+        $certPath = storage_path('rawg_io.pem');
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_CAINFO, $certPath);
+        $response = Http::withOptions([
+            'curl' => [
+                CURLOPT_CAINFO => $certPath,
+            ],
+        ])->get("https://api.rawg.io/api/games/".$gameId."?key=".env('RAWG_API_KEY'));
+        $game = $response->json();
+        return compact('game');
+    }
 }

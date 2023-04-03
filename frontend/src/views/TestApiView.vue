@@ -3,7 +3,13 @@
     test api
     <div v-for="game in games" :key="game.id">
       <h3>{{ game.name }}</h3>
-      <p>desc: {{ game.description }}</p>
+      <router-link
+        :to="{
+          name: 'specificGame',
+          params: { id: game.id },
+        }"
+        >Ver detalhes</router-link
+      >
       <img :src="game.background_image" alt="Capa do jogo" />
     </div>
   </div>
