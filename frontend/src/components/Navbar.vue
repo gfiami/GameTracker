@@ -1,7 +1,7 @@
 <template>
   <div id="nav">
-    <router-link id="website-name" to="/test-api">GameTracker</router-link>
-    <router-link class="nav-link" to="/test-api">Games</router-link>
+    <router-link id="website-name" to="/about">GameTracker</router-link>
+    <router-link class="nav-link" to="/about">Games</router-link>
     <router-link class="nav-link" to="/">Login</router-link>
     <router-link class="nav-link" to="/">Register</router-link>
   </div>
