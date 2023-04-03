@@ -11,7 +11,7 @@
 import axios from "axios";
 
 export default {
-  name: "TestGame",
+  name: "TestGameView",
   data() {
     return {
       game: null,

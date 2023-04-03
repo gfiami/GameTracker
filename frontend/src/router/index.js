@@ -26,7 +26,9 @@ const routes = [
     path: "/testGame/:id",
     name: "specificGame",
     component: () =>
-      import(/* webpackChunkName: "specificGame" */ "../views/TestGame.vue"),
+      import(
+        /* webpackChunkName: "specificGame" */ "../views/TestGameView.vue"
+      ),
   },
 ];
 

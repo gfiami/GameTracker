@@ -1,6 +1,6 @@
 <template>
   <div>
-    test api
+    <h1>Test Api</h1>
     <div v-for="game in games" :key="game.id">
       <h3>{{ game.name }}</h3>
       <router-link
@@ -28,6 +28,7 @@ export default {
     await this.gameRequest();
   },
   methods: {
+    //requisição para o laravel, especificamente para a rota gameinfo
     async gameRequest() {
       const response = await axios.get(`${process.env.VUE_APP_APIURL}gameinfo`);
       this.games = response.data.games.results;
