@@ -10,8 +10,13 @@
 
     <form class="search-features" @submit.prevent="">
       <div class="search-box">
-        <input type="text" id="searchBar" placeholder="Search game" />
-        <button id="searchButton" type="button">
+        <input
+          type="text"
+          id="searchBar"
+          placeholder="Search game"
+          v-model="searchQuery"
+        />
+        <button @click="searchGames" id="searchButton" type="button">
           <i class="fas fa-search"></i>
         </button>
       </div>
@@ -32,6 +37,7 @@ export default {
   data() {
     return {
       sortOrder: "asc",
+      searchQuery: "",
     };
   },
   computed: {
@@ -42,6 +48,9 @@ export default {
   methods: {
     changeSortIcon() {
       this.sortOrder = this.sortOrder === "asc" ? "desc" : "asc";
+    },
+    searchGames() {
+      this.$emit("search", this.searchQuery);
     },
   },
 };
@@ -125,6 +134,7 @@ export default {
   font-size: 16px;
   width: 250px;
   height: 35px;
+  padding-right: 45px;
 }
 
 #searchButton {

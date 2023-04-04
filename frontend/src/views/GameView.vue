@@ -1,6 +1,6 @@
 <template>
   <div class="main-wrapper">
-    <SearchBar />
+    <SearchBar @search="search" />
     <!-- 
         Isso ainda tem que ser passado da paginations pra cá
         <ul>
@@ -19,6 +19,17 @@ export default {
   components: {
     Paginations,
     SearchBar,
+  },
+  data() {
+    return {
+      searchQuery: "", //isso pegamos via emit lá do searchbar
+    };
+  },
+  methods: {
+    search(query) {
+      this.searchQuery = query;
+      console.log(this.searchQuery);
+    },
   },
 };
 </script>
