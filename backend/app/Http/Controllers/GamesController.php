@@ -21,7 +21,7 @@ class GamesController extends Controller
 
         return view('games.index', compact('games'));
     }
-    public function games($page){
+    public function games($page = 1){
         $certPath = storage_path('rawg_io.pem');
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_CAINFO, $certPath);

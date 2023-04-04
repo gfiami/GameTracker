@@ -19,7 +19,7 @@
         </button>
         <!--Mostra reticencias se a primeira página exibida for maior que 2 (ou seja 3 pra frente) -->
 
-        <span class="dots" v-if="currentPage > 3">...</span>
+        <span class="dots" v-if="currentPage > 3"> ...</span>
 
         <button
           :id="currentPage == page ? 'currentPage' : null"
@@ -129,10 +129,17 @@ export default {
         return;
       }
       this.fetchGames(page);
+
+      //isso aqui serve para atualizar a url da página e permitir mais interação com botoes de voltar
+      window.history.pushState({ page }, null, `?page=${page}`);
     },
   },
   mounted() {
-    this.fetchGames(1);
+    // pega o valor da página da URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const page = parseInt(urlParams.get("page")) || 1;
+    // fetchGames com o valor da página ou pagina inicial
+    this.fetchGames(page);
   },
 };
 </script>

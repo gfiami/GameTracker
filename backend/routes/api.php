@@ -20,5 +20,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/games/{page}', [GamesController::class, 'games']);
+Route::get('/games/{page?}', [GamesController::class, 'games']);
 Route::get('/game/{id}', [GamesController::class, 'specificGameInfo']);

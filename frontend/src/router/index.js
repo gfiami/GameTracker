@@ -36,6 +36,13 @@ const routes = [
         /* webpackChunkName: "RegisterView" */ "../views/RegisterView.vue"
       ),
   },
+  {
+    //${this.$route.params.id}
+    path: "/games",
+    name: "games",
+    component: () =>
+      import(/* webpackChunkName: "GameView" */ "../views/GameView.vue"),
+  },
 ];
 
 const router = createRouter({
