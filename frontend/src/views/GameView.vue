@@ -1,6 +1,6 @@
 <template>
   <div class="main-wrapper">
-    <h1>Games</h1>
+    <SearchBar />
     <!-- 
         Isso ainda tem que ser passado da paginations pra cá
         <ul>
@@ -11,13 +11,16 @@
 </template>
 
 <script>
-  import Paginations from "../components/Paginations.vue";
-  export default {
-    name: "GameView",
-    components: {
-      Paginations,
-    },
-  };
+import Paginations from "../components/Paginations.vue";
+import SearchBar from "../components/SearchBar.vue";
+
+export default {
+  name: "GameView",
+  components: {
+    Paginations,
+    SearchBar,
+  },
+};
 </script>
 
 <style scoped></style>
