@@ -1,5 +1,5 @@
 <template>
-  <div class="login-container">
+  <div class="main-wrapper">
     <h1>Login</h1>
   </div>
 </template>

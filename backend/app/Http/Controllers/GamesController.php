@@ -21,7 +21,7 @@ class GamesController extends Controller
 
         return view('games.index', compact('games'));
     }
-    public function gameInfo(){
+    public function games($page){
         $certPath = storage_path('rawg_io.pem');
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_CAINFO, $certPath);
@@ -29,7 +29,7 @@ class GamesController extends Controller
             'curl' => [
                 CURLOPT_CAINFO => $certPath,
             ],
-        ])->get("https://api.rawg.io/api/games?key=".env('RAWG_API_KEY')."&ordering=-rating&page_size=30");
+        ])->get("https://api.rawg.io/api/games?key=".env('RAWG_API_KEY')."&page=".$page."&page_size=24"); //aqui pode entrar pesquisas
         $games = $response->json();
         return compact('games');
     }

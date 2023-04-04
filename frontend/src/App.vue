@@ -1,9 +1,7 @@
 <template>
   <div class="app">
     <Navbar />
-    <div class="main-wrapper">
-      <router-view />
-    </div>
+    <router-view />
     <Footer />
   </div>
 </template>
@@ -29,6 +27,7 @@ export default {
 html,
 body {
   height: 100%;
+  color: #fff;
 }
 body {
   background-color: #161b3a;
