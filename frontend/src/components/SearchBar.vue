@@ -1,7 +1,7 @@
 <template>
   <div class="search-container">
     <div class="search-info">
-      <div id="counter">{{ counter }} games</div>
+      <div v-if="counter" id="counter">{{ counter }} games</div>
       <div v-if="searchMade" id="results">
         Results for
         <span class="search-bar-input">{{ showSearchResults }}</span>
