@@ -1,6 +1,5 @@
 <template>
   <div class="main-wrapper">
-    <FetchGames />
     <SearchBar @search="search" :counter="gameinfo.count" />
     <!-- 
         Isso ainda tem que ser passado da paginations pra cá
@@ -14,19 +13,16 @@
 <script>
 import Paginations from "../components/Paginations.vue";
 import SearchBar from "../components/SearchBar.vue";
-import FetchGames from "../components/FetchGames.vue";
 export default {
   name: "GameView",
   components: {
     Paginations,
     SearchBar,
-    FetchGames,
   },
   data() {
     return {
       searchQuery: "", //isso pegamos via emit lá do searchbar
       gameinfo: "", //isso pegamos via emit lá do paginations
-      fetchGames: "", //via emit vindo da fetch games
     };
   },
   methods: {
