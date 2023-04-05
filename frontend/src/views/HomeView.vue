@@ -1,15 +1,12 @@
 <template>
   <div class="main-wrapper">
-    <SearchBar />
+    <h1>HOME</h1>
   </div>
 </template>
 
 <script>
-import SearchBar from "../components/SearchBar.vue";
-import GameLayout from "../components/GameLayout.vue";
 export default {
   name: "HomeView",
-  components: { SearchBar, GameLayout },
 };
 </script>
 

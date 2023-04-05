@@ -1,10 +1,5 @@
 <template>
   <div>
-    {{ totalPages }}
-    {{ currentPage }}
-    <!-- <ul>
-      <li v-for="game in games" :key="game.id">{{ game.name }}</li>
-    </ul> -->
     <div id="paginationWrapper">
       <div class="pagination">
         <button
@@ -17,9 +12,9 @@
         <button class="page-button" v-if="pages[0] > 1" @click="goToPage(1)">
           1
         </button>
-        <!--Mostra reticencias se a primeira página exibida for maior que 2 (ou seja 3 pra frente) -->
 
-        <span class="dots" v-if="currentPage > 3"> ...</span>
+        <!--Mostra reticencias se a primeira página exibida for maior que 4-->
+        <span class="dots" v-if="currentPage > 4"> ...</span>
 
         <button
           :id="currentPage == page ? 'currentPage' : null"
@@ -31,12 +26,20 @@
           {{ page }}
         </button>
 
-        <!-- Mostra '...' se a última página exibida for menor que a penúltima página do total de páginas menos 1.
-      Com isso, sempre teremos dois botões no máximo depois, reticencias, e última página
--->
+        <!-- Mostra reticencias se a página a ultima pagina exibida no paginate
+            for menor que a penultima página
+            exemplo: 100 páginas
+            Se estiver na página 96, e a última página mostrada no nosso array for menor que o total(100)-1, ou seja
+            menor que 99, mostra reticencias
+            no caso de estar na página 96, a página 98 é a última do array, então por ser menor que 99, mostra reticencias
+
+        -->
         <span class="dots" v-if="pages[pages.length - 1] < totalPages - 1"
           >...</span
         >
+        <!-- aqui é para mostrar a última página caso a ultima página do array seja menor
+        (sempre mostrará pois sempre é menor, exceto quando a current page for ela, ai mostra só a current page)
+        -->
         <button
           class="page-button"
           v-if="pages[pages.length - 1] < totalPages"

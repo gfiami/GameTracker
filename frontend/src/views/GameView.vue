@@ -1,13 +1,7 @@
 <template>
   <div class="main-wrapper">
     <SearchBar @search="search" :counter="gameinfo.count" />
-
     <GameLayout :games="gameinfo.results" />
-    <!-- 
-        Isso ainda tem que ser passado da paginations pra cá
-        <ul>
-          <li v-for="game in games" :key="game.id">{{ game.name }}</li>
-        </ul> -->
     <Paginations @gamedata="gamedata" />
   </div>
 </template>
@@ -35,7 +29,6 @@ export default {
     },
     gamedata(response) {
       this.gameinfo = response;
-      //passar variavel gamedata para ser usada(.games .results .count .next . next . previous)
     },
   },
 };
