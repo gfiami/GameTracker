@@ -47,7 +47,7 @@ export default {
   },
   computed: {
     sortIconClass() {
-      return "fas fa-sort" + (this.sortOrder === "asc" ? "-up" : "-down");
+      return "fas fa-sort" + (this.sortOrder === "desc" ? "-up" : "-down");
     },
   },
   methods: {

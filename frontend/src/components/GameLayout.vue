@@ -107,7 +107,8 @@ export default {
 }
 .game-hover a {
   color: white;
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 500;
 }
 
 /* AJUSTES MOBILE (nem sei se tão bom mas no chrome ficou ok*/
