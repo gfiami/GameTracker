@@ -35,7 +35,7 @@
 export default {
   name: "SearchBar",
   props: {
-    counter: "",
+    counter: Number,
   },
   data() {
     return {

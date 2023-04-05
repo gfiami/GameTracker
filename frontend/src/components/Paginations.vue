@@ -134,8 +134,10 @@ export default {
         return;
       }
       this.fetchGames(page);
+      //ir para topo da página ao carregar novamente
+      window.scrollTo(0, 0);
 
-      //isso aqui serve para atualizar a url da página e permitir mais interação com botoes de voltar
+      //isso aqui serve para atualizar a url da página e permitir mais interação direto com a url
       window.history.pushState({ page }, null, `?page=${page}`);
     },
   },
@@ -145,6 +147,12 @@ export default {
     const page = parseInt(urlParams.get("page")) || 1;
     // fetchGames com o valor da página ou pagina inicial
     this.fetchGames(page);
+
+    //aqui é uma tentativa do voltar
+    window.addEventListener("popstate", (event) => {
+      const page = event.state.page || 1;
+      this.fetchGames(page);
+    });
   },
 };
 </script>
