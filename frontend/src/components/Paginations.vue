@@ -64,6 +64,7 @@ export default {
   data() {
     return {
       games: [],
+      gametadata: null,
       currentPage: 1,
       totalPages: 1,
       nextButton: "",
@@ -114,8 +115,15 @@ export default {
       const response = await axios.get(
         `${process.env.VUE_APP_APIURL}games/${page}`
       );
-      console.log(response);
       //pega os jogos da resposta
+
+      /*AJUSTES A FAZER */
+      //Preciso remover coisas que não irei utilizar aqui, já que usarei emit
+      /*AJUSTES A FAZER */
+
+      //passar variavel gamedata para ser usada(.games .results .count .next . next . previous)
+      this.$emit("gamedata", response.data.games);
+
       this.games = response.data.games.results;
       //atualiza página atual
       this.currentPage = page;

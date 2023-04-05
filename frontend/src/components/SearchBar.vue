@@ -1,7 +1,7 @@
 <template>
   <div class="search-container">
     <div class="search-info">
-      <div id="counter">299,999 items</div>
+      <div id="counter">{{ counter }}</div>
       <div id="results">
         Results for
         <span class="search-bar-input">search bar input</span>
@@ -34,6 +34,7 @@
 <script>
 export default {
   name: "SearchBar",
+  props: ["counter"],
   data() {
     return {
       sortOrder: "asc",
@@ -50,6 +51,7 @@ export default {
       this.sortOrder = this.sortOrder === "asc" ? "desc" : "asc";
     },
     searchGames() {
+      //passar search query para a view, pelo search
       this.$emit("search", this.searchQuery);
     },
   },
