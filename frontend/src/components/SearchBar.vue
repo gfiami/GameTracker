@@ -1,10 +1,10 @@
 <template>
   <div class="search-container">
     <div class="search-info">
-      <div id="counter">{{ counter }}</div>
-      <div id="results">
+      <div id="counter">{{ counter }} games</div>
+      <div v-if="searchMade" id="results">
         Results for
-        <span class="search-bar-input">search bar input</span>
+        <span class="search-bar-input">{{ showSearchResults }}</span>
       </div>
     </div>
 
@@ -34,11 +34,15 @@
 <script>
 export default {
   name: "SearchBar",
-  props: ["counter"],
+  props: {
+    counter: "",
+  },
   data() {
     return {
       sortOrder: "asc",
       searchQuery: "",
+      searchMade: false,
+      showSearchResults: "",
     };
   },
   computed: {
@@ -53,6 +57,8 @@ export default {
     searchGames() {
       //passar search query para a view, pelo search
       this.$emit("search", this.searchQuery);
+      this.searchMade = true;
+      this.showSearchResults = this.searchQuery;
     },
   },
 };

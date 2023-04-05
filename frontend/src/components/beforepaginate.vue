@@ -60,9 +60,9 @@
 import axios from "axios";
 
 export default {
-  name: "Paginations",
   data() {
     return {
+      gametadata: null,
       currentPage: 1,
       totalPages: 1,
       nextButton: "",
