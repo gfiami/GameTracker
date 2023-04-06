@@ -45,7 +45,7 @@
           />
         </div>
 
-        <button type="button">Register</button>
+        <button @click="register" type="button">Register</button>
         <p class="loginMessage">
           Already on GameTracker?
           <router-link to="/login">Login</router-link>
@@ -56,10 +56,42 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
-  name: "LoginView",
+  name: "RegisterView",
   data() {
-    return {};
+    return {
+      username: null,
+      email: null,
+      password: null,
+      passwordConfirmation: null,
+    };
+  },
+  methods: {
+    async register() {
+      console.log("teste se botão funciona");
+      //Lembrar de ajustar para tratar erros e coisas invalidas, mas por hora fazer com se tudo fosse perfeito e nenhum user mal intencionado
+      try {
+        const response = await axios.post(
+          `${process.env.VUE_APP_APIURL}register`,
+          {
+            username: this.username,
+            email: this.email,
+            password: this.password,
+            password_confirmation: this.passwordConfirmation,
+          }
+        );
+        //aqui recebo o que o laravel me retornou
+        console.log(response.data);
+        this.redirectToLoginPage;
+      } catch (error) {
+        //caso haja erro
+        console.log(error.response.data);
+      }
+    },
+    redirectToGamePage() {
+      console.log("redirecionado!");
+    },
   },
 };
 </script>
