@@ -6,33 +6,39 @@ use Illuminate\Http\Request;
 use App\Models\User;
 //esse validation serve para pegar erros vindos da $request->validate
 use Illuminate\Validation\ValidationException;
+//esse Auth serve para auxiliar no login e realizar a autenticação do usuario
+use Illuminate\Support\Facades\Auth;
 
 
 class UserController extends Controller
 {
 
-     public function login(Request $request)
+     public function signin(Request $request)
     {
 
             $validateUserInfo = $request->validate([
                 'email' => 'required|email',
                 'password' => 'required'
             ]);
-            //autenticação com tabela de users, retorna true se achar
-            //ele já funciona como um "try/catch"
-            //se nao achar, o código continua e nossa response será um erro
-            //esse attempt também já checa se a senha está criptografada e resolve isso
-            //apesar vendo se é do tipo email e se foram enviadas sem ser vazio
-            //ver mais na documentação sobre o ->validate
+            /*
+            -autenticação com tabela de users, retorna true se achar
+            -ele já funciona como um "try/catch"
+            -se nao achar, o código continua e nossa response será um erro
+            -esse attempt também já checa se a senha está criptografada e resolve isso
+            -apesar vendo se é do tipo email e se foram enviadas sem ser vazio
+            -ver mais na documentação sobre o ->validate
+            */
             if (Auth::attempt($validateUserInfo)){
                 //aqui o ($user vira o usuario achado)
                 $user = $request->user();
-                //token é criado a cada login e podemos usar para
-                //interagir com user sem usar dados sensiveis
+                /*token é criado a cada login e podemos usar para
+                interagir com user sem usar dados sensiveis*/
                 $token = $user->createToken('authToken')->plainTextToken;
+                //criando um cookie que deve expirar em 15 dias
                 return response()->json([
                     'token'=> $token,
                     'user' => $user,
+                    'message' => "Login successeful!",
                 ]);
             }
             return response()->json(['message' => 'Login failed, please check your credentials'], 401);

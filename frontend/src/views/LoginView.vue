@@ -33,6 +33,9 @@
 </template>
 
 <script>
+import axios from "axios";
+import router from "@/router";
+
 export default {
   name: "LoginView",
   data() {
@@ -52,11 +55,29 @@ export default {
             password: this.password,
           }
         );
-        console.log(response.data.token); //token criado no login
+        //definindo localStorage
+        localStorage.setItem("gameTrackerUserToken", response.data.token);
+
+        console.log(response.data.token + "aqui é o token!"); //token criado no login
+        console.log(response.data.user);
+        window.location.reload();
+
+        //redirecionar para algum lugar pois deu certo o login!
       } catch (error) {
-        console.log(error.response.data);
+        //console.log(error);
+        console.log(error.response.data.message); // aqui mostra a mensagem que eu defini!
+        console.log(error.response.data.errors); //aqui mostra oque foi errado, caso senha seja invalida ou email invalido
       }
     },
+  },
+  mounted() {
+    //aqui redireciona para a pagina inicial se estiver logado
+    //depois eu vou obviamente tirar esse view da exibição
+    const checkToken = localStorage.getItem("gameTrackerUserToken");
+    console.log(checkToken + "checando token");
+    if (checkToken !== null && checkToken !== undefined && checkToken !== "") {
+      router.push("/");
+    }
   },
 };
 </script>

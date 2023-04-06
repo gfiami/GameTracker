@@ -1,10 +1,11 @@
 <?php
-
 namespace App\Http\Controllers;
-use Illuminate\Support\Facades\Http;
 
+use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 
+//isso serve para usar logs no console com Log::info($teste);
+use Illuminate\Support\Facades\Log;
 class GamesController extends Controller
 {
     public function index()
@@ -22,7 +23,8 @@ class GamesController extends Controller
         return view('games.index', compact('games'));
     }
     public function games($page = 1, $search = null){
-
+       /* $teste = " TESTANDO TESTANDOTESTANDOTESTANDOTESTANDOTESTANDO TESTANDO";
+        Log::info($teste); útil para depurar no console laravel.log*/
         $search = $search !== null ? $search : '';
         $certPath = storage_path('rawg_io.pem');
         $curl = curl_init();
