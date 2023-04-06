@@ -86,7 +86,10 @@ export default {
         this.redirectToLoginPage();
       } catch (error) {
         //caso haja erro
-        console.log(error);
+        console.log(error.response.data.message);
+        console.log(error.response.data.validation);
+        //aqui vai mostrar os erros pra cada uma das validações!
+        console.log(error.response.data.errors);
       }
     },
     redirectToLoginPage() {
