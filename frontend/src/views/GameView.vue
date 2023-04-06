@@ -1,8 +1,9 @@
 <template>
   <div class="main-wrapper">
+    <!-- @está pegando lá de dentro, : está mandando -->
     <SearchBar @search="search" :counter="gameinfo.count" />
     <GameLayout :games="gameinfo.results" />
-    <Paginations @gamedata="gamedata" />
+    <Paginations @gamedata="gamedata" :searchText="searchQuery" />
   </div>
 </template>
 

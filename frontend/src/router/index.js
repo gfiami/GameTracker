@@ -37,7 +37,6 @@ const routes = [
       ),
   },
   {
-    //${this.$route.params.id}
     path: "/games",
     name: "games",
     component: () =>

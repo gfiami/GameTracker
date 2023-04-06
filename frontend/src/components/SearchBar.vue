@@ -2,7 +2,7 @@
   <div class="search-container">
     <div class="search-info">
       <div v-if="counter" id="counter">{{ counter }} games</div>
-      <div v-if="searchMade" id="results">
+      <div v-if="showSearchResults" id="results">
         Results for
         <span class="search-bar-input">{{ showSearchResults }}</span>
       </div>
@@ -16,7 +16,7 @@
           placeholder="Search game"
           v-model="searchQuery"
         />
-        <button @click="searchGames" id="searchButton" type="button">
+        <button @click="showSearch" id="searchButton" type="button">
           <i class="fas fa-search"></i>
         </button>
       </div>
@@ -41,7 +41,6 @@ export default {
     return {
       sortOrder: "asc",
       searchQuery: "",
-      searchMade: false,
       showSearchResults: "",
     };
   },
@@ -54,7 +53,7 @@ export default {
     changeSortIcon() {
       this.sortOrder = this.sortOrder === "asc" ? "desc" : "asc";
     },
-    searchGames() {
+    showSearch() {
       //passar search query para a view, pelo search
       this.$emit("search", this.searchQuery);
       this.searchMade = true;

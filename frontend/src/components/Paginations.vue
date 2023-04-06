@@ -64,6 +64,23 @@ import axios from "axios";
 
 export default {
   name: "Paginations",
+  props: {
+    searchText: null,
+  },
+  watch: {
+    searchText(newValue, oldValue) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const page = 1; //se usuario faz pesquisa reloca para pagina inicial
+      //define search caso o newValue exista, se não fica null
+      const search = newValue ? newValue : null;
+      this.fetchGames(page, search);
+      window.history.pushState(
+        { page },
+        null,
+        `?page=${page}&search=${this.searchText}`
+      );
+    },
+  },
   data() {
     return {
       currentPage: 1,
@@ -109,13 +126,15 @@ export default {
       return pageArray;
     },
   },
-
   methods: {
     //requisição a api de acordo com número de páginas (lá no controller tá pegando 24 jogos por página)
-    async fetchGames(page) {
+
+    async fetchGames(page, search) {
+      console.log(search);
       const response = await axios.get(
-        `${process.env.VUE_APP_APIURL}games/${page}`
+        `${process.env.VUE_APP_APIURL}games/${page}/${search}`
       );
+
       //pega os jogos da resposta
 
       /*AJUSTES A FAZER */
@@ -124,6 +143,7 @@ export default {
 
       //passar variavel gamedata para ser usada(.games .results .count .next . next . previous)
       this.$emit("gamedata", response.data.games);
+      // Se isso aqui em cima .count for = 0, mostrar erro!
 
       //atualiza página atual
       this.currentPage = page;
@@ -136,25 +156,39 @@ export default {
       if (page < 1 || page > this.totalPages) {
         return;
       }
-      this.fetchGames(page);
+      const search = this.searchText;
+      this.fetchGames(page, search);
       //ir para topo da página ao carregar novamente
       window.scrollTo(0, 0);
 
       //isso aqui serve para atualizar a url da página e permitir mais interação direto com a url
-      window.history.pushState({ page }, null, `?page=${page}`);
+      if (search) {
+        window.history.pushState(
+          { page },
+          null,
+          `?page=${page}&search=${search}`
+        );
+      } else {
+        window.history.pushState({ page }, null, `?page=${page}`);
+      }
     },
   },
   mounted() {
     // pega o valor da página da URL
     const urlParams = new URLSearchParams(window.location.search);
     const page = parseInt(urlParams.get("page")) || 1;
-    // fetchGames com o valor da página ou pagina inicial
-    this.fetchGames(page);
+    const search = urlParams.get("search") || "";
 
-    //aqui é uma tentativa do voltar
+    // fetchGames com o valor da página ou pagina inicial
+    this.fetchGames(page, search);
+
+    //aqui é uma tentativa do voltar página
     window.addEventListener("popstate", (event) => {
-      const page = event.state.page || 1;
-      this.fetchGames(page);
+      if (event.state) {
+        const page = event.state.page || 1;
+        const search = urlParams.get("search") || "";
+        this.fetchGames(page, search);
+      }
     });
   },
 };

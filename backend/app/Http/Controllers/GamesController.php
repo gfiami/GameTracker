@@ -21,15 +21,17 @@ class GamesController extends Controller
 
         return view('games.index', compact('games'));
     }
-    public function games($page = 1){
+    public function games($page = 1, $search = null){
+
+        $search = $search !== null ? $search : '';
         $certPath = storage_path('rawg_io.pem');
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_CAINFO, $certPath);
-        $response = Http::withOptions([
+         $response = Http::withOptions([
             'curl' => [
                 CURLOPT_CAINFO => $certPath,
             ],
-        ])->get("https://api.rawg.io/api/games?key=".env('RAWG_API_KEY')."&page=".$page."&page_size=24"); //aqui pode entrar pesquisas
+        ])->get("https://api.rawg.io/api/games?key=".env('RAWG_API_KEY')."&page=".$page."&page_size=24&search=".$search);
         $games = $response->json();
         return compact('games');
     }
