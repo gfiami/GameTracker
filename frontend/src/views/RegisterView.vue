@@ -82,14 +82,14 @@ export default {
           }
         );
         //aqui recebo o que o laravel me retornou
-        console.log(response.data);
-        this.redirectToLoginPage;
+        console.log(response);
+        this.redirectToLoginPage();
       } catch (error) {
         //caso haja erro
-        console.log(error.response.data);
+        console.log(error);
       }
     },
-    redirectToGamePage() {
+    redirectToLoginPage() {
       console.log("redirecionado!");
     },
   },

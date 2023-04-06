@@ -23,5 +23,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('/games/{page?}/{search?}', [GamesController::class, 'games']);
 Route::get('/game/{id}', [GamesController::class, 'specificGameInfo']);
-Route::post('/login', [UserController::class, 'login']);
+Route::post('/login', [UserController::class, 'login']);//->middleware('throttle:5,1'); //isso serve para permitir apenas 5 tentativas de login por minuto e retorna erro de muitas tentativas 429
 Route::post('/register', [UserController::class, 'register']);

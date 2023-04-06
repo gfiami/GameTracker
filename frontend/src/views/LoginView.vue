@@ -22,7 +22,7 @@
           />
         </div>
 
-        <button type="button">Login</button>
+        <button @click="login" type="button">Login</button>
         <p class="registerMessage">
           First time at GameTracker?
           <router-link to="/register">Register</router-link>
@@ -36,7 +36,27 @@
 export default {
   name: "LoginView",
   data() {
-    return {};
+    return {
+      email: null,
+      password: null,
+    };
+  },
+  methods: {
+    //lembrar de ajustar para tratar erros também aqui no front
+    async login() {
+      try {
+        const response = await axios.post(
+          `${process.env.VUE_APP_APIURL}login`,
+          {
+            email: this.email,
+            password: this.password,
+          }
+        );
+        console.log(response.data.token); //token criado no login
+      } catch (error) {
+        console.log(error.response.data);
+      }
+    },
   },
 };
 </script>

@@ -10,9 +10,7 @@ use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
-    public function login(){
-        return;
-    }
+
     public function register(Request $request){
         //aqui depois posso ajustar alguams validações! checar na documentação para o ->validade
         //usando try catch para encontrar possiveis erros!
