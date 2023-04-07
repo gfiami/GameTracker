@@ -83,7 +83,12 @@ export default {
         );
         //aqui recebo o que o laravel me retornou
         console.log(response);
-        this.redirectToLoginPage();
+        this.$router.push({
+          path: "/login",
+          query: {
+            message: "Your GameTracker account has been successfully created!",
+          },
+        });
       } catch (error) {
         //caso haja erro
         console.log(error.response.data.message);
@@ -91,9 +96,6 @@ export default {
         //aqui vai mostrar os erros pra cada uma das validações!
         console.log(error.response.data.errors);
       }
-    },
-    redirectToLoginPage() {
-      console.log("redirecionado!");
     },
   },
 };

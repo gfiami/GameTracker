@@ -1,5 +1,6 @@
 <template>
   <div class="main-wrapper">
+    <Message :message="message" />
     <h1 class="title">Login</h1>
     <div class="login-container">
       <form class="login-form" action="" method="post" @submit.prevent>
@@ -34,7 +35,7 @@
 
 <script>
 import axios from "axios";
-import router from "@/router";
+import Message from "../components/Message.vue";
 //isso serve para usar as "mutations" do store.js, importando elas com o mapMutations
 import { mapMutations } from "vuex";
 
@@ -44,7 +45,11 @@ export default {
     return {
       email: null,
       password: null,
+      message: this.$route.query.message || null,
     };
+  },
+  components: {
+    Message,
   },
   methods: {
     //isso usa a mutation para importar a função que temos no store.js
@@ -62,11 +67,7 @@ export default {
           }
         );
         //definindo localStorage (ajustar depois para que tenha um tempo de expiração para deslogar automaticamente)
-        localStorage.setItem("gameTrackerUserToken", response.data.token);
-
-        console.log(response.data.token + "aqui é o token!"); //token criado no login
-        console.log(response.data.user);
-
+        localStorage.setItem("gameTrackerUserToken", response.data.user.name);
         //chama a função do store.js que é a setlogged que importei no method
         this.$store.commit("login", true);
         //redirecionar para algum lugar pois deu certo o login!

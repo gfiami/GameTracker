@@ -1,14 +1,7 @@
 <template>
   <div id="nav">
     <router-link id="website-name" to="/">GameTracker</router-link>
-    <router-link
-      v-if="logged"
-      :to="{
-        name: 'profile',
-        params: { id: 1 },
-      }"
-      >Perfil</router-link
-    >
+    <router-link v-if="logged" to="/profile">{{ username }}</router-link>
     <router-link to="/games">Games</router-link>
     <router-link v-if="!logged" to="/login">Login</router-link>
     <router-link v-if="!logged" to="/register">Register</router-link>
@@ -21,9 +14,16 @@ import { mapMutations } from "vuex";
 
 export default {
   name: "Navbar",
+  data() {
+    return {
+      username: "Profile",
+    };
+  },
   computed: {
-    //esse logged é chamado semrpe pq temos um v-if no router link que "checa" o status dele
+    //esse logged é chamado semrpe pq temos um v-if no router link que "checa" o status dele, se mudar vai alterar
     logged() {
+      console.log("teste");
+      this.username = this.getUserName(this.$store.state.logged);
       return this.$store.state.logged;
     },
     //aqui temos o token do usuario vindo do store.js
@@ -38,6 +38,12 @@ export default {
       this.$store.commit("logout", false);
       localStorage.removeItem("gameTrackerUserToken");
       this.$router.push("/");
+    },
+    getUserName(logged) {
+      if (logged) {
+        console.log(this.$store.state);
+        return this.$store.state.token;
+      }
     },
   },
 };

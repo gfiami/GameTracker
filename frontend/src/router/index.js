@@ -59,7 +59,7 @@ const routes = [
       import(/* webpackChunkName: "GameView" */ "../views/GameView.vue"),
   },
   {
-    path: "/profile/:id",
+    path: "/profile/",
     name: "profile",
     beforeEnter: (to, from, next) => {
       const loggedIn = store.state.logged;

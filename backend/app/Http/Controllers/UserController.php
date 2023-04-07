@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Models\User;
+
 //esse validation serve para pegar erros vindos da $request->validate
 use Illuminate\Validation\ValidationException;
 //esse Auth serve para auxiliar no login e realizar a autenticação do usuario
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
+//esse personalacess serve para acessar a tabela de tokens do banco de dados, em conjunto com a auth do sanctum
 
 class UserController extends Controller
 {
@@ -33,10 +36,8 @@ class UserController extends Controller
                 $user = $request->user();
                 /*token é criado a cada login e podemos usar para
                 interagir com user sem usar dados sensiveis*/
-                $token = $user->createToken('authToken')->plainTextToken;
                 //criando um cookie que deve expirar em 15 dias
                 return response()->json([
-                    'token'=> $token,
                     'user' => $user,
                     'message' => "Login successeful!",
                 ]);
@@ -76,6 +77,10 @@ class UserController extends Controller
             //retornar junto esse erro 422 significa que "deu tudo certo", mas não passou na validação
             //basicamente o user fez besteirinhas na digitação que não passou na minha função validate
         }
+    }
+    public function userInfo(Request $request){
+        //$token = str_replace('Bearer ', '', $token);
 
+        return $user;
     }
 }
