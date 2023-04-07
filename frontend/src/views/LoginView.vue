@@ -61,7 +61,7 @@ export default {
             password: this.password,
           }
         );
-        //definindo localStorage
+        //definindo localStorage (ajustar depois para que tenha um tempo de expiração para deslogar automaticamente)
         localStorage.setItem("gameTrackerUserToken", response.data.token);
 
         console.log(response.data.token + "aqui é o token!"); //token criado no login

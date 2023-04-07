@@ -1,11 +1,17 @@
 <template>
   <div id="nav">
     <router-link id="website-name" to="/">GameTracker</router-link>
-    <router-link to="/games">Games</router-link>
-    <router-link v-if="!logged" class="nav-link" to="/login">Login</router-link>
-    <router-link v-if="!logged" class="nav-link" to="/register"
-      >Register</router-link
+    <router-link
+      v-if="logged"
+      :to="{
+        name: 'profile',
+        params: { id: 1 },
+      }"
+      >Perfil</router-link
     >
+    <router-link to="/games">Games</router-link>
+    <router-link v-if="!logged" to="/login">Login</router-link>
+    <router-link v-if="!logged" to="/register">Register</router-link>
     <a @click="logout" v-if="logged">Logout</a>
   </div>
 </template>
