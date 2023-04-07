@@ -39,6 +39,14 @@ const routes = [
   {
     path: "/register",
     name: "register",
+    beforeEnter: (to, from, next) => {
+      const loggedIn = store.state.logged;
+      if (loggedIn) {
+        next("/"); // aqui evitamos que usuario logado entre novametne no login
+      } else {
+        next(); // segue pro login se n tá logad
+      }
+    },
     component: () =>
       import(
         /* webpackChunkName: "RegisterView" */ "../views/RegisterView.vue"

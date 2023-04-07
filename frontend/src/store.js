@@ -26,7 +26,7 @@ const store = createStore({
 const currentUserState = localStorage.getItem("userState"); // true se estiver logado
 
 if (currentUserState) {
-  //se o usuario estiver logado
+  //se o usuario estiver logado, executa o mutation login e seta os valores para "logado"
   store.commit("login");
 }
 
