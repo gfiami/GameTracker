@@ -27,3 +27,4 @@ Route::post('/signin', [UserController::class, 'signin']);//->middleware('thrott
 Route::post('/register', [UserController::class, 'register']);
 Route::get('/userinfo', [UserController::class, 'userInfo']);
 Route::post('/owned', [UserController::class, 'addOwned']);
+Route::get('/check-owned', [UserController::class, 'checkOwned']);

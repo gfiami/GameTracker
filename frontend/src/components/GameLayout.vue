@@ -8,9 +8,17 @@
           <router-link to="/register">Register</router-link> to track your games
         </p>
         <p v-if="logged">
-          <button @click="markOwned(game.id)" type="button">
-            Mark as Owned
+          <button
+            v-if="ownedGames.includes(game.id)"
+            @click="removeOwned(game.id)"
+            type="button"
+          >
+            Remove from Owned
           </button>
+          <button v-else @click="addToOwnedGames(game.id)" type="button">
+            Add as Owned
+          </button>
+
           <button @click="addWishList(game.id)" type="button">
             Add to Wishlist
           </button>
@@ -37,21 +45,35 @@ export default {
   props: {
     games: "",
   },
+  data() {
+    return {
+      ownedGames: [],
+    };
+  },
+  watch: {
+    games: {
+      immediate: true,
+      handler(newGames, oldGames) {
+        console.log("Valor atual da prop games:", newGames); //aqui eu posso usar um "LOADING para aguardar o games chegar!"
+        if (newGames !== undefined) {
+          const gameIds = newGames.map((game) => game.id);
+          this.checkIfOwn(gameIds);
+        }
+      },
+    },
+  },
   computed: {
     //esse logged é chamado semrpe pq temos um v-if no router link que "checa" o status dele, se mudar vai alterar
     logged() {
       return this.$store.state.logged;
     },
   },
-  mounted() {
-    setTimeout(() => {
-      console.log(this.games);
-    }, 3333);
-  },
   methods: {
     async markOwned(game) {
       const user_id = localStorage.getItem("user_id");
+
       const game_api_id = game;
+
       try {
         const response = await axios.post(
           `${process.env.VUE_APP_APIURL}owned`,
@@ -60,11 +82,31 @@ export default {
             game_api_id: game_api_id,
           }
         );
-        //aqui recebo o que o laravel me retornou
-        console.log(response.data.message);
+        //aqui recebo o que o laravel me retornou dos itens encontrados no banco de dados iguais
+        console.log(response.data);
       } catch (error) {
         console.log(error.response.data.error);
       }
+    },
+    async checkIfOwn(gameIds) {
+      const user_id = localStorage.getItem("user_id");
+      try {
+        const response = await axios.get(
+          `${process.env.VUE_APP_APIURL}check-owned`,
+          {
+            params: {
+              user_id: user_id,
+              game_api_ids: gameIds,
+            },
+          }
+        );
+        this.ownedGames = response.data;
+      } catch (error) {
+        console.log(error.response.data.error);
+      }
+    },
+    removeOwned(game) {
+      console.log("removendo" + game);
     },
     addWishList(game) {
       console.log("wishlist" + game);

@@ -95,4 +95,21 @@ class UserController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+    public function checkOwned(Request $request){
+    try {
+        $user_id = $request->input('user_id');
+        $game_api_ids = $request->input('game_api_ids');
+        Log::info($user_id);
+        Log::info($game_api_ids);
+        $owned_games = OwnedGame::where('user_id', $user_id)
+        ->whereIn('game_api_id', $game_api_ids)
+        ->pluck('game_api_id')
+        ->toArray();
+        return response()->json($owned_games);
+
+    }catch (\Exception $e) {
+        return response()->json(['Erro na requisição' => $e->getMessage()], 500);
+    }
+}
 }
