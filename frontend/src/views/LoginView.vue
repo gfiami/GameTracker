@@ -35,6 +35,8 @@
 <script>
 import axios from "axios";
 import router from "@/router";
+//isso serve para usar as "mutations" do store.js, importando elas com o mapMutations
+import { mapMutations } from "vuex";
 
 export default {
   name: "LoginView",
@@ -45,6 +47,10 @@ export default {
     };
   },
   methods: {
+    //isso usa a mutation para importar a função que temos no store.js
+    ...mapMutations(["login"]),
+    //ai eu posso chamar a função com  this.$store.commit("login", true);
+
     //lembrar de ajustar para tratar erros também aqui no front
     async login() {
       try {
@@ -60,24 +66,17 @@ export default {
 
         console.log(response.data.token + "aqui é o token!"); //token criado no login
         console.log(response.data.user);
-        window.location.reload();
 
+        //chama a função do store.js que é a setlogged que importei no method
+        this.$store.commit("login", true);
         //redirecionar para algum lugar pois deu certo o login!
+        this.$router.push("/");
       } catch (error) {
         //console.log(error);
         console.log(error.response.data.message); // aqui mostra a mensagem que eu defini!
         console.log(error.response.data.errors); //aqui mostra oque foi errado, caso senha seja invalida ou email invalido
       }
     },
-  },
-  mounted() {
-    //aqui redireciona para a pagina inicial se estiver logado
-    //depois eu vou obviamente tirar esse view da exibição
-    const checkToken = localStorage.getItem("gameTrackerUserToken");
-    console.log(checkToken + "checando token");
-    if (checkToken !== null && checkToken !== undefined && checkToken !== "") {
-      router.push("/");
-    }
   },
 };
 </script>

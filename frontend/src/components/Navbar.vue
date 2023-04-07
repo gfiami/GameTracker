@@ -2,27 +2,36 @@
   <div id="nav">
     <router-link id="website-name" to="/">GameTracker</router-link>
     <router-link to="/games">Games</router-link>
-    <router-link class="nav-link" to="/login">Login</router-link>
-    <router-link class="nav-link" to="/register">Register</router-link>
-    <a @click="logout" v-if="userToken !== null && userToken !== undefined"
-      >Logout</a
+    <router-link v-if="!logged" class="nav-link" to="/login">Login</router-link>
+    <router-link v-if="!logged" class="nav-link" to="/register"
+      >Register</router-link
     >
+    <a @click="logout" v-if="logged">Logout</a>
   </div>
 </template>
 
 <script>
+import { mapMutations } from "vuex";
+
 export default {
   name: "Navbar",
-  data() {
-    return {
-      userToken: localStorage.getItem("gameTrackerUserToken"),
-    };
+  computed: {
+    //esse logged é chamado semrpe pq temos um v-if no router link que "checa" o status dele
+    logged() {
+      return this.$store.state.logged;
+    },
+    //aqui temos o token do usuario vindo do store.js
+    userToken() {
+      return this.$store.state.token;
+    },
   },
   methods: {
+    ...mapMutations(["logout"]),
+
     logout() {
+      this.$store.commit("logout", false);
       localStorage.removeItem("gameTrackerUserToken");
-      window.location.href = "/";
-      window.location.reload();
+      this.$router.push("/");
     },
   },
 };

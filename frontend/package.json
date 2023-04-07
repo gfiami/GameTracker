@@ -12,7 +12,8 @@
     "js-cookie": "^3.0.1",
     "laravel-vue-pagination": "^4.1.0",
     "vue": "^3.2.13",
-    "vue-router": "^4.0.3"
+    "vue-router": "^4.0.3",
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~5.0.0",
