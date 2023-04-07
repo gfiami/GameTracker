@@ -3,9 +3,17 @@
     <div v-for="game in games" :key="game.id" class="game">
       <img :src="game.background_image" :alt="game.name" />
       <div class="game-hover">
-        <p>
+        <p v-if="!logged">
           <router-link to="/login">Login</router-link> or
           <router-link to="/register">Register</router-link> to track your games
+        </p>
+        <p v-if="logged">
+          <button @click="markOwned(game.id)" type="button">
+            Mark as Owned
+          </button>
+          <button @click="addWishList(game.id)" type="button">
+            Add to Wishlist
+          </button>
         </p>
         <!-- ajustar essa rota, apenas teste no momento -->
         <router-link
@@ -22,15 +30,45 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "GameLayout",
   props: {
     games: "",
   },
+  computed: {
+    //esse logged é chamado semrpe pq temos um v-if no router link que "checa" o status dele, se mudar vai alterar
+    logged() {
+      return this.$store.state.logged;
+    },
+  },
   mounted() {
     setTimeout(() => {
       console.log(this.games);
     }, 3333);
+  },
+  methods: {
+    async markOwned(game) {
+      const user_id = localStorage.getItem("user_id");
+      const game_api_id = game;
+      try {
+        const response = await axios.post(
+          `${process.env.VUE_APP_APIURL}owned`,
+          {
+            user_id: user_id,
+            game_api_id: game_api_id,
+          }
+        );
+        //aqui recebo o que o laravel me retornou
+        console.log(response.data.message);
+      } catch (error) {
+        console.log(error.response.data.error);
+      }
+    },
+    addWishList(game) {
+      console.log("wishlist" + game);
+    },
   },
 };
 </script>

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\OwnedGame;
+
 
 //esse validation serve para pegar erros vindos da $request->validate
 use Illuminate\Validation\ValidationException;
@@ -78,9 +80,19 @@ class UserController extends Controller
             //basicamente o user fez besteirinhas na digitação que não passou na minha função validate
         }
     }
-    public function userInfo(Request $request){
-        //$token = str_replace('Bearer ', '', $token);
+    public function addOwned(Request $request){
+        try {
+            $user_id = $request->input('user_id');
+            $game_api_id = $request->input('game_api_id');
 
-        return $user;
+            $owned_game = OwnedGame::create([
+                'user_id' => $user_id,
+                'game_api_id' => $game_api_id,
+            ]);
+            return response()->json(['message' => 'Game add to owned games!']);
+
+        }catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }

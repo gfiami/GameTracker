@@ -12,11 +12,13 @@ const store = createStore({
       state.logged = true;
       localStorage.setItem("userState", true);
       state.token = localStorage.getItem("gameTrackerUserToken");
+      state.user_id = localStorage.getItem("user_id");
     },
     logout(state) {
       state.logged = false;
       localStorage.removeItem("userState");
       localStorage.removeItem("gameTrackerUserToken");
+      localStorage.removeItem("user_id");
     },
   },
 });

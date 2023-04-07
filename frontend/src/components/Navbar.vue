@@ -22,13 +22,8 @@ export default {
   computed: {
     //esse logged é chamado semrpe pq temos um v-if no router link que "checa" o status dele, se mudar vai alterar
     logged() {
-      console.log("teste");
       this.username = this.getUserName(this.$store.state.logged);
       return this.$store.state.logged;
-    },
-    //aqui temos o token do usuario vindo do store.js
-    userToken() {
-      return this.$store.state.token;
     },
   },
   methods: {
@@ -37,11 +32,12 @@ export default {
     logout() {
       this.$store.commit("logout", false);
       localStorage.removeItem("gameTrackerUserToken");
+      localStorage.removeItem("user_id");
+
       this.$router.push("/");
     },
     getUserName(logged) {
       if (logged) {
-        console.log(this.$store.state);
         return this.$store.state.token;
       }
     },
