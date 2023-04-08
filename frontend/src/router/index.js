@@ -59,16 +59,8 @@ const routes = [
       import(/* webpackChunkName: "GameView" */ "../views/GameView.vue"),
   },
   {
-    path: "/profile/",
+    path: "/profile/:id",
     name: "profile",
-    beforeEnter: (to, from, next) => {
-      const loggedIn = store.state.logged;
-      if (loggedIn) {
-        next(); // se estiver logado, vai para o profile
-      } else {
-        next("/login"); // segue para a rota do login
-      }
-    },
     component: () =>
       import(/* webpackChunkName: "ProfileView" */ "../views/ProfileView.vue"),
   },

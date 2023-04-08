@@ -5,13 +5,14 @@ const store = createStore({
     return {
       logged: false,
       token: null,
+      user_id: null,
     };
   },
   mutations: {
     login(state) {
       state.logged = true;
       localStorage.setItem("userState", true);
-      state.token = localStorage.getItem("gameTrackerUserToken");
+      state.token = localStorage.getItem("gameTrackerUserToken"); //username
       state.user_id = localStorage.getItem("user_id");
     },
     logout(state) {
