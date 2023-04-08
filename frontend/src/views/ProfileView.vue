@@ -2,7 +2,13 @@
   <div class="main-wrapper">
     <div class="routerChecker">
       <div v-if="checkOwnProfile">
-        <OwnProfile />
+        <div class="wait-data" v-if="ownedGames.length">
+          <OwnProfile
+            :ownedGames="ownedGames"
+            :favoriteGames="favoriteGames"
+            :wishListedGames="wishListedGames"
+          />
+        </div>
       </div>
       <div v-else-if="checkAnotherProfile">Another</div>
       <div v-else>Not logged</div>
@@ -11,9 +17,8 @@
 </template>
 
 <script>
-import { getCurrentInstance } from "vue";
-
 import OwnProfile from "../components/OwnProfile.vue";
+import axios from "axios";
 export default {
   name: "ProfileView",
   components: {
@@ -24,6 +29,9 @@ export default {
       ownProfile: null,
       anotherProfile: null,
       notLogged: null,
+      ownedGames: [],
+      favoriteGames: [],
+      wishListedGames: [],
     };
   },
   computed: {
@@ -43,15 +51,67 @@ export default {
       }
       return false;
     },
-  }, //isso aqui vai servir para "forçar" um update da rota caso estejamos em outro perfil de outra pessoa e vamos para o nosso
-  mounted() {},
+  },
   methods: {
-    //nao tenho ideia de como isso funciona, só sei que é para atualziar a rota ao ser clicada nela meio que "já" estando nela
-    methodThatForcesUpdate() {
-      const instance = getCurrentInstance();
-      this.$forceUpdate();
-      instance.proxy.forceUpdate();
+    async getOwnedGames() {
+      const user_id = this.$route.params.id;
+      try {
+        const response = await axios.get(
+          `${process.env.VUE_APP_APIURL}fetch-owned`,
+          {
+            params: {
+              user_id: user_id,
+            },
+          }
+        );
+        //pega os jogos "owned" e bota no array
+        this.ownedGames = response.data;
+        //console.log("owned: " + this.ownedGames);
+      } catch (error) {
+        console.log(error.response.data.error);
+      }
     },
+    async getFavoriteGames() {
+      const user_id = this.$route.params.id;
+      try {
+        const response = await axios.get(
+          `${process.env.VUE_APP_APIURL}fetch-favorite`,
+          {
+            params: {
+              user_id: user_id,
+            },
+          }
+        );
+        //pega os jogos "favorited" e bota no array
+        this.favoriteGames = response.data;
+        // console.log("favorite: " + this.favoriteGames);
+      } catch (error) {
+        console.log(error.response.data.error);
+      }
+    },
+    async getWishedGames() {
+      const user_id = this.$route.params.id;
+      try {
+        const response = await axios.get(
+          `${process.env.VUE_APP_APIURL}fetch-wished`,
+          {
+            params: {
+              user_id: user_id,
+            },
+          }
+        );
+        //pega os jogos "wishlisted" e bota no array
+        this.wishListedGames = response.data;
+        // console.log("wishlisted: " + this.wishListedGames);
+      } catch (error) {
+        console.log(error.response.data.error);
+      }
+    },
+  },
+  mounted() {
+    this.getOwnedGames();
+    this.getFavoriteGames();
+    this.getWishedGames();
   },
 };
 </script>

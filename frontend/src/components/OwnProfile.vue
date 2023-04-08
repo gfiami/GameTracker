@@ -7,21 +7,73 @@
         alt=""
       />
       <div class="user-edit-container">
-        <h1 class="username">Username</h1>
+        <h1 class="username">{{ $store.state.token }}</h1>
         <a class="edit-profile" href="">Edit profile</a>
+      </div>
+      <div class="game-info-container">
+        <div class="owned-games">
+          <!-- <div class="owned-title">{{ ownedGamesArray }}</div>-->
+        </div>
+        <div class="favorite-games">
+          <!-- <div class="favorite-title">{{ favoriteGamesArray }}</div> -->
+        </div>
+        <div class="wishlist-games">
+          <!-- <div class="wishlist-title">{{ wishListedGamesArray }}</div> -->
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import GameLayout from "./GameLayout.vue";
 export default {
   name: "OwnProfile",
+  components: {
+    GameLayout,
+  },
+  props: {
+    ownedGames: Array,
+    favoriteGames: Array,
+    wishListedGames: Array,
+  },
   data() {
     return {
-      //username: this.$store.state.token,
+      ownedGamesArray: [], //esperar chegar e observar o prop com watch pra nao receber vazio
+      favoriteGamesArray: [],
+      wishListedGamesArray: [],
     };
   },
+  watch: {
+    ownedGames: {
+      immediate: true, //isso significa que a função é chamada mesmo com ownedGames ainda undefined
+      handler(newOwned) {
+        //aqui eu posso usar um "LOADING"
+        if (newOwned !== undefined) {
+          this.ownedGamesArray = newOwned;
+        }
+      },
+    },
+    favoriteGames: {
+      immediate: true, //isso significa que a função é chamada mesmo com ownedGames ainda undefined
+      handler(newFavorite) {
+        //aqui eu posso usar um "LOADING"
+        if (newFavorite !== undefined) {
+          this.favoriteGamesArray = newFavorite;
+        }
+      },
+    },
+    wishListedGames: {
+      immediate: true, //isso significa que a função é chamada mesmo com ownedGames ainda undefined
+      handler(newWish) {
+        //aqui eu posso usar um "LOADING"
+        if (newWish !== undefined) {
+          this.wishListedGamesArray = newWish;
+        }
+      },
+    },
+  },
+  methods: {},
 };
 </script>
 
