@@ -42,3 +42,8 @@ Route::post('/wishlist', [UserController::class, 'addWishlist']); //adiciona a w
 Route::get('/check-wishlist', [UserController::class, 'checkWishlist']); //checa todos os jogos na página atual que estão na wishlist
 Route::get('/fetch-wished', [UserController::class, 'fetchAllWished']); //pegar todos os jogos que o user botou na wishlist
 Route::delete('/remove-wishlist', [UserController::class, 'removeWishlist']); //deleta o jogo da wishlist
+
+
+
+//owned api fetch
+Route::get('/game-api-owned/{ids}', [GamesController::class, 'fetchOwned']);

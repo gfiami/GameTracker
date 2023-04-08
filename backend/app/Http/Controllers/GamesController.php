@@ -2,6 +2,12 @@
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\OwnedGame;
+use App\Models\FavoritedGame;
+use App\Models\WishlistGame;
+
+
 
 //isso serve para usar logs no console com Log::info($teste);
 use Illuminate\Support\Facades\Log;
@@ -48,4 +54,20 @@ class GamesController extends Controller
         $game = $response->json();
         return compact('game');
     }
+
+    public function fetchOwned($owned_array){
+        try {
+        $certPath = storage_path('rawg_io.pem');
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_CAINFO, $certPath);
+        $response = Http::withOptions([
+            'curl' => [
+                CURLOPT_CAINFO => $certPath,
+            ],
+        ])->get("https://api.rawg.io/api/games?ids=".$owned_array."&key=".env('RAWG_API_KEY'));
+        $games = $response->json()['results'];
+        return $games;
+    }catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }}
 }

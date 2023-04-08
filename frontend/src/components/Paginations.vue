@@ -144,7 +144,6 @@ export default {
       //passar variavel gamedata para ser usada(.games .results .count .next . next . previous)
       this.$emit("gamedata", response.data.games);
       // Se isso aqui em cima .count for = 0, mostrar erro!
-
       //atualiza página atual
       this.currentPage = page;
       //checa total de páginas para criar botões de páginas

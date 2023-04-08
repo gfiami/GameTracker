@@ -117,6 +117,7 @@ export default {
       handler(newGames, oldGames) {
         console.log("Valor atual da prop games:", newGames); //aqui eu posso usar um "LOADING para aguardar o games chegar!"
         if (newGames !== undefined) {
+          console.log(typeof newGames);
           const gameIds = newGames.map((game) => game.id);
           this.checkIfOwn(gameIds);
           this.checkIfFavorite(gameIds);

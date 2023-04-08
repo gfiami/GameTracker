@@ -12,20 +12,28 @@
       </div>
       <div class="game-info-container">
         <div class="owned-games">
-          <!-- <div class="owned-title">{{ ownedGamesArray }}</div>-->
+          <div class="owned-title">{{ ownedGamesArray }}</div>
+          <div v-if="ownedApi" class="testando-owned">
+            <GameLayout :games="ownedApi" />
+          </div>
+          <!-- para cada game layout eu passo o array, mas antes eu tenho que buscar na api pra pegar e mandar -->
         </div>
         <div class="favorite-games">
           <!-- <div class="favorite-title">{{ favoriteGamesArray }}</div> -->
+          <!-- <GameLayout /> -->
         </div>
         <div class="wishlist-games">
           <!-- <div class="wishlist-title">{{ wishListedGamesArray }}</div> -->
+          <!-- <GameLayout />-->
         </div>
+        <div class="teste"></div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
 import GameLayout from "./GameLayout.vue";
 export default {
   name: "OwnProfile",
@@ -42,6 +50,7 @@ export default {
       ownedGamesArray: [], //esperar chegar e observar o prop com watch pra nao receber vazio
       favoriteGamesArray: [],
       wishListedGamesArray: [],
+      ownedApi: "",
     };
   },
   watch: {
@@ -73,7 +82,23 @@ export default {
       },
     },
   },
-  methods: {},
+  methods: {
+    async fetchOwnedGames(ownedArray) {
+      try {
+        const response = await axios.get(
+          `${process.env.VUE_APP_APIURL}game-api-owned/${ownedArray}`
+        );
+        //passar variavel gamedata para ser usada(.games .results .count .next . next . previous)
+        this.ownedApi = response.data;
+      } catch (error) {
+        console.log(error.response.data.error);
+      }
+    },
+  },
+  mounted() {
+    console.log("teste no own profile");
+    this.fetchOwnedGames(this.ownedGamesArray);
+  },
 };
 </script>
 
