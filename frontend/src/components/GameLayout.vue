@@ -2,7 +2,14 @@
   <div class="game-list">
     <div v-for="game in games" :key="game.id" class="game">
       <img :src="game.background_image" :alt="game.name" />
-      <div class="indicators">
+      <div
+        v-if="
+          ownedGames.includes(game.id) ||
+          wishListedGames.includes(game.id) ||
+          favoriteGames.includes(game.id)
+        "
+        class="indicators"
+      >
         <span v-if="ownedGames.includes(game.id)" class="fa"
           ><i class="fas fa-gamepad own"></i
         ></span>
@@ -368,7 +375,12 @@ export default {
   position: absolute;
   bottom: 0;
   padding: 15px;
-  background-color: rgba(0, 0, 0, 0.25);
+  background-image: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.5788690476190477) 40%,
+    rgba(0, 0, 0, 0.8029586834733894) 100%
+  );
   width: 100%;
   text-shadow: 2px 2px 4px #000000;
   border-bottom-left-radius: 12px;
