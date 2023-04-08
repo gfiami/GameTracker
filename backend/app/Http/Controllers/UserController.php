@@ -5,6 +5,10 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\OwnedGame;
+use App\Models\FavoritedGame;
+use App\Models\WishlistGame;
+
+
 
 
 //esse validation serve para pegar erros vindos da $request->validate
@@ -18,6 +22,7 @@ use Illuminate\Support\Facades\Log;
 class UserController extends Controller
 {
 
+    //LOGIN
      public function signin(Request $request)
     {
 
@@ -47,7 +52,7 @@ class UserController extends Controller
             return response()->json(['message' => 'Login failed, please check your credentials'], 401);
         //caso falhe, retorna erro de credenciais 401
     }
-
+    //REGISTER
     public function register(Request $request){
         //aqui depois posso ajustar alguams validações! checar na documentação para o ->validade
         //usando try catch para encontrar possiveis erros!
@@ -80,6 +85,9 @@ class UserController extends Controller
             //basicamente o user fez besteirinhas na digitação que não passou na minha função validate
         }
     }
+
+
+    //OWN
     public function addOwned(Request $request){
         try {
             $user_id = $request->input('user_id');
@@ -100,8 +108,8 @@ class UserController extends Controller
     try {
         $user_id = $request->input('user_id');
         $game_api_ids = $request->input('game_api_ids');
-        Log::info($user_id);
-        Log::info($game_api_ids);
+        //Log::info($user_id);
+        //Log::info($game_api_ids);
         $owned_games = OwnedGame::where('user_id', $user_id)
         ->whereIn('game_api_id', $game_api_ids)
         ->pluck('game_api_id')
@@ -111,5 +119,111 @@ class UserController extends Controller
     }catch (\Exception $e) {
         return response()->json(['Erro na requisição' => $e->getMessage()], 500);
     }
-}
+
+    }
+    public function removeOwned (Request $request){
+        try{
+        $user_id = $request->input('user_id');
+        $game_api_id = $request->input('game_api_id');
+        OwnedGame::where('user_id', $user_id)
+        ->where('game_api_id', $game_api_id)
+        ->delete();
+        return response()->json(['message' => 'Jogo removido com sucesso!']);
+    }catch (\Exception $e) {
+        return response()->json(['Erro ao deletar jogo' => $e->getMessage()], 500);
+    }
+    }
+    //FAVORITES
+    public function addFavorite(Request $request){
+        try {
+            $user_id = $request->input('user_id');
+            $game_api_id = $request->input('game_api_id');
+
+            $favorite_game = FavoritedGame::create([
+                'user_id' => $user_id,
+                'game_api_id' => $game_api_id,
+            ]);
+            return response()->json(['message' => 'Game add to favorite games!']);
+
+        }catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function checkFavorite(Request $request){
+    try {
+        $user_id = $request->input('user_id');
+        $game_api_ids = $request->input('game_api_ids');
+        //Log::info($user_id);
+        //Log::info($game_api_ids);
+        $favorite_games = FavoritedGame::where('user_id', $user_id)
+        ->whereIn('game_api_id', $game_api_ids)
+        ->pluck('game_api_id')
+        ->toArray();
+        return response()->json($favorite_games);
+
+    }catch (\Exception $e) {
+        return response()->json(['Erro na requisição' => $e->getMessage()], 500);
+    }
+
+    }
+    public function removeFavorite (Request $request){
+        try{
+        $user_id = $request->input('user_id');
+        $game_api_id = $request->input('game_api_id');
+        FavoritedGame::where('user_id', $user_id)
+        ->where('game_api_id', $game_api_id)
+        ->delete();
+        return response()->json(['message' => 'Jogo removido com sucesso dos favoritos!']);
+    }catch (\Exception $e) {
+        return response()->json(['Erro ao deletar jogo' => $e->getMessage()], 500);
+    }
+    }
+
+    //WISHLIST
+    public function addWishlist(Request $request){
+        try {
+            $user_id = $request->input('user_id');
+            $game_api_id = $request->input('game_api_id');
+
+            $wishlist_game = WishlistGame::create([
+                'user_id' => $user_id,
+                'game_api_id' => $game_api_id,
+            ]);
+            return response()->json(['message' => 'Game add to wishlist games!']);
+
+        }catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function checkWishlist(Request $request){
+    try {
+        $user_id = $request->input('user_id');
+        $game_api_ids = $request->input('game_api_ids');
+        //Log::info($user_id);
+        //Log::info($game_api_ids);
+        $wishlist_games = WishlistGame::where('user_id', $user_id)
+        ->whereIn('game_api_id', $game_api_ids)
+        ->pluck('game_api_id')
+        ->toArray();
+        return response()->json($wishlist_games);
+
+    }catch (\Exception $e) {
+        return response()->json(['Erro na requisição' => $e->getMessage()], 500);
+    }
+
+    }
+    public function removeWishlist (Request $request){
+        try{
+        $user_id = $request->input('user_id');
+        $game_api_id = $request->input('game_api_id');
+        WishlistGame::where('user_id', $user_id)
+        ->where('game_api_id', $game_api_id)
+        ->delete();
+        return response()->json(['message' => 'Jogo removido com sucesso da wishlist!']);
+    }catch (\Exception $e) {
+        return response()->json(['Erro ao deletar jogo' => $e->getMessage()], 500);
+    }
+    }
 }

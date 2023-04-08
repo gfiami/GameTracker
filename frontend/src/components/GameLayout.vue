@@ -15,12 +15,46 @@
           >
             Remove from Owned
           </button>
-          <button v-else @click="addToOwnedGames(game.id)" type="button">
+          <button v-else @click="addOwned(game.id)" type="button">
             Add as Owned
           </button>
 
-          <button @click="addWishList(game.id)" type="button">
+          <button
+            v-if="
+              wishListedGames.includes(game.id) && !ownedGames.includes(game.id)
+            "
+            @click="removeWishList(game.id)"
+            type="button"
+          >
+            Remove from Wishlist
+          </button>
+          <button
+            v-if="
+              !wishListedGames.includes(game.id) &&
+              !ownedGames.includes(game.id)
+            "
+            @click="addWishList(game.id)"
+            type="button"
+          >
             Add to Wishlist
+          </button>
+
+          <button
+            v-if="
+              favoriteGames.includes(game.id) && ownedGames.includes(game.id)
+            "
+            @click="removeFavorite(game.id)"
+            type="button"
+          >
+            Remove from favorites
+          </button>
+
+          <button
+            v-else-if="ownedGames.includes(game.id)"
+            @click="addFavorite(game.id)"
+            type="button"
+          >
+            Add as Favorite
           </button>
         </p>
         <!-- ajustar essa rota, apenas teste no momento -->
@@ -48,6 +82,8 @@ export default {
   data() {
     return {
       ownedGames: [],
+      favoriteGames: [],
+      wishListedGames: [],
     };
   },
   watch: {
@@ -58,6 +94,8 @@ export default {
         if (newGames !== undefined) {
           const gameIds = newGames.map((game) => game.id);
           this.checkIfOwn(gameIds);
+          this.checkIfFavorite(gameIds);
+          this.checkIfWishlist(gameIds);
         }
       },
     },
@@ -69,7 +107,7 @@ export default {
     },
   },
   methods: {
-    async markOwned(game) {
+    async addOwned(game) {
       const user_id = localStorage.getItem("user_id");
 
       const game_api_id = game;
@@ -82,8 +120,13 @@ export default {
             game_api_id: game_api_id,
           }
         );
+        this.removeWishList(game);
+
         //aqui recebo o que o laravel me retornou dos itens encontrados no banco de dados iguais
         console.log(response.data);
+        //pega os jogos na tela de novo e checa se tão no "owned"
+        const gameIds = this.games.map((game) => game.id);
+        this.checkIfOwn(gameIds);
       } catch (error) {
         console.log(error.response.data.error);
       }
@@ -100,16 +143,143 @@ export default {
             },
           }
         );
+        //pega os jogos "owned" e bota no array
         this.ownedGames = response.data;
       } catch (error) {
         console.log(error.response.data.error);
       }
     },
-    removeOwned(game) {
-      console.log("removendo" + game);
+    async removeOwned(game) {
+      const user_id = localStorage.getItem("user_id");
+      try {
+        const response = await axios.delete(
+          `${process.env.VUE_APP_APIURL}remove-owned`,
+          {
+            params: {
+              user_id: user_id,
+              game_api_id: game,
+            },
+          }
+        );
+        this.removeFavorite(game);
+        console.log(response.data);
+        const gameIds = this.games.map((game) => game.id);
+        this.checkIfOwn(gameIds);
+      } catch (error) {
+        console.log(error.response.data.error);
+      }
     },
-    addWishList(game) {
-      console.log("wishlist" + game);
+    async addFavorite(game) {
+      const user_id = localStorage.getItem("user_id");
+      const game_api_id = game;
+
+      try {
+        const response = await axios.post(
+          `${process.env.VUE_APP_APIURL}favorite`,
+          {
+            user_id: user_id,
+            game_api_id: game_api_id,
+          }
+        );
+        //aqui recebo o que o laravel me retornou dos itens encontrados no banco de dados iguais
+        console.log(response.data);
+        const gameIds = this.games.map((game) => game.id);
+        this.checkIfFavorite(gameIds);
+      } catch (error) {
+        console.log(error.response.data.error);
+      }
+    },
+    async checkIfFavorite(gameIds) {
+      const user_id = localStorage.getItem("user_id");
+      try {
+        const response = await axios.get(
+          `${process.env.VUE_APP_APIURL}check-favorite`,
+          {
+            params: {
+              user_id: user_id,
+              game_api_ids: gameIds,
+            },
+          }
+        );
+        this.favoriteGames = response.data;
+      } catch (error) {
+        console.log(error.response.data.error);
+      }
+    },
+    async removeFavorite(game) {
+      const user_id = localStorage.getItem("user_id");
+      try {
+        const response = await axios.delete(
+          `${process.env.VUE_APP_APIURL}remove-favorite`,
+          {
+            params: {
+              user_id: user_id,
+              game_api_id: game,
+            },
+          }
+        );
+        console.log(response.data);
+        const gameIds = this.games.map((game) => game.id);
+        this.checkIfFavorite(gameIds);
+      } catch (error) {
+        console.log(error.response.data.error);
+      }
+    },
+    async addWishList(game) {
+      const user_id = localStorage.getItem("user_id");
+      const game_api_id = game;
+
+      try {
+        const response = await axios.post(
+          `${process.env.VUE_APP_APIURL}wishlist`,
+          {
+            user_id: user_id,
+            game_api_id: game_api_id,
+          }
+        );
+        //aqui recebo o que o laravel me retornou dos itens encontrados no banco de dados iguais
+        console.log(response.data);
+        const gameIds = this.games.map((game) => game.id);
+        this.checkIfWishlist(gameIds);
+      } catch (error) {
+        console.log(error.response.data.error);
+      }
+    },
+    async checkIfWishlist(gameIds) {
+      const user_id = localStorage.getItem("user_id");
+      try {
+        const response = await axios.get(
+          `${process.env.VUE_APP_APIURL}check-wishlist`,
+          {
+            params: {
+              user_id: user_id,
+              game_api_ids: gameIds,
+            },
+          }
+        );
+        this.wishListedGames = response.data;
+      } catch (error) {
+        console.log(error.response.data.error);
+      }
+    },
+    async removeWishList(game) {
+      const user_id = localStorage.getItem("user_id");
+      try {
+        const response = await axios.delete(
+          `${process.env.VUE_APP_APIURL}remove-wishlist`,
+          {
+            params: {
+              user_id: user_id,
+              game_api_id: game,
+            },
+          }
+        );
+        console.log(response.data);
+        const gameIds = this.games.map((game) => game.id);
+        this.checkIfWishlist(gameIds);
+      } catch (error) {
+        console.log(error.response.data.error);
+      }
     },
   },
 };
