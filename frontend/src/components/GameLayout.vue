@@ -21,7 +21,7 @@
         ></span>
       </div>
       <div class="game-hover">
-        <p v-if="!logged">
+        <p v-if="!logged" class="login-register-offline">
           <router-link to="/login">Login</router-link> or
           <router-link to="/register">Register</router-link> to track your games
         </p>
@@ -387,7 +387,7 @@ export default {
   border-bottom-right-radius: 12px;
 }
 .game:hover .game-title {
-  background-color: transparent;
+  background-image: none;
 }
 /* add hover */
 .game:hover .game-hover {
@@ -444,6 +444,9 @@ export default {
 .game-hover .info-link {
   padding: 15px;
   margin-bottom: 50px;
+}
+.game-hover .login-register-offline {
+  background-color: rgba(0, 0, 0, 0.8029586834733894);
 }
 .game-hover .logged-container {
   display: flex;
