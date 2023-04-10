@@ -167,7 +167,10 @@ export default {
 
         //pega os jogos na tela de novo e checa se tão no "owned"
         const gameIds = this.games.map((game) => game.id);
-        this.checkIfOwn(gameIds);
+        //this.checkIfFavorite(gameIds); // O PADRÃO É CHECK IF _NOME DO ADD/REMOVE_
+        this.checkIfOwn(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
+        //this.checkIfWishlist(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
+        this.$emit("button-clicked", "addOwned");
       } catch (error) {
         console.log(error.response.data.error);
       }
@@ -206,10 +209,13 @@ export default {
             },
           }
         );
-        this.removeFavorite(game);
+        await this.removeFavorite(game);
         console.log(response.data);
         const gameIds = this.games.map((game) => game.id);
-        this.checkIfOwn(gameIds);
+        //this.checkIfFavorite(gameIds); // O PADRÃO É CHECK IF _NOME DO ADD/REMOVE_
+        this.checkIfOwn(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
+        //  this.checkIfWishlist(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
+        this.$emit("button-clicked", "removeOwned");
       } catch (error) {
         console.log(error.response.data.error);
       }
@@ -229,7 +235,10 @@ export default {
         //aqui recebo o que o laravel me retornou dos itens encontrados no banco de dados iguais
         console.log(response.data);
         const gameIds = this.games.map((game) => game.id);
-        this.checkIfFavorite(gameIds);
+        this.checkIfFavorite(gameIds); // O PADRÃO É CHECK IF _NOME DO ADD/REMOVE_
+        //  this.checkIfOwn(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
+        //  this.checkIfWishlist(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
+        this.$emit("button-clicked", "addFavorite");
       } catch (error) {
         console.log(error.response.data.error);
       }
@@ -247,6 +256,7 @@ export default {
           }
         );
         this.favoriteGames = response.data;
+        this.$emit("favoriteGamesUpdate", this.favoriteGames);
       } catch (error) {
         console.log(error.response.data.error);
       }
@@ -265,7 +275,10 @@ export default {
         );
         console.log(response.data);
         const gameIds = this.games.map((game) => game.id);
-        this.checkIfFavorite(gameIds);
+        this.checkIfFavorite(gameIds); // O PADRÃO É CHECK IF _NOME DO ADD/REMOVE_
+        //this.checkIfOwn(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
+        //this.checkIfWishlist(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
+        this.$emit("button-clicked", "removeFavorite");
       } catch (error) {
         console.log(error.response.data.error);
       }
@@ -285,7 +298,10 @@ export default {
         //aqui recebo o que o laravel me retornou dos itens encontrados no banco de dados iguais
         console.log(response.data);
         const gameIds = this.games.map((game) => game.id);
-        this.checkIfWishlist(gameIds);
+        //this.checkIfFavorite(gameIds); // O PADRÃO É CHECK IF _NOME DO ADD/REMOVE_
+        // this.checkIfOwn(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
+        this.checkIfWishlist(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
+        this.$emit("button-clicked", "addWishList");
       } catch (error) {
         console.log(error.response.data.error);
       }
@@ -303,6 +319,7 @@ export default {
           }
         );
         this.wishListedGames = response.data;
+        this.$emit("wishListedGamesUpdate", this.wishListedGames);
       } catch (error) {
         console.log(error.response.data.error);
       }
@@ -321,7 +338,10 @@ export default {
         );
         console.log(response.data);
         const gameIds = this.games.map((game) => game.id);
-        this.checkIfWishlist(gameIds);
+        // this.checkIfFavorite(gameIds); // O PADRÃO É CHECK IF _NOME DO ADD/REMOVE_
+        //this.checkIfOwn(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
+        this.checkIfWishlist(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
+        this.$emit("button-clicked", "removeWishlist");
       } catch (error) {
         console.log(error.response.data.error);
       }

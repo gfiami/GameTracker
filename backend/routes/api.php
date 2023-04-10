@@ -45,5 +45,11 @@ Route::delete('/remove-wishlist', [UserController::class, 'removeWishlist']); //
 
 
 
-//owned api fetch
+//owned api fetch (for profile)
 Route::get('/game-api-owned/{ids}', [GamesController::class, 'fetchOwned']);
+
+//favorite api fetch (for profile)
+Route::get('/game-api-favorite/{ids}', [GamesController::class, 'fetchFavorite']);
+
+//wished api fetch (for profile)
+Route::get('/game-api-wished/{ids}', [GamesController::class, 'fetchWished']);

@@ -10,12 +10,13 @@
         <h1 class="username">{{ $store.state.token }}</h1>
         <a class="edit-profile" href="">Edit profile</a>
       </div>
-      <div class="game-info-container">
-        <div class="owned-games">
-          <div class="owned-title">{{ ownedGamesArray }}</div>
-          <div v-if="ownedApi && ownedIds" class="testando-owned">
-            <div>
-              <!--
+    </div>
+    <div class="game-info-container">
+      <div class="owned-games">
+        <div class="owned-title"><h3>Owned Games</h3></div>
+        <div v-if="ownedApi && ownedIds" class="testando-owned">
+          <div class="layout-container">
+            <!--
                 Com a função getOwned eu pego os jogos do usuario
                 Com a fetch, eu uso o obtido na get e pego da api os jogos que eu quero
                 Daí, faço passo o prop games com o valor dos jogos obtidos da api, e aí ele monta o layout
@@ -35,25 +36,43 @@
                       >Com os ids, faço requisição na api e pego os jogos
                       >Mando esses valores da requisição pro layout e ele renderiza tudo, e o "checkIds" apenas ajuda a forçar excluir mesmo
               -->
-              <GameLayout
-                class="game-layout-profile"
-                :games="ownedApi"
-                @ownedGamesUpdate="updateOwnedGames"
-                :checkIds="ownedIds"
-              />
-            </div>
+            <GameLayout
+              class="game-layout-owned"
+              :games="ownedApi"
+              @ownedGamesUpdate="updateOwnedGames"
+              :checkIds="ownedIds"
+              @button-clicked="onButtonClicked"
+            />
           </div>
-          <!-- para cada game layout eu passo o array, mas antes eu tenho que buscar na api pra pegar e mandar -->
         </div>
-        <div class="favorite-games">
-          <!-- <div class="favorite-title">{{ favoriteGamesArray }}</div> -->
-          <!-- <GameLayout /> -->
+      </div>
+      <div class="favorite-games">
+        <div class="favorite-title"><h3>Favorite Games</h3></div>
+        <div v-if="favoriteApi && favoriteIds">
+          <div class="layout-container">
+            <GameLayout
+              class="game-layout-favorite"
+              :games="favoriteApi"
+              @favoriteGamesUpdate="updateFavoriteGames"
+              :checkIds="favoriteIds"
+              @button-clicked="onButtonClicked"
+            />
+          </div>
         </div>
-        <div class="wishlist-games">
-          <!-- <div class="wishlist-title">{{ wishListedGamesArray }}</div> -->
-          <!-- <GameLayout />-->
+      </div>
+      <div class="wishlist-games">
+        <div class="wishlist-title"><h3>Wishlist Games</h3></div>
+        <div v-if="wishedApi && wishedIds">
+          <div class="layout-container">
+            <GameLayout
+              class="game-layout-wished"
+              :games="wishedApi"
+              @wishListedGamesUpdate="updateWishedGames"
+              :checkIds="wishedIds"
+              @button-clicked="onButtonClicked"
+            />
+          </div>
         </div>
-        <div class="teste"></div>
       </div>
     </div>
   </div>
@@ -74,10 +93,61 @@ export default {
       wishListedGamesArray: [],
       ownedApi: "",
       ownedIds: "",
-      checkOwnedCounter: 0,
+      favoriteApi: "",
+      favoriteIds: "",
+      wishedApi: "",
+      wishedIds: "",
+      forceOwnedUpdate: 0,
+      forceWishedUpdate: 0,
     };
   },
   methods: {
+    async onButtonClicked(buttonType) {
+      console.log("o botão clickado foi: " + buttonType);
+      //removeOwned | addOwned | removeWishlist | addWishList | removeFavorite | addFavorite
+      switch (buttonType) {
+        case "removeOwned":
+          await this.getOwnedGames().then(() => {
+            this.fetchOwnedGames(this.ownedGamesArray);
+          });
+          break;
+        case "addOwned":
+          await this.getOwnedGames().then(() => {
+            this.fetchOwnedGames(this.ownedGamesArray);
+          });
+
+          break;
+        case "removeWishlist":
+          await this.getWishedGames().then(() => {
+            this.fetchWishedGames(this.wishListedGamesArray);
+          });
+          break;
+        case "addWishList":
+          console.log("nem deveria ser possível aqui rsrsrs");
+          break;
+
+        case "removeFavorite":
+          await this.getFavoriteGames().then(() => {
+            this.fetchFavoriteGames(this.favoriteGamesArray);
+            this.fetchOwnedGames(this.ownedGamesArray);
+          });
+
+          break;
+        case "addFavorite":
+          await this.getFavoriteGames().then(() => {
+            this.fetchFavoriteGames(this.favoriteGamesArray);
+          });
+
+          break;
+        default:
+          console.log("erro reconhecendo button type");
+          break;
+      }
+      /*this.getFavoriteGames();
+      this.getOwnedGames();
+      this.getWishedGames();*/
+    },
+    /* owned functions */
     async getOwnedGames() {
       const user_id = this.$route.params.id;
       try {
@@ -90,8 +160,11 @@ export default {
           }
         );
         //pega os jogos "owned" e bota no array
+
         this.ownedGamesArray = response.data;
-        this.fetchOwnedGames(this.ownedGamesArray);
+        console.log(
+          this.ownedGamesArray + "ARRAY DOS OWNED DENTRO DO GAMEOWNED FUNCTION"
+        );
         //console.log("owned: " + this.ownedGames);
       } catch (error) {
         console.log(error.response.data.error);
@@ -106,6 +179,7 @@ export default {
         //passar variavel gamedata para ser usada(.games .results .count .next . next . previous)
         this.ownedApi = response.data;
         this.ownedIds = ownedArray;
+        console.log("passou no fetchowned");
       } catch (error) {
         console.log(error.response.data.error);
       }
@@ -113,20 +187,97 @@ export default {
 
     updateOwnedGames(newValue) {
       this.ownedGamesArray = newValue; //só é usado aqui
+      console.log("vendo no update" + this.ownedIds);
       this.ownedIds = newValue;
-      console.log(this.ownedGamesArray.length);
-      console.log(this.ownedIds.length); //isso é bom usar depois para ver as paradas de qnt por page
+      //console.log(this.ownedGamesArray.length);
+      console.log("tamanho dos owned: " + this.ownedIds.length); //isso é bom usar depois para ver as paradas de qnt por page
+    },
 
-      /*  this.checkOwnedCounter++;
-      console.log(this.checkOwnedCounter);
-     if (this.checkOwnedCounter == 2) {
-        this.getOwnedGames();
-        this.checkOwnedCounter = 0;
-      } */
+    /* favorite functions */
+    async getFavoriteGames() {
+      const user_id = this.$route.params.id;
+      try {
+        const response = await axios.get(
+          `${process.env.VUE_APP_APIURL}fetch-favorite`,
+          {
+            params: {
+              user_id: user_id,
+            },
+          }
+        );
+        //pega os jogos "favorite" e bota no array
+        this.favoriteGamesArray = response.data;
+      } catch (error) {
+        console.log(error.response.data.error);
+      }
+    },
+    async fetchFavoriteGames(favoriteArray) {
+      try {
+        const response = await axios.get(
+          `${process.env.VUE_APP_APIURL}game-api-favorite/${favoriteArray}`
+        );
+        //passar variavel gamedata para ser usada(.games .results .count .next . next . previous)
+        this.favoriteApi = response.data;
+        this.favoriteIds = favoriteArray;
+      } catch (error) {
+        console.log(error.response.data.error);
+        if (error.response.data.error == undefined) {
+          console.log("Não possui favoritos");
+        }
+      }
+    },
+    updateFavoriteGames(newValue) {
+      this.favoriteGamesArray = newValue; //só é usado aqui
+      this.favoriteIds = newValue;
+      console.log("tamanho dos favoritos: " + this.favoriteIds.length); //isso é bom usar depois para ver as paradas de qnt por page
+    },
+    /*wished functions */
+    async getWishedGames() {
+      const user_id = this.$route.params.id;
+      try {
+        const response = await axios.get(
+          `${process.env.VUE_APP_APIURL}fetch-wished`,
+          {
+            params: {
+              user_id: user_id,
+            },
+          }
+        );
+        //pega os jogos "favorite" e bota no array
+        this.wishListedGamesArray = response.data;
+        console.log("teste wished" + this.wishListedGamesArray);
+      } catch (error) {
+        console.log(error.response.data.error);
+      }
+    },
+    async fetchWishedGames(wishedArray) {
+      try {
+        const response = await axios.get(
+          `${process.env.VUE_APP_APIURL}game-api-wished/${wishedArray}`
+        );
+        //passar variavel gamedata para ser usada(.games .results .count .next . next . previous)
+        this.wishedApi = response.data;
+        this.wishedIds = wishedArray;
+      } catch (error) {
+        console.log(error.response.data.error);
+      }
+    },
+    updateWishedGames(newValue) {
+      this.wishListedGamesArray = newValue; //só é usado aqui
+      this.wishedIds = newValue;
+      console.log("tamanho dos wished: " + this.wishedIds.length); //isso é bom usar depois para ver as paradas de qnt por page
     },
   },
   mounted() {
-    this.getOwnedGames();
+    this.getWishedGames().then(() => {
+      this.fetchWishedGames(this.wishListedGamesArray);
+    });
+    this.getFavoriteGames().then(() => {
+      this.fetchFavoriteGames(this.favoriteGamesArray);
+    });
+    this.getOwnedGames().then(() => {
+      this.fetchOwnedGames(this.ownedGamesArray);
+    });
   },
 };
 </script>

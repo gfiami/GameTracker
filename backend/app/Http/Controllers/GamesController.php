@@ -70,4 +70,39 @@ class GamesController extends Controller
     }catch (\Exception $e) {
         return response()->json(['error' => $e->getMessage()], 500);
     }}
+
+    public function fetchFavorite($favorite_array){
+        try {
+        $certPath = storage_path('rawg_io.pem');
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_CAINFO, $certPath);
+        $response = Http::withOptions([
+            'curl' => [
+                CURLOPT_CAINFO => $certPath,
+            ],
+        ])->get("https://api.rawg.io/api/games?ids=".$favorite_array."&key=".env('RAWG_API_KEY'));
+        $games = $response->json()['results'];
+        return $games;
+    }catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }}
+
+    public function fetchWished($wished_array){
+        try {
+        $certPath = storage_path('rawg_io.pem');
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_CAINFO, $certPath);
+        $response = Http::withOptions([
+            'curl' => [
+                CURLOPT_CAINFO => $certPath,
+            ],
+        ])->get("https://api.rawg.io/api/games?ids=".$wished_array."&key=".env('RAWG_API_KEY'));
+        $games = $response->json()['results'];
+        return $games;
+    }catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }}
+
+    //fazer fetch fav e wish
+
 }
