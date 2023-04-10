@@ -2,7 +2,7 @@
   <div class="main-wrapper">
     <!-- @está pegando lá de dentro, : está mandando -->
     <SearchBar @search="search" :counter="gameinfo.count" />
-    <GameLayout :games="gameinfo.results" />
+    <GameLayout class="game-layout-gameview" :games="gameinfo.results" />
     <Paginations @gamedata="gamedata" :searchText="searchQuery" />
   </div>
 </template>
@@ -35,4 +35,21 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style>
+.game-layout-gameview .indicators {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 2px;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-top-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+.game-layout-gameview .game:hover .indicators {
+  display: none;
+}
+</style>

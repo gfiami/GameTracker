@@ -1,7 +1,19 @@
 <template>
   <div class="game-list">
-    <div v-for="game in games" :key="game.id" class="game">
+    <div
+      v-for="game in games"
+      :key="game.id"
+      class="game"
+      v-show="
+        !checkIds ||
+        (checkIds && Object.values(this.checkIds).includes(game.id))
+      "
+    >
+      <!-- Aqui é a lógica para caso estejamos no profile e trabalhando com deleção dos jogos lá, ele suma da página -->
+      <!--<div v-if="!checkIds || (checkIds && Object.values(this.checkIds).includes(game.id))">      </div>
+-->
       <img :src="game.background_image" :alt="game.name" />
+
       <div
         v-if="
           ownedGames.includes(game.id) ||
@@ -103,6 +115,7 @@ export default {
   name: "GameLayout",
   props: {
     games: "",
+    checkIds: "",
   },
   data() {
     return {
@@ -115,9 +128,9 @@ export default {
     games: {
       immediate: true,
       handler(newGames, oldGames) {
-        console.log("Valor atual da prop games:", newGames); //aqui eu posso usar um "LOADING para aguardar o games chegar!"
+        //aqui eu posso usar um "LOADING para aguardar o games chegar!"
         if (newGames !== undefined) {
-          console.log(typeof newGames);
+          console.log("Valor atual da prop games:", newGames);
           const gameIds = newGames.map((game) => game.id);
           this.checkIfOwn(gameIds);
           this.checkIfFavorite(gameIds);
@@ -126,6 +139,7 @@ export default {
       },
     },
   },
+  //vou usar isso para passar owned/wished/favortes
   computed: {
     //esse logged é chamado semrpe pq temos um v-if no router link que "checa" o status dele, se mudar vai alterar
     logged() {
@@ -150,6 +164,7 @@ export default {
 
         //aqui recebo o que o laravel me retornou dos itens encontrados no banco de dados iguais
         console.log(response.data);
+
         //pega os jogos na tela de novo e checa se tão no "owned"
         const gameIds = this.games.map((game) => game.id);
         this.checkIfOwn(gameIds);
@@ -171,6 +186,10 @@ export default {
         );
         //pega os jogos "owned" e bota no array
         this.ownedGames = response.data;
+        this.$emit("ownedGamesUpdate", this.ownedGames);
+
+        //preciso mandar esse ownedGames para o ProfileView para mudar os valores lá
+        //        this.ownedArrayUpdate = this.ownedGames;
       } catch (error) {
         console.log(error.response.data.error);
       }
@@ -338,19 +357,7 @@ export default {
   object-fit: cover;
   box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.3);
 }
-.indicators {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  justify-content: center;
-  position: absolute;
-  top: 0;
-  left: 0;
-  padding: 2px;
-  background-color: rgba(0, 0, 0, 0.6);
-  border-top-left-radius: 12px;
-  border-bottom-right-radius: 12px;
-}
+
 .fav {
   padding: 2px;
   color: rgba(250, 250, 45, 0.849);
@@ -366,9 +373,7 @@ export default {
 
   color: rgba(250, 45, 45, 0.849);
 }
-.game:hover .indicators {
-  display: none;
-}
+
 .game-title {
   font-size: 16px;
   font-weight: bolder;

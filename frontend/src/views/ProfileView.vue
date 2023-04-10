@@ -2,13 +2,7 @@
   <div class="main-wrapper">
     <div class="routerChecker">
       <div v-if="checkOwnProfile">
-        <div class="wait-data" v-if="ownedGames.length">
-          <OwnProfile
-            :ownedGames="ownedGames"
-            :favoriteGames="favoriteGames"
-            :wishListedGames="wishListedGames"
-          />
-        </div>
+        <OwnProfile />
       </div>
       <div v-else-if="checkAnotherProfile">Another</div>
       <div v-else>Not logged</div>
@@ -109,9 +103,9 @@ export default {
     },
   },
   mounted() {
-    this.getOwnedGames();
-    this.getFavoriteGames();
-    this.getWishedGames();
+    //this.getOwnedGames();
+    //this.getFavoriteGames();
+    // this.getWishedGames();
   },
 };
 </script>
