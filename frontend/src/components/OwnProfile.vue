@@ -14,7 +14,7 @@
     <div class="game-info-container">
       <div class="owned-games">
         <div class="owned-title"><h3>Owned Games</h3></div>
-        <div v-if="ownedApi && ownedIds" class="testando-owned">
+        <div v-if="allGames && ownedIds" class="testando-owned">
           <div class="layout-container">
             <!--
                 Com a função getOwned eu pego os jogos do usuario
@@ -40,7 +40,7 @@
               -->
             <GameLayout
               class="game-layout-owned"
-              :games="ownedApi"
+              :games="allGames"
               @ownedGamesUpdate="updateOwnedGames"
               :checkIds="ownedIds"
               @button-clicked="onButtonClicked"
@@ -50,11 +50,11 @@
       </div>
       <div class="favorite-games">
         <div class="favorite-title"><h3>Favorite Games</h3></div>
-        <div v-if="favoriteApi && favoriteIds">
+        <div v-if="allGames && favoriteIds">
           <div class="layout-container">
             <GameLayout
               class="game-layout-favorite"
-              :games="favoriteApi"
+              :games="allGames"
               @favoriteGamesUpdate="updateFavoriteGames"
               :checkIds="favoriteIds"
               @button-clicked="onButtonClicked"
@@ -64,11 +64,11 @@
       </div>
       <div class="wishlist-games">
         <div class="wishlist-title"><h3>Wishlist Games</h3></div>
-        <div v-if="wishedApi && wishedIds">
+        <div v-if="allGames && wishedIds">
           <div class="layout-container">
             <GameLayout
               class="game-layout-wished"
-              :games="wishedApi"
+              :games="allGames"
               @wishListedGamesUpdate="updateWishedGames"
               :checkIds="wishedIds"
               @button-clicked="onButtonClicked"
@@ -90,72 +90,52 @@ export default {
   },
   data() {
     return {
-      ownedGamesArray: [],
-      favoriteGamesArray: [],
-      wishListedGamesArray: [],
-      ownedApi: "",
       ownedIds: "",
-      favoriteApi: "",
       favoriteIds: "",
-      wishedApi: "",
       wishedIds: "",
-      forceOwnedUpdate: 0,
-      forceWishedUpdate: 0,
+      allGames: "",
     };
   },
   methods: {
+    async allRawgGames() {
+      const response = await axios.get(
+        `${process.env.VUE_APP_APIURL}all-rawg-games`
+      );
+      this.allGames = response.data.games.results;
+      console.log("teste tamanho: " + this.allGames.length);
+    },
+
     async onButtonClicked(buttonType) {
-      console.log("o botão clickado foi: " + buttonType);
       //removeOwned | addOwned | removeWishlist | addWishList | removeFavorite | addFavorite
       switch (buttonType) {
         case "removeOwned":
-          await this.getOwnedGames().then(() => {
-            this.fetchOwnedGames(this.ownedGamesArray);
-          });
-          await this.getFavoriteGames().then(() => {
-            this.fetchFavoriteGames(this.favoriteGamesArray);
-          });
+          await this.getOwnedGames();
+          await this.getFavoriteGames();
           break;
         case "addOwned":
-          await this.getWishedGames().then(() => {
-            this.fetchWishedGames(this.wishListedGamesArray);
-          });
-          await this.getOwnedGames().then(() => {
-            this.fetchOwnedGames(this.ownedGamesArray);
-          });
+          await this.getWishedGames();
+          await this.getOwnedGames();
 
           break;
         case "removeWishlist":
-          await this.getWishedGames().then(() => {
-            this.fetchWishedGames(this.wishListedGamesArray);
-          });
+          await this.getWishedGames();
           break;
         case "addWishList":
           console.log("nem deveria ser possível aqui rsrsrs");
           break;
 
         case "removeFavorite":
-          await this.getFavoriteGames().then(() => {
-            this.fetchFavoriteGames(this.favoriteGamesArray);
-          });
-          await this.getOwnedGames().then(() => {
-            this.fetchOwnedGames(this.ownedGamesArray);
-          });
+          await this.getFavoriteGames();
+          await this.getOwnedGames();
 
           break;
         case "addFavorite":
-          await this.getFavoriteGames().then(() => {
-            this.fetchFavoriteGames(this.favoriteGamesArray);
-          });
-
+          await this.getFavoriteGames();
           break;
         default:
           console.log("erro reconhecendo button type");
           break;
       }
-      /*this.getFavoriteGames();
-      this.getOwnedGames();
-      this.getWishedGames();*/
     },
     /* owned functions */
     async getOwnedGames() {
@@ -170,41 +150,13 @@ export default {
           }
         );
         //pega os jogos "owned" e bota no array
-
-        this.ownedGamesArray = response.data;
-        console.log(
-          this.ownedGamesArray + "ARRAY DOS OWNED DENTRO DO GAMEOWNED FUNCTION"
-        );
-        //console.log("owned: " + this.ownedGames);
+        this.ownedIds = response.data;
       } catch (error) {
         console.log(error.response.data.error);
       }
     },
-    async fetchOwnedGames(ownedArray) {
-      if (ownedArray.length < 1) {
-        //nao tem OwnedGames || evita fetch a toa
-        return false;
-      }
-      console.log("na busca da api:" + ownedArray);
-      try {
-        const response = await axios.get(
-          `${process.env.VUE_APP_APIURL}game-api-owned/${ownedArray}`
-        );
-        //passar variavel gamedata para ser usada(.games .results .count .next . next . previous)
-        this.ownedApi = response.data;
-        this.ownedIds = ownedArray;
-        console.log("passou no fetchowned");
-      } catch (error) {
-        console.log(error.response.data.error);
-      }
-    },
-
     updateOwnedGames(newValue) {
-      this.ownedGamesArray = newValue; //só é usado aqui
-      console.log("vendo no update" + this.ownedIds);
       this.ownedIds = newValue;
-      //console.log(this.ownedGamesArray.length);
-      console.log("tamanho dos owned: " + this.ownedIds.length); //isso é bom usar depois para ver as paradas de qnt por page
     },
 
     /* favorite functions */
@@ -220,34 +172,13 @@ export default {
           }
         );
         //pega os jogos "favorite" e bota no array
-        this.favoriteGamesArray = response.data;
+        this.favoriteIds = response.data;
       } catch (error) {
         console.log(error.response.data.error);
       }
     },
-    async fetchFavoriteGames(favoriteArray) {
-      if (favoriteArray.length < 1) {
-        //nao tem favorite games
-        return false;
-      }
-      try {
-        const response = await axios.get(
-          `${process.env.VUE_APP_APIURL}game-api-favorite/${favoriteArray}`
-        );
-        //passar variavel gamedata para ser usada(.games .results .count .next . next . previous)
-        this.favoriteApi = response.data;
-        this.favoriteIds = favoriteArray;
-      } catch (error) {
-        console.log(error);
-        if (error.response.data.error == undefined) {
-          console.log("Não possui favoritos");
-        }
-      }
-    },
     updateFavoriteGames(newValue) {
-      this.favoriteGamesArray = newValue; //só é usado aqui
       this.favoriteIds = newValue;
-      console.log("tamanho dos favoritos: " + this.favoriteIds.length); //isso é bom usar depois para ver as paradas de qnt por page
     },
     /*wished functions */
     async getWishedGames() {
@@ -262,44 +193,20 @@ export default {
           }
         );
         //pega os jogos "favorite" e bota no array
-        this.wishListedGamesArray = response.data;
-        console.log("teste wished" + this.wishListedGamesArray);
-      } catch (error) {
-        console.log(error.response.data.error);
-      }
-    },
-    async fetchWishedGames(wishedArray) {
-      if (wishedArray.length < 1) {
-        //nao tem wishlisted games
-        return false;
-      }
-      try {
-        const response = await axios.get(
-          `${process.env.VUE_APP_APIURL}game-api-wished/${wishedArray}`
-        );
-        //passar variavel gamedata para ser usada(.games .results .count .next . next . previous)
-        this.wishedApi = response.data;
-        this.wishedIds = wishedArray;
+        this.wishedIds = response.data;
       } catch (error) {
         console.log(error.response.data.error);
       }
     },
     updateWishedGames(newValue) {
-      this.wishListedGamesArray = newValue; //só é usado aqui
       this.wishedIds = newValue;
-      console.log("tamanho dos wished: " + this.wishedIds.length); //isso é bom usar depois para ver as paradas de qnt por page
     },
   },
   mounted() {
-    this.getWishedGames().then(() => {
-      this.fetchWishedGames(this.wishListedGamesArray);
-    });
-    this.getFavoriteGames().then(() => {
-      this.fetchFavoriteGames(this.favoriteGamesArray);
-    });
-    this.getOwnedGames().then(() => {
-      this.fetchOwnedGames(this.ownedGamesArray);
-    });
+    this.allRawgGames();
+    this.getWishedGames();
+    this.getFavoriteGames();
+    this.getOwnedGames();
   },
 };
 </script>

@@ -27,6 +27,19 @@ class GamesController extends Controller
 
         return view('games.index', compact('games'));
     }
+    public function allGames(){
+        $certPath = storage_path('rawg_io.pem');
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_CAINFO, $certPath);
+         $response = Http::withOptions([
+            'curl' => [
+                CURLOPT_CAINFO => $certPath,
+            ],
+            //limitações da api de no máximo 40 jogos por página
+        ])->get("https://api.rawg.io/api/games?key=".env('RAWG_API_KEY') ."&page_size=40");
+        $games = $response->json();
+        return compact('games');
+    }
     public function games($page = 1, $search = null){
        /* $teste = " TESTANDO TESTANDOTESTANDOTESTANDOTESTANDOTESTANDO TESTANDO";
         Log::info($teste); útil para depurar no console laravel.log*/
