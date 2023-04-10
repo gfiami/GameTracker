@@ -117,6 +117,9 @@ export default {
           });
           break;
         case "addOwned":
+          await this.getWishedGames().then(() => {
+            this.fetchWishedGames(this.wishListedGamesArray);
+          });
           await this.getOwnedGames().then(() => {
             this.fetchOwnedGames(this.ownedGamesArray);
           });
