@@ -149,37 +149,33 @@ export default {
   methods: {
     async addOwned(game) {
       const user_id = localStorage.getItem("user_id");
-
-      const game_api_id = game;
+      const gameIds = this.games.map((game) => game.id);
 
       try {
         const response = await axios.post(
           `${process.env.VUE_APP_APIURL}owned`,
           {
             user_id: user_id,
-            game_api_id: game_api_id,
+            game_api_id: game,
+            game_api_ids: gameIds,
           }
         );
-        this.removeWishList(game);
+        this.ownedGames = response.data;
+        this.checkIfWishlist(gameIds);
 
-        //aqui recebo o que o laravel me retornou dos itens encontrados no banco de dados iguais
         console.log(response.data);
-
-        //pega os jogos na tela de novo e checa se tão no "owned"
-        const gameIds = this.games.map((game) => game.id);
-        //this.checkIfFavorite(gameIds); // O PADRÃO É CHECK IF _NOME DO ADD/REMOVE_
-        this.checkIfOwn(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
-        //this.checkIfWishlist(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
+        this.$emit("ownedGamesUpdate", this.ownedGames);
         this.$emit("button-clicked", "addOwned");
       } catch (error) {
         console.log(error.response.data.error);
       }
     },
     async checkIfOwn(gameIds) {
+      console.log("valor do gamids" + gameIds);
       const user_id = localStorage.getItem("user_id");
       try {
         const response = await axios.get(
-          `${process.env.VUE_APP_APIURL}check-owned`,
+          `${process.env.VUE_APP_APIURL}check-owned-starter`,
           {
             params: {
               user_id: user_id,
@@ -187,67 +183,64 @@ export default {
             },
           }
         );
-        //pega os jogos "owned" e bota no array
         this.ownedGames = response.data;
-        this.$emit("ownedGamesUpdate", this.ownedGames);
-
-        //preciso mandar esse ownedGames para o ProfileView para mudar os valores lá
-        //        this.ownedArrayUpdate = this.ownedGames;
       } catch (error) {
         console.log(error.response.data.error);
       }
     },
     async removeOwned(game) {
+      const gameIds = this.games.map((game) => game.id);
       const user_id = localStorage.getItem("user_id");
       try {
+        console.log("Entrou no try do remove Owned");
         const response = await axios.delete(
           `${process.env.VUE_APP_APIURL}remove-owned`,
           {
             params: {
               user_id: user_id,
               game_api_id: game,
+              game_api_ids: gameIds,
             },
           }
         );
-        await this.removeFavorite(game);
-        console.log(response.data);
-        const gameIds = this.games.map((game) => game.id);
+        this.ownedGames = response.data;
+        this.checkIfFavorite(gameIds);
+
         //this.checkIfFavorite(gameIds); // O PADRÃO É CHECK IF _NOME DO ADD/REMOVE_
-        this.checkIfOwn(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
+        //this.checkIfOwn(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
         //  this.checkIfWishlist(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
         this.$emit("button-clicked", "removeOwned");
       } catch (error) {
         console.log(error.response.data.error);
+        console.log("Entrou no erro do Remove owned");
       }
     },
     async addFavorite(game) {
       const user_id = localStorage.getItem("user_id");
-      const game_api_id = game;
+      const gameIds = this.games.map((game) => game.id);
 
       try {
         const response = await axios.post(
           `${process.env.VUE_APP_APIURL}favorite`,
           {
             user_id: user_id,
-            game_api_id: game_api_id,
+            game_api_id: game,
+            game_api_ids: gameIds,
           }
         );
-        //aqui recebo o que o laravel me retornou dos itens encontrados no banco de dados iguais
-        console.log(response.data);
-        const gameIds = this.games.map((game) => game.id);
-        this.checkIfFavorite(gameIds); // O PADRÃO É CHECK IF _NOME DO ADD/REMOVE_
-        //  this.checkIfOwn(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
-        //  this.checkIfWishlist(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
+        this.favoriteGames = response.data;
+        this.$emit("favoriteGamesUpdate", this.favoriteGames);
         this.$emit("button-clicked", "addFavorite");
       } catch (error) {
         console.log(error.response.data.error);
       }
     },
+
     async checkIfFavorite(gameIds) {
       const user_id = localStorage.getItem("user_id");
       try {
         const response = await axios.get(
-          `${process.env.VUE_APP_APIURL}check-favorite`,
+          `${process.env.VUE_APP_APIURL}check-favorite-starter`,
           {
             params: {
               user_id: user_id,
@@ -256,51 +249,46 @@ export default {
           }
         );
         this.favoriteGames = response.data;
-        this.$emit("favoriteGamesUpdate", this.favoriteGames);
       } catch (error) {
         console.log(error.response.data.error);
       }
     },
     async removeFavorite(game) {
       const user_id = localStorage.getItem("user_id");
+      const gameIds = this.games.map((game) => game.id);
+
       try {
+        console.log("entrou no try do remove favorite");
         const response = await axios.delete(
           `${process.env.VUE_APP_APIURL}remove-favorite`,
           {
             params: {
               user_id: user_id,
               game_api_id: game,
+              game_api_ids: gameIds,
             },
           }
         );
-        console.log(response.data);
-        const gameIds = this.games.map((game) => game.id);
-        this.checkIfFavorite(gameIds); // O PADRÃO É CHECK IF _NOME DO ADD/REMOVE_
-        //this.checkIfOwn(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
-        //this.checkIfWishlist(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
+        this.favoriteGames = response.data;
         this.$emit("button-clicked", "removeFavorite");
       } catch (error) {
-        console.log(error.response.data.error);
+        console.log("entrou no error do remove favorite");
       }
     },
     async addWishList(game) {
       const user_id = localStorage.getItem("user_id");
-      const game_api_id = game;
-
+      const gameIds = this.games.map((game) => game.id);
       try {
         const response = await axios.post(
           `${process.env.VUE_APP_APIURL}wishlist`,
           {
             user_id: user_id,
-            game_api_id: game_api_id,
+            game_api_id: game,
+            game_api_ids: gameIds,
           }
         );
-        //aqui recebo o que o laravel me retornou dos itens encontrados no banco de dados iguais
-        console.log(response.data);
-        const gameIds = this.games.map((game) => game.id);
-        //this.checkIfFavorite(gameIds); // O PADRÃO É CHECK IF _NOME DO ADD/REMOVE_
-        // this.checkIfOwn(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
-        this.checkIfWishlist(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
+        this.wishListedGames = response.data;
+        this.$emit("wishListedGamesUpdate", this.wishListedGames);
         this.$emit("button-clicked", "addWishList");
       } catch (error) {
         console.log(error.response.data.error);
@@ -310,7 +298,7 @@ export default {
       const user_id = localStorage.getItem("user_id");
       try {
         const response = await axios.get(
-          `${process.env.VUE_APP_APIURL}check-wishlist`,
+          `${process.env.VUE_APP_APIURL}check-wishlist-starter`,
           {
             params: {
               user_id: user_id,
@@ -319,13 +307,14 @@ export default {
           }
         );
         this.wishListedGames = response.data;
-        this.$emit("wishListedGamesUpdate", this.wishListedGames);
       } catch (error) {
         console.log(error.response.data.error);
       }
     },
     async removeWishList(game) {
       const user_id = localStorage.getItem("user_id");
+      const gameIds = this.games.map((game) => game.id);
+
       try {
         const response = await axios.delete(
           `${process.env.VUE_APP_APIURL}remove-wishlist`,
@@ -333,17 +322,16 @@ export default {
             params: {
               user_id: user_id,
               game_api_id: game,
+              game_api_ids: gameIds,
             },
           }
         );
-        console.log(response.data);
-        const gameIds = this.games.map((game) => game.id);
-        // this.checkIfFavorite(gameIds); // O PADRÃO É CHECK IF _NOME DO ADD/REMOVE_
-        //this.checkIfOwn(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
-        this.checkIfWishlist(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
+
+        this.wishListedGames = response.data;
         this.$emit("button-clicked", "removeWishlist");
       } catch (error) {
-        console.log(error.response.data.error);
+        //console.log(error.response.data.error);
+        console.log("jogo nao estava na wishlist");
       }
     },
   },

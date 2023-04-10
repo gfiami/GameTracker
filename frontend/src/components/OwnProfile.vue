@@ -35,6 +35,8 @@
                       >Ele remove e checa os jogos que tenho, e devolve o novo array dos ids dos jogos
                       >Com os ids, faço requisição na api e pego os jogos
                       >Mando esses valores da requisição pro layout e ele renderiza tudo, e o "checkIds" apenas ajuda a forçar excluir mesmo
+                      o button-clicked serve para pegar qual botão (add owned/remove/wishlist etc) foi clicado e interagir com as listas de outros componentes
+
               -->
             <GameLayout
               class="game-layout-owned"
@@ -110,6 +112,9 @@ export default {
           await this.getOwnedGames().then(() => {
             this.fetchOwnedGames(this.ownedGamesArray);
           });
+          await this.getFavoriteGames().then(() => {
+            this.fetchFavoriteGames(this.favoriteGamesArray);
+          });
           break;
         case "addOwned":
           await this.getOwnedGames().then(() => {
@@ -129,6 +134,8 @@ export default {
         case "removeFavorite":
           await this.getFavoriteGames().then(() => {
             this.fetchFavoriteGames(this.favoriteGamesArray);
+          });
+          await this.getOwnedGames().then(() => {
             this.fetchOwnedGames(this.ownedGamesArray);
           });
 
@@ -171,6 +178,10 @@ export default {
       }
     },
     async fetchOwnedGames(ownedArray) {
+      if (ownedArray.length < 1) {
+        //nao tem OwnedGames || evita fetch a toa
+        return false;
+      }
       console.log("na busca da api:" + ownedArray);
       try {
         const response = await axios.get(
@@ -212,6 +223,10 @@ export default {
       }
     },
     async fetchFavoriteGames(favoriteArray) {
+      if (favoriteArray.length < 1) {
+        //nao tem favorite games
+        return false;
+      }
       try {
         const response = await axios.get(
           `${process.env.VUE_APP_APIURL}game-api-favorite/${favoriteArray}`
@@ -220,7 +235,7 @@ export default {
         this.favoriteApi = response.data;
         this.favoriteIds = favoriteArray;
       } catch (error) {
-        console.log(error.response.data.error);
+        console.log(error);
         if (error.response.data.error == undefined) {
           console.log("Não possui favoritos");
         }
@@ -251,6 +266,10 @@ export default {
       }
     },
     async fetchWishedGames(wishedArray) {
+      if (wishedArray.length < 1) {
+        //nao tem wishlisted games
+        return false;
+      }
       try {
         const response = await axios.get(
           `${process.env.VUE_APP_APIURL}game-api-wished/${wishedArray}`
