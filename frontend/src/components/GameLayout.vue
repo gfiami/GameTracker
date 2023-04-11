@@ -55,6 +55,14 @@
           <router-link to="/login">Login</router-link> or
           <router-link to="/register">Register</router-link> to track your games
         </p>
+        <p
+          v-if="logged && !ownProfile && !gameRoute"
+          class="login-container-another-profile"
+        >
+          Go to
+          <router-link :to="'/profile/' + loggedId">Profile</router-link> or
+          <router-link to="/games">Game Page</router-link> to track your games
+        </p>
 
         <p
           class="logged-container"
@@ -252,6 +260,9 @@ export default {
     logged() {
       return this.$store.state.logged;
     },
+    loggedId() {
+      return this.$store.state.user_id;
+    },
     shouldShowIndicators() {
       const gamesRouteLogged =
         this.$route.name == "games" && this.$store.state.logged;
@@ -263,6 +274,16 @@ export default {
     profileRoute() {
       const profileRoute = this.$route.name == "profile";
       return profileRoute;
+    },
+    gameRoute() {
+      const gamesRoute = this.$route.name == "games";
+      return gamesRoute;
+    },
+    ownProfile() {
+      const ownProfile =
+        this.$route.name == "profile" &&
+        this.$route.params.id == this.$store.state.user_id;
+      return ownProfile;
     },
   },
   methods: {
@@ -594,7 +615,8 @@ export default {
   padding: 15px;
   margin-bottom: 50px;
 }
-.game-hover .login-register-offline {
+.game-hover .login-register-offline,
+.game-hover .login-container-another-profile {
   background-color: rgba(0, 0, 0, 0.8029586834733894);
 }
 .game-hover .logged-container {
