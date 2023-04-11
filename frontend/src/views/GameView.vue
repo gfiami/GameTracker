@@ -2,7 +2,11 @@
   <div class="main-wrapper">
     <!-- @está pegando lá de dentro, : está mandando -->
     <SearchBar @search="search" :counter="gameinfo.count" />
-    <GameLayout class="game-layout-gameview" :games="gameinfo.results" />
+    <GameLayout
+      :user="userId"
+      class="game-layout-gameview"
+      :games="gameinfo.results"
+    />
     <Paginations @gamedata="gamedata" :searchText="searchQuery" />
   </div>
 </template>
@@ -23,6 +27,11 @@ export default {
       searchQuery: "", //isso pegamos via emit lá do searchbar
       gameinfo: "", //isso pegamos via emit lá do paginations
     };
+  },
+  computed: {
+    userId() {
+      return this.$store.state.user_id;
+    },
   },
   methods: {
     search(query) {

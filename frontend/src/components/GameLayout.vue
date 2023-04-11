@@ -9,14 +9,16 @@
         (checkIds && Object.values(this.checkIds).includes(game.id))
       "
     >
-      <!-- Aqui é a lógica para caso estejamos no profile e trabalhando com deleção dos jogos lá, ele suma da página -->
-      <!--<div v-if="!checkIds || (checkIds && Object.values(this.checkIds).includes(game.id))">      </div>
- checkOwned: "",
-    checkFavorite: "",
-    checkWished: "",
--->
       <img :src="game.background_image" :alt="game.name" />
-      <div v-if="checkOwned || checkFavorite || checkWished" class="indicators">
+
+      <!--\/ pequenos botões no canto superior esquerdo \/-->
+      <div class="indicators" v-if="profileRoute">
+        <!-- caso esteja no perfil isso faz sumir os indicadorzim -->
+      </div>
+      <div
+        v-else-if="checkOwned || checkFavorite || checkWished"
+        class="indicators"
+      >
         <span v-if="checkOwned.includes(game.id)" class="fa"
           ><i class="fas fa-gamepad own"></i
         ></span>
@@ -45,7 +47,9 @@
           ><i class="fas fa-star fav"></i
         ></span>
       </div>
+      <!--/\ pequenos botões no canto superior esquerdo /\
 
+            \/ coisas que aparecem on hover \/ -->
       <div class="game-hover">
         <p v-if="!logged" class="login-register-offline">
           <router-link to="/login">Login</router-link> or
@@ -54,10 +58,10 @@
 
         <p
           class="logged-container"
-          v-if="logged && (checkOwned || checkFavorite || checkWished)"
+          v-else-if="logged && (checkOwned || checkFavorite || checkWished)"
         >
           <button
-            v-if="checkOwned.includes(game.id)"
+            v-if="shouldShowIndicators && checkOwned.includes(game.id)"
             @click="removeOwned(game.id)"
             type="button"
           >
@@ -65,7 +69,7 @@
             <p class="button-legend">Remove from owned</p>
           </button>
           <button
-            v-if="!checkOwned.includes(game.id)"
+            v-if="shouldShowIndicators && !checkOwned.includes(game.id)"
             @click="addOwned(game.id)"
             type="button"
           >
@@ -74,7 +78,7 @@
           </button>
 
           <button
-            v-if="checkWished.includes(game.id)"
+            v-if="shouldShowIndicators && checkWished.includes(game.id)"
             @click="removeWishList(game.id)"
             type="button"
           >
@@ -83,7 +87,9 @@
           </button>
           <button
             v-if="
-              !checkWished.includes(game.id) && !checkOwned.includes(game.id)
+              shouldShowIndicators &&
+              !checkWished.includes(game.id) &&
+              !checkOwned.includes(game.id)
             "
             @click="addWishList(game.id)"
             type="button"
@@ -94,6 +100,7 @@
 
           <button
             v-if="
+              shouldShowIndicators &&
               checkFavorite.includes(game.id) &&
               !checkWished.includes(game.id) &&
               checkOwned.includes(game.id)
@@ -107,6 +114,7 @@
 
           <button
             v-if="
+              shouldShowIndicators &&
               checkOwned.includes(game.id) &&
               !checkFavorite.includes(game.id) &&
               !checkWished.includes(game.id)
@@ -121,7 +129,7 @@
         <!-- gameview -->
         <p class="logged-container" v-else-if="logged">
           <button
-            v-if="ownedGames.includes(game.id)"
+            v-if="shouldShowIndicators && ownedGames.includes(game.id)"
             @click="removeOwned(game.id)"
             type="button"
           >
@@ -129,7 +137,7 @@
             <p class="button-legend">Remove from owned</p>
           </button>
           <button
-            v-if="!ownedGames.includes(game.id)"
+            v-if="shouldShowIndicators && !ownedGames.includes(game.id)"
             @click="addOwned(game.id)"
             type="button"
           >
@@ -138,7 +146,7 @@
           </button>
 
           <button
-            v-if="wishListedGames.includes(game.id)"
+            v-if="shouldShowIndicators && wishListedGames.includes(game.id)"
             @click="removeWishList(game.id)"
             type="button"
           >
@@ -147,6 +155,7 @@
           </button>
           <button
             v-if="
+              shouldShowIndicators &&
               !wishListedGames.includes(game.id) &&
               !ownedGames.includes(game.id)
             "
@@ -159,6 +168,7 @@
 
           <button
             v-if="
+              shouldShowIndicators &&
               favoriteGames.includes(game.id) &&
               !wishListedGames.includes(game.id) &&
               ownedGames.includes(game.id)
@@ -172,6 +182,7 @@
 
           <button
             v-if="
+              shouldShowIndicators &&
               ownedGames.includes(game.id) &&
               !favoriteGames.includes(game.id) &&
               !wishListedGames.includes(game.id)
@@ -183,6 +194,7 @@
             <p class="button-legend">Add favorite</p>
           </button>
         </p>
+
         <!-- ajustar essa rota, apenas teste no momento -->
         <router-link
           class="info-link"
@@ -193,6 +205,8 @@
           ><i class="fa fa-info-circle game-info"></i>
         </router-link>
       </div>
+
+      <!-- /\ coisas que aparecem on hover -->
       <div class="game-title">{{ game.name }}</div>
     </div>
   </div>
@@ -209,6 +223,7 @@ export default {
     checkOwned: null,
     checkFavorite: null,
     checkWished: null,
+    user: null,
   },
   data() {
     return {
@@ -223,7 +238,6 @@ export default {
       handler(newGames, oldGames) {
         //aqui eu posso usar um "LOADING para aguardar o games chegar!"
         if (newGames !== undefined) {
-          console.log("Valor atual da prop games:", newGames);
           const gameIds = newGames.map((game) => game.id);
           this.checkIfOwn(gameIds);
           this.checkIfFavorite(gameIds);
@@ -238,11 +252,23 @@ export default {
     logged() {
       return this.$store.state.logged;
     },
+    shouldShowIndicators() {
+      const gamesRouteLogged =
+        this.$route.name == "games" && this.$store.state.logged;
+      const ownProfile =
+        this.$route.name == "profile" &&
+        this.$route.params.id == this.$store.state.user_id;
+      return gamesRouteLogged || ownProfile;
+    },
+    profileRoute() {
+      const profileRoute = this.$route.name == "profile";
+      return profileRoute;
+    },
   },
   methods: {
     async addOwned(game) {
-      const user_id = localStorage.getItem("user_id");
       const gameIds = this.games.map((game) => game.id);
+      const user_id = this.user;
 
       try {
         const response = await axios.post(
@@ -266,8 +292,7 @@ export default {
       }
     },
     async checkIfOwn(gameIds) {
-      console.log("valor do gamids" + gameIds);
-      const user_id = localStorage.getItem("user_id");
+      const user_id = this.user;
       try {
         const response = await axios.get(
           `${process.env.VUE_APP_APIURL}check-owned-starter`,
@@ -285,7 +310,7 @@ export default {
     },
     async removeOwned(game) {
       const gameIds = this.games.map((game) => game.id);
-      const user_id = localStorage.getItem("user_id");
+      const user_id = this.user;
       try {
         console.log("Entrou no try do remove Owned");
         const response = await axios.delete(
@@ -311,7 +336,7 @@ export default {
       }
     },
     async addFavorite(game) {
-      const user_id = localStorage.getItem("user_id");
+      const user_id = this.user;
       const gameIds = this.games.map((game) => game.id);
 
       try {
@@ -337,7 +362,7 @@ export default {
     },
 
     async checkIfFavorite(gameIds) {
-      const user_id = localStorage.getItem("user_id");
+      const user_id = this.user;
       try {
         const response = await axios.get(
           `${process.env.VUE_APP_APIURL}check-favorite-starter`,
@@ -354,7 +379,7 @@ export default {
       }
     },
     async removeFavorite(game) {
-      const user_id = localStorage.getItem("user_id");
+      const user_id = this.user;
       const gameIds = this.games.map((game) => game.id);
 
       try {
@@ -381,7 +406,7 @@ export default {
       }
     },
     async addWishList(game) {
-      const user_id = localStorage.getItem("user_id");
+      const user_id = this.user;
       const gameIds = this.games.map((game) => game.id);
       try {
         const response = await axios.post(
@@ -400,7 +425,7 @@ export default {
       }
     },
     async checkIfWishlist(gameIds) {
-      const user_id = localStorage.getItem("user_id");
+      const user_id = this.user;
       try {
         const response = await axios.get(
           `${process.env.VUE_APP_APIURL}check-wishlist-starter`,
@@ -417,8 +442,8 @@ export default {
       }
     },
     async removeWishList(game) {
-      const user_id = localStorage.getItem("user_id");
       const gameIds = this.games.map((game) => game.id);
+      const user_id = this.user;
 
       try {
         const response = await axios.delete(
@@ -444,6 +469,7 @@ export default {
       }
     },
   },
+  created() {},
 };
 </script>
 

@@ -1,12 +1,24 @@
 <template>
   <div class="main-wrapper">
-    <div class="routerChecker">
-      <div v-if="checkOwnProfile">
-        <OwnProfile />
+    <div class="initial checker" v-if="user">
+      <!-- checar se o user existe -->
+      <div class="personnal-info">
+        <img
+          class="profile-image"
+          src="../assets/def-avatar-profile.jpg"
+          alt=""
+        />
+        <div class="user-edit-container">
+          <h1 class="username">{{ user.name }}</h1>
+          <a v-if="checkOwnProfile" class="edit-profile" href=""
+            >Edit profile</a
+          >
+        </div>
       </div>
-      <div v-else-if="checkAnotherProfile">Another</div>
-      <div v-else>Not logged</div>
+      <OwnProfile :user="user.id" />
     </div>
+    <div class="loading-user" v-if="loadingUser">Carregando...</div>
+    <div v-else-if="!user" class="user-doesnt-exist">Usuario não existe</div>
   </div>
 </template>
 
@@ -26,6 +38,8 @@ export default {
       ownedGames: [],
       favoriteGames: [],
       wishListedGames: [],
+      user: null,
+      loadingUser: true,
     };
   },
   computed: {
@@ -101,11 +115,23 @@ export default {
         console.log(error.response.data.error);
       }
     },
+    async getUserInfo(id) {
+      try {
+        const response = await axios
+          .get(`${process.env.VUE_APP_APIURL}userinfo/${id}`)
+          .then((response) => {
+            this.user = response.data.user;
+          });
+
+        console.log(this.user);
+      } catch (error) {
+        console.log(error.response.data.error);
+      }
+      this.loadingUser = false;
+    },
   },
   mounted() {
-    //this.getOwnedGames();
-    //this.getFavoriteGames();
-    // this.getWishedGames();
+    this.getUserInfo(this.$route.params.id);
   },
 };
 </script>

@@ -86,6 +86,19 @@ class UserController extends Controller
             //basicamente o user fez besteirinhas na digitação que não passou na minha função validate
         }
     }
+    //get user info
+    public function userInfo($id){
+        $user = User::find($id);
+        if ($user) {
+            return response()->json([
+                'user' => $user
+            ]);
+        } else {
+            return response()->json([
+                'error' => 'Usuário não encontrado'
+            ], 404);
+        }
+    }
 
     //OWN
     //Pega a lista de todos os owned mas aqui vamos interagir mais com a api rawg despois(praticamente igual a de baixo, rever...)

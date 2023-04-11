@@ -25,6 +25,7 @@ Route::get('/games/{page?}/{search?}', [GamesController::class, 'games']);
 Route::get('/game/{id}', [GamesController::class, 'specificGameInfo']);
 Route::post('/signin', [UserController::class, 'signin']);//->middleware('throttle:5,1'); //isso serve para permitir apenas 5 tentativas de login por minuto e retorna erro de muitas tentativas 429
 Route::post('/register', [UserController::class, 'register']);
+Route::get('/userinfo/{id}',[UserController::class, 'userInfo']);
 
 //owned relations
 Route::post('/owned', [UserController::class, 'addOwned']); //adiciona a owned

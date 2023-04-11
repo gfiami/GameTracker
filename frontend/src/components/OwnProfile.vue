@@ -1,16 +1,5 @@
 <template>
   <div>
-    <div class="personnal-info">
-      <img
-        class="profile-image"
-        src="../assets/def-avatar-profile.jpg"
-        alt=""
-      />
-      <div class="user-edit-container">
-        <h1 class="username">{{ $store.state.token }}</h1>
-        <a class="edit-profile" href="">Edit profile</a>
-      </div>
-    </div>
     <div class="game-info-container">
       <div class="owned-games">
         <div class="owned-title"><h3>Owned Games</h3></div>
@@ -38,6 +27,7 @@
                       o button-clicked serve para pegar qual botão (add owned/remove/wishlist etc) foi clicado e interagir com as listas de outros componentes
               -->
             <GameLayout
+              :user="user"
               class="game-layout-owned"
               :games="allGames"
               @ownedGamesUpdate="updateOwnedGames"
@@ -55,6 +45,7 @@
         <div v-if="allGames && favoriteIds">
           <div class="layout-container">
             <GameLayout
+              :user="user"
               class="game-layout-favorite"
               :games="allGames"
               @favoriteGamesUpdate="updateFavoriteGames"
@@ -72,6 +63,7 @@
         <div v-if="allGames && wishedIds">
           <div class="layout-container">
             <GameLayout
+              :user="user"
               class="game-layout-wished"
               :games="allGames"
               @wishListedGamesUpdate="updateWishedGames"
@@ -93,6 +85,10 @@ import axios from "axios";
 import GameLayout from "./GameLayout.vue";
 export default {
   name: "OwnProfile",
+  props: {
+    user: null,
+  },
+
   components: {
     GameLayout,
   },
@@ -152,7 +148,8 @@ export default {
     },
     /* owned functions */
     async getOwnedGames() {
-      const user_id = this.$route.params.id;
+      const user_id = this.user;
+      console.log("get owned: " + this.user);
       try {
         const response = await axios.get(
           `${process.env.VUE_APP_APIURL}fetch-owned`,
@@ -175,7 +172,7 @@ export default {
 
     /* favorite functions */
     async getFavoriteGames() {
-      const user_id = this.$route.params.id;
+      const user_id = this.user;
       try {
         const response = await axios.get(
           `${process.env.VUE_APP_APIURL}fetch-favorite`,
@@ -201,7 +198,7 @@ export default {
     },
     /*wished functions */
     async getWishedGames() {
-      const user_id = this.$route.params.id;
+      const user_id = this.user;
       try {
         const response = await axios.get(
           `${process.env.VUE_APP_APIURL}fetch-wished`,
