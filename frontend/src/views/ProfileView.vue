@@ -17,7 +17,13 @@
       </div>
       <Profile :user="user.id" />
     </div>
-    <div class="loading-user" v-if="loadingUser">Carregando...</div>
+    <div v class="loading-user" v-if="loadingUser">
+      <div class="lds-facebook">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
     <div v-else-if="!user" class="user-doesnt-exist">Usuario não existe</div>
   </div>
 </template>
@@ -41,14 +47,6 @@ export default {
       user: null,
       loadingUser: true,
     };
-  },
-  watch: {
-    "$route.params.id"(newVal, oldVal) {
-      if (newVal !== oldVal) {
-        //this.loadData();
-        this.getUserInfo(newVal);
-      }
-    },
   },
   computed: {
     logged() {
@@ -144,4 +142,61 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.loading-user {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.lds-facebook {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+}
+.lds-facebook div {
+  display: inline-block;
+  position: absolute;
+  left: 8px;
+  width: 16px;
+  background: #fff;
+  animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+}
+.lds-facebook div:nth-child(1) {
+  left: 8px;
+  animation-delay: -0.24s;
+}
+.lds-facebook div:nth-child(2) {
+  left: 32px;
+  animation-delay: -0.12s;
+}
+.lds-facebook div:nth-child(3) {
+  left: 56px;
+  animation-delay: 0;
+}
+@keyframes lds-facebook {
+  0% {
+    top: 8px;
+    height: 64px;
+  }
+  50%,
+  100% {
+    top: 24px;
+    height: 32px;
+  }
+}
+
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+</style>

@@ -2,8 +2,15 @@
   <div>
     <div class="game-info-container">
       <div class="owned-games">
-        <div class="owned-title"><h3>Owned Games</h3></div>
-        <div v-if="allGames && ownedIds" class="testando-owned">
+        <div class="category-title"><h3>Owned Games</h3></div>
+        <div class="loading-games" v-if="loadingGames">
+          <div class="lds-facebook">
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+        <div v-else-if="allGames && ownedIds">
           <div class="layout-container">
             <!--
                 Com a função getOwned eu pego os jogos do usuario
@@ -41,7 +48,14 @@
         </div>
       </div>
       <div class="favorite-games">
-        <div class="favorite-title"><h3>Favorite Games</h3></div>
+        <div class="category-title"><h3>Favorite Games</h3></div>
+        <div class="loading-games" v-if="loadingGames">
+          <div class="lds-facebook">
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
         <div v-if="allGames && favoriteIds">
           <div class="layout-container">
             <GameLayout
@@ -59,7 +73,14 @@
         </div>
       </div>
       <div class="wishlist-games">
-        <div class="wishlist-title"><h3>Wishlist Games</h3></div>
+        <div class="category-title"><h3>Wishlist Games</h3></div>
+        <div class="loading-games" v-if="loadingGames">
+          <div class="lds-facebook">
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
         <div v-if="allGames && wishedIds">
           <div class="layout-container">
             <GameLayout
@@ -118,6 +139,7 @@ export default {
       favoriteIds: "",
       wishedIds: "",
       allGames: "",
+      loadingGames: true,
     };
   },
   methods: {
@@ -128,6 +150,7 @@ export default {
       console.log(response.data.games.results);
       this.allGames = response.data.games.results;
       console.log("teste tamanho: " + this.allGames.length);
+      this.loadingGames = false;
     },
 
     async onButtonClicked(buttonType) {
@@ -257,16 +280,22 @@ export default {
 
 <style>
 /* style nao é scoped para mexermos no layout dosotro */
-.game-layout-profile .indicators {
-  display: none;
+.owned-games,
+.favorite-games,
+.wishlist-games {
+  margin-bottom: 20px;
 }
-
 .personnal-info {
   display: flex;
   gap: 20px;
   width: 90%;
   margin: 0 auto;
   margin-top: 30px;
+}
+.category-title {
+  width: 70%;
+  margin: 0 auto;
+  margin-bottom: 0;
 }
 .user-edit-container {
   display: flex;
@@ -288,5 +317,136 @@ export default {
   color: #fff;
   font-weight: 400;
   font-size: 12px;
+}
+.layout-container {
+  width: 70%;
+  margin: 0 auto;
+}
+
+.layout-container .game-list {
+  display: block;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+  margin: 0;
+}
+::-webkit-scrollbar {
+  height: 7px;
+  width: 0px;
+  background: gray;
+}
+::-webkit-scrollbar-thumb:horizontal {
+  background: rgba(54, 30, 148, 0.9);
+  border-radius: 2px;
+}
+.layout-container .game-list .game {
+  display: inline-block;
+  margin: 10px;
+}
+
+.layout-container .game-list .game-title {
+  font-size: 10px;
+  font-weight: bold;
+  padding: 10px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.layout-container .game img {
+  width: 100%;
+  height: 200px;
+}
+.layout-container .game-hover {
+  width: 100%;
+  height: 200px;
+}
+.layout-container .game-hover .login-register-offline,
+.layout-container .game-hover .login-container-another-profile {
+  white-space: initial;
+  font-size: 12px;
+}
+.layout-container .game-hover .login-register-offline a,
+.layout-container .game-hover .login-container-another-profile a {
+  white-space: initial;
+  font-size: 12px;
+}
+.layout-container .game:hover {
+  transform: scale(1.1);
+}
+.layout-container .game-hover i {
+  font-size: 20px;
+}
+.layout-container .game-hover {
+  gap: 5px;
+}
+.layout-container .game-hover .logged-container {
+  margin-top: 10px;
+  flex-direction: column;
+  align-content: center;
+  justify-content: flex-start;
+  margin-top: 10px;
+}
+.layout-container .logged-container button {
+  font-size: 8px;
+}
+.layout-container .logged-container .button-legend {
+  font-size: 10px;
+  font-weight: 500;
+}
+.layout-container .game-hover .info-link {
+  padding: 15px;
+  margin-bottom: 10px;
+}
+/*loading */
+.loading-games {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.lds-facebook {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.lds-facebook div {
+  display: inline-block;
+  position: absolute;
+  left: 8px;
+  width: 16px;
+  background: #fff;
+  animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+}
+
+.lds-facebook div:nth-child(1) {
+  left: 8px;
+  animation-delay: -0.24s;
+}
+
+.lds-facebook div:nth-child(2) {
+  left: 32px;
+  animation-delay: -0.12s;
+}
+
+.lds-facebook div:nth-child(3) {
+  left: 56px;
+  animation-delay: 0;
+}
+
+@keyframes lds-facebook {
+  0% {
+    top: 8px;
+    height: 64px;
+  }
+  50%,
+  100% {
+    top: 24px;
+    height: 32px;
+  }
 }
 </style>
