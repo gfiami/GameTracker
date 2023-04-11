@@ -36,6 +36,7 @@ export default {
   name: "SearchBar",
   props: {
     counter: Number,
+    routeReset: "",
   },
   data() {
     return {

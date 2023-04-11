@@ -66,6 +66,11 @@ export default {
       return false;
     },
   },
+  watch: {
+    "$route.params.id": {
+      handler: "getUserInfo",
+    },
+  },
   methods: {
     async getOwnedGames() {
       const user_id = this.$route.params.id;
@@ -121,7 +126,8 @@ export default {
         console.log(error.response.data.error);
       }
     },
-    async getUserInfo(id) {
+    async getUserInfo() {
+      const id = this.$route.params.id;
       try {
         const response = await axios
           .get(`${process.env.VUE_APP_APIURL}userinfo/${id}`)
@@ -136,8 +142,8 @@ export default {
       this.loadingUser = false;
     },
   },
-  mounted() {
-    this.getUserInfo(this.$route.params.id);
+  async created() {
+    await this.getUserInfo();
   },
 };
 </script>

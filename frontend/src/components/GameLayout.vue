@@ -233,6 +233,7 @@ export default {
     checkFavorite: null,
     checkWished: null,
     user: null,
+    routeReset: "",
   },
   data() {
     return {

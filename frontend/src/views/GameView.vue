@@ -1,13 +1,18 @@
 <template>
   <div class="main-wrapper">
     <!-- @está pegando lá de dentro, : está mandando -->
-    <SearchBar @search="search" :counter="gameinfo.count" />
+    <SearchBar :key="routeReset" @search="search" :counter="gameinfo.count" />
     <GameLayout
+      :key="routeReset"
       :user="userId"
       class="game-layout-gameview"
       :games="gameinfo.results"
     />
-    <Paginations @gamedata="gamedata" :searchText="searchQuery" />
+    <Paginations
+      :key="routeReset"
+      @gamedata="gamedata"
+      :searchText="searchQuery"
+    />
   </div>
 </template>
 
@@ -31,6 +36,9 @@ export default {
   computed: {
     userId() {
       return this.$store.state.user_id;
+    },
+    routeReset() {
+      return this.$route.fullPath;
     },
   },
   methods: {

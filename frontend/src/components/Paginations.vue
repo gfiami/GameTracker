@@ -66,6 +66,7 @@ export default {
   name: "Paginations",
   props: {
     searchText: null,
+    routeReset: "",
   },
   watch: {
     searchText(newValue, oldValue) {
