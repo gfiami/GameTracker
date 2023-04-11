@@ -136,8 +136,15 @@ class UserController extends Controller
         if($remove_wishlist){
             $remove_wishlist->delete();
         }
+
             $owned_games = $this->checkOwnedGames($user_id, $game_api_ids);
-            return response()->json($owned_games);
+            $wishlisted_games = $this->checkWishlist($user_id, $game_api_ids);
+        $response = [
+            'owned_games' => $owned_games,
+            'wishlisted_games' => $wishlisted_games
+        ];
+        return response()->json($response);
+
         }catch (\Exception $e) {
             return response()->json(['Erro ao adicionar jogo' => $e->getMessage()], 500);
         }
@@ -160,17 +167,13 @@ class UserController extends Controller
             $remove_favorite->delete();
         }
         $owned_games = $this->checkOwnedGames($user_id, $game_api_ids);
-        /*$owned_games = $this->checkOwnedGames($user_id, $game_api_ids);
-        $favorite_game = $this->checkFavoriteGames($user_id, $game_api_ids);
-        $wishlist_games = $this->checkWishList($user_id, $game_api_ids);
+        $favorite_games = $this->checkFavoriteGames($user_id, $game_api_ids);
+    $response = [
+        'owned_games' => $owned_games,
+        'favorite_games' => $favorite_games
+    ];
+    return response()->json($response);
 
-        $response_data = [
-            'owned_games' => $owned_games,
-            'favorite_games' => $favorite_games
-          ];
-
-          return response()->json($response_data);*/
-        return response()->json($owned_games);
     }catch (\Exception $e) {
         return response()->json(['Erro ao deletar jogo' => $e->getMessage()], 500);
     }

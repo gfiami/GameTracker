@@ -36,13 +36,15 @@
                       >Com os ids, faço requisição na api e pego os jogos
                       >Mando esses valores da requisição pro layout e ele renderiza tudo, e o "checkIds" apenas ajuda a forçar excluir mesmo
                       o button-clicked serve para pegar qual botão (add owned/remove/wishlist etc) foi clicado e interagir com as listas de outros componentes
-
               -->
             <GameLayout
               class="game-layout-owned"
               :games="allGames"
               @ownedGamesUpdate="updateOwnedGames"
               :checkIds="ownedIds"
+              :checkOwned="ownedIds"
+              :checkFavorite="favoriteIds"
+              :checkWished="wishedIds"
               @button-clicked="onButtonClicked"
             />
           </div>
@@ -57,6 +59,9 @@
               :games="allGames"
               @favoriteGamesUpdate="updateFavoriteGames"
               :checkIds="favoriteIds"
+              :checkOwned="ownedIds"
+              :checkFavorite="favoriteIds"
+              :checkWished="wishedIds"
               @button-clicked="onButtonClicked"
             />
           </div>
@@ -71,6 +76,9 @@
               :games="allGames"
               @wishListedGamesUpdate="updateWishedGames"
               :checkIds="wishedIds"
+              :checkOwned="ownedIds"
+              :checkFavorite="favoriteIds"
+              :checkWished="wishedIds"
               @button-clicked="onButtonClicked"
             />
           </div>
@@ -97,16 +105,18 @@ export default {
     };
   },
   methods: {
-    async allRawgGames() {
+    async allGamesUserTracked(ids) {
       const response = await axios.get(
-        `${process.env.VUE_APP_APIURL}all-rawg-games`
+        `${process.env.VUE_APP_APIURL}all-rawg-games/${ids}`
       );
+      console.log(response.data.games.results);
       this.allGames = response.data.games.results;
       console.log("teste tamanho: " + this.allGames.length);
     },
 
     async onButtonClicked(buttonType) {
       //removeOwned | addOwned | removeWishlist | addWishList | removeFavorite | addFavorite
+      console.log("Botão clickado: " + buttonType);
       switch (buttonType) {
         case "removeOwned":
           await this.getOwnedGames();
@@ -130,7 +140,10 @@ export default {
 
           break;
         case "addFavorite":
+          await this.getOwnedGames();
           await this.getFavoriteGames();
+          this.allGames = this.allGames;
+
           break;
         default:
           console.log("erro reconhecendo button type");
@@ -151,6 +164,7 @@ export default {
         );
         //pega os jogos "owned" e bota no array
         this.ownedIds = response.data;
+        return response.data;
       } catch (error) {
         console.log(error.response.data.error);
       }
@@ -171,8 +185,13 @@ export default {
             },
           }
         );
+        console.log("Atualizando favoritos Ids");
+
         //pega os jogos "favorite" e bota no array
         this.favoriteIds = response.data;
+        console.log("Id dos favoritos: " + this.favoriteIds);
+
+        return response.data;
       } catch (error) {
         console.log(error.response.data.error);
       }
@@ -194,6 +213,7 @@ export default {
         );
         //pega os jogos "favorite" e bota no array
         this.wishedIds = response.data;
+        return response.data;
       } catch (error) {
         console.log(error.response.data.error);
       }
@@ -203,10 +223,17 @@ export default {
     },
   },
   mounted() {
-    this.allRawgGames();
-    this.getWishedGames();
-    this.getFavoriteGames();
-    this.getOwnedGames();
+    Promise.all([
+      this.getWishedGames(),
+      this.getFavoriteGames(),
+      this.getOwnedGames(),
+    ]).then((values) => {
+      const owned_fetcher = this.ownedIds;
+      const wished_fetcher = this.wishedIds;
+      const favorte_fetcher = this.favoriteIds;
+      const fetcher = [].concat(owned_fetcher, wished_fetcher, favorte_fetcher);
+      this.allGamesUserTracked(fetcher);
+    });
   },
 };
 </script>

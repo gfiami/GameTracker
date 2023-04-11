@@ -27,7 +27,7 @@ class GamesController extends Controller
 
         return view('games.index', compact('games'));
     }
-    public function allGames(){
+    public function allGamesUserTracked($ids){
         $certPath = storage_path('rawg_io.pem');
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_CAINFO, $certPath);
@@ -36,7 +36,7 @@ class GamesController extends Controller
                 CURLOPT_CAINFO => $certPath,
             ],
             //limitações da api de no máximo 40 jogos por página
-        ])->get("https://api.rawg.io/api/games?key=".env('RAWG_API_KEY') ."&page_size=40");
+        ])->get("https://api.rawg.io/api/games?key=".env('RAWG_API_KEY') ."&ids={$ids}");
         $games = $response->json();
         return compact('games');
     }

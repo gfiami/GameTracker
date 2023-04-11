@@ -11,11 +11,24 @@
     >
       <!-- Aqui é a lógica para caso estejamos no profile e trabalhando com deleção dos jogos lá, ele suma da página -->
       <!--<div v-if="!checkIds || (checkIds && Object.values(this.checkIds).includes(game.id))">      </div>
+ checkOwned: "",
+    checkFavorite: "",
+    checkWished: "",
 -->
       <img :src="game.background_image" :alt="game.name" />
-
+      <div v-if="checkOwned || checkFavorite || checkWished" class="indicators">
+        <span v-if="checkOwned.includes(game.id)" class="fa"
+          ><i class="fas fa-gamepad own"></i
+        ></span>
+        <span v-if="checkWished.includes(game.id)" class="fa"
+          ><i class="fas fa-heart wish"></i
+        ></span>
+        <span v-if="checkFavorite.includes(game.id)" class="fa"
+          ><i class="fas fa-star fav"></i
+        ></span>
+      </div>
       <div
-        v-if="
+        v-else-if="
           ownedGames.includes(game.id) ||
           wishListedGames.includes(game.id) ||
           favoriteGames.includes(game.id)
@@ -32,12 +45,81 @@
           ><i class="fas fa-star fav"></i
         ></span>
       </div>
+
       <div class="game-hover">
         <p v-if="!logged" class="login-register-offline">
           <router-link to="/login">Login</router-link> or
           <router-link to="/register">Register</router-link> to track your games
         </p>
-        <p class="logged-container" v-if="logged">
+
+        <p
+          class="logged-container"
+          v-if="logged && (checkOwned || checkFavorite || checkWished)"
+        >
+          <button
+            v-if="checkOwned.includes(game.id)"
+            @click="removeOwned(game.id)"
+            type="button"
+          >
+            <i class="fas fa-gamepad removeOwned"></i>
+            <p class="button-legend">Remove from owned</p>
+          </button>
+          <button
+            v-if="!checkOwned.includes(game.id)"
+            @click="addOwned(game.id)"
+            type="button"
+          >
+            <i class="fas fa-gamepad"></i>
+            <p class="button-legend">Add as owned</p>
+          </button>
+
+          <button
+            v-if="checkWished.includes(game.id)"
+            @click="removeWishList(game.id)"
+            type="button"
+          >
+            <i class="fas fa-heart removeWishlist"></i>
+            <p class="button-legend">Remove from Wishlist</p>
+          </button>
+          <button
+            v-if="
+              !checkWished.includes(game.id) && !checkOwned.includes(game.id)
+            "
+            @click="addWishList(game.id)"
+            type="button"
+          >
+            <i class="far fa-heart"></i>
+            <p class="button-legend">Add to Wishlist</p>
+          </button>
+
+          <button
+            v-if="
+              checkFavorite.includes(game.id) &&
+              !checkWished.includes(game.id) &&
+              checkOwned.includes(game.id)
+            "
+            @click="removeFavorite(game.id)"
+            type="button"
+          >
+            <i class="fas fa-star removeFavorite"></i>
+            <p class="button-legend">Remove favorite</p>
+          </button>
+
+          <button
+            v-if="
+              checkOwned.includes(game.id) &&
+              !checkFavorite.includes(game.id) &&
+              !checkWished.includes(game.id)
+            "
+            @click="addFavorite(game.id)"
+            type="button"
+          >
+            <i class="far fa-star addFavorite"></i>
+            <p class="button-legend">Add favorite</p>
+          </button>
+        </p>
+        <!-- gameview -->
+        <p class="logged-container" v-else-if="logged">
           <button
             v-if="ownedGames.includes(game.id)"
             @click="removeOwned(game.id)"
@@ -46,15 +128,17 @@
             <i class="fas fa-gamepad removeOwned"></i>
             <p class="button-legend">Remove from owned</p>
           </button>
-          <button v-else @click="addOwned(game.id)" type="button">
+          <button
+            v-if="!ownedGames.includes(game.id)"
+            @click="addOwned(game.id)"
+            type="button"
+          >
             <i class="fas fa-gamepad"></i>
             <p class="button-legend">Add as owned</p>
           </button>
 
           <button
-            v-if="
-              wishListedGames.includes(game.id) && !ownedGames.includes(game.id)
-            "
+            v-if="wishListedGames.includes(game.id)"
             @click="removeWishList(game.id)"
             type="button"
           >
@@ -75,7 +159,9 @@
 
           <button
             v-if="
-              favoriteGames.includes(game.id) && ownedGames.includes(game.id)
+              favoriteGames.includes(game.id) &&
+              !wishListedGames.includes(game.id) &&
+              ownedGames.includes(game.id)
             "
             @click="removeFavorite(game.id)"
             type="button"
@@ -85,7 +171,11 @@
           </button>
 
           <button
-            v-else-if="ownedGames.includes(game.id)"
+            v-if="
+              ownedGames.includes(game.id) &&
+              !favoriteGames.includes(game.id) &&
+              !wishListedGames.includes(game.id)
+            "
             @click="addFavorite(game.id)"
             type="button"
           >
@@ -116,6 +206,9 @@ export default {
   props: {
     games: "",
     checkIds: "",
+    checkOwned: null,
+    checkFavorite: null,
+    checkWished: null,
   },
   data() {
     return {
@@ -160,11 +253,13 @@ export default {
             game_api_ids: gameIds,
           }
         );
-        this.ownedGames = response.data;
-        this.checkIfWishlist(gameIds);
-
-        console.log(response.data);
+        this.ownedGames = response.data.owned_games;
+        this.wishListedGames = response.data.wishlisted_games;
+        this.$emit("favoriteGamesUpdate", this.favoriteGames);
         this.$emit("ownedGamesUpdate", this.ownedGames);
+
+        this.$emit("wishListedGamesUpdate", this.wishListedGames);
+
         this.$emit("button-clicked", "addOwned");
       } catch (error) {
         console.log(error.response.data.error);
@@ -203,12 +298,12 @@ export default {
             },
           }
         );
-        this.ownedGames = response.data;
-        this.checkIfFavorite(gameIds);
+        this.ownedGames = response.data.owned_games;
+        this.favoriteGames = response.data.favorite_games;
+        this.$emit("favoriteGamesUpdate", this.favoriteGames);
+        this.$emit("ownedGamesUpdate", this.ownedGames);
 
-        //this.checkIfFavorite(gameIds); // O PADRÃO É CHECK IF _NOME DO ADD/REMOVE_
-        //this.checkIfOwn(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
-        //  this.checkIfWishlist(gameIds); //TALVEZ REMOVER, TESTANDO OWNPROFILE
+        this.$emit("wishListedGamesUpdate", this.wishListedGames);
         this.$emit("button-clicked", "removeOwned");
       } catch (error) {
         console.log(error.response.data.error);
@@ -228,8 +323,13 @@ export default {
             game_api_ids: gameIds,
           }
         );
+
         this.favoriteGames = response.data;
         this.$emit("favoriteGamesUpdate", this.favoriteGames);
+        this.$emit("ownedGamesUpdate", this.ownedGames);
+
+        this.$emit("wishListedGamesUpdate", this.wishListedGames);
+
         this.$emit("button-clicked", "addFavorite");
       } catch (error) {
         console.log(error.response.data.error);
@@ -269,7 +369,12 @@ export default {
             },
           }
         );
+        console.log("estou no removeFavorite" + response.data);
         this.favoriteGames = response.data;
+        this.$emit("favoriteGamesUpdate", this.favoriteGames);
+        this.$emit("ownedGamesUpdate", this.ownedGames);
+
+        this.$emit("wishListedGamesUpdate", this.wishListedGames);
         this.$emit("button-clicked", "removeFavorite");
       } catch (error) {
         console.log("entrou no error do remove favorite");
@@ -328,6 +433,10 @@ export default {
         );
 
         this.wishListedGames = response.data;
+        this.$emit("favoriteGamesUpdate", this.favoriteGames);
+        this.$emit("ownedGamesUpdate", this.ownedGames);
+
+        this.$emit("wishListedGamesUpdate", this.wishListedGames);
         this.$emit("button-clicked", "removeWishlist");
       } catch (error) {
         //console.log(error.response.data.error);

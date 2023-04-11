@@ -61,5 +61,5 @@ Route::get('/game-api-favorite/{ids}', [GamesController::class, 'fetchFavorite']
 Route::get('/game-api-wished/{ids}', [GamesController::class, 'fetchWished']);
 
 
-//pegar TODOS os jogos da api
-Route::get('/all-rawg-games', [GamesController::class, 'allGames']);
+//pegar TODOS os jogos da api QUE O USUARIO TEM
+Route::get('/all-rawg-games/{ids}', [GamesController::class, 'allGamesUserTracked']);
