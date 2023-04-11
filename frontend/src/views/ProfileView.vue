@@ -15,7 +15,7 @@
           >
         </div>
       </div>
-      <OwnProfile :user="user.id" />
+      <Profile :user="user.id" />
     </div>
     <div class="loading-user" v-if="loadingUser">Carregando...</div>
     <div v-else-if="!user" class="user-doesnt-exist">Usuario não existe</div>
@@ -23,12 +23,12 @@
 </template>
 
 <script>
-import OwnProfile from "../components/OwnProfile.vue";
+import Profile from "../components/Profile.vue";
 import axios from "axios";
 export default {
   name: "ProfileView",
   components: {
-    OwnProfile,
+    Profile,
   },
   data() {
     return {

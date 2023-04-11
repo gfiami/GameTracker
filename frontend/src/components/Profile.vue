@@ -84,7 +84,7 @@
 import axios from "axios";
 import GameLayout from "./GameLayout.vue";
 export default {
-  name: "OwnProfile",
+  name: "Profile",
   props: {
     user: null,
   },
