@@ -42,6 +42,14 @@ export default {
       loadingUser: true,
     };
   },
+  watch: {
+    "$route.params.id"(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        //this.loadData();
+        this.getUserInfo(newVal);
+      }
+    },
+  },
   computed: {
     logged() {
       return this.$store.state.logged;

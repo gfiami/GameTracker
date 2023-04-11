@@ -16,7 +16,7 @@
         <!-- caso esteja no perfil isso faz sumir os indicadorzim -->
       </div>
       <div
-        v-else-if="checkOwned || checkFavorite || checkWished"
+        v-else-if="logged && (checkOwned || checkFavorite || checkWished)"
         class="indicators"
       >
         <span v-if="checkOwned.includes(game.id)" class="fa"
@@ -31,9 +31,10 @@
       </div>
       <div
         v-else-if="
-          ownedGames.includes(game.id) ||
-          wishListedGames.includes(game.id) ||
-          favoriteGames.includes(game.id)
+          logged &&
+          (ownedGames.includes(game.id) ||
+            wishListedGames.includes(game.id) ||
+            favoriteGames.includes(game.id))
         "
         class="indicators"
       >

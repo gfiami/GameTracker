@@ -4,9 +4,11 @@
     <router-link
       v-if="logged"
       :to="{ name: 'profile', params: { id: $store.state.user_id } }"
+      :key="$route.fullPath"
       >Profile</router-link
     >
-    <router-link to="/games">Games</router-link>
+    <router-link to="/games" :key="$route.fullPath">Games</router-link>
+    <!--:key="$route.fullPath" FORÇA A rota a renderizar de novo-->
     <router-link v-if="!logged" to="/login">Login</router-link>
     <router-link v-if="!logged" to="/register">Register</router-link>
     <a @click="logout" v-if="logged">Logout</a>

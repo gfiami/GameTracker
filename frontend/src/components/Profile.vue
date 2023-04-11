@@ -88,6 +88,26 @@ export default {
   props: {
     user: null,
   },
+  watch: {
+    user(newVal, oldVal) {
+      console.log("novo user: " + newVal);
+      Promise.all([
+        this.getWishedGames(),
+        this.getFavoriteGames(),
+        this.getOwnedGames(),
+      ]).then((values) => {
+        const owned_fetcher = this.ownedIds;
+        const wished_fetcher = this.wishedIds;
+        const favorte_fetcher = this.favoriteIds;
+        const fetcher = [].concat(
+          owned_fetcher,
+          wished_fetcher,
+          favorte_fetcher
+        );
+        this.allGamesUserTracked(fetcher);
+      });
+    },
+  },
 
   components: {
     GameLayout,
