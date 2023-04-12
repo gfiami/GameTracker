@@ -6,65 +6,67 @@
       </div>
 
       <div class="top-container">
-        <div class="image-container">
+        <div class="secondary-container">
+          <img
+            class="secondary-image"
+            :src="game.background_image_additional"
+            :alt="game.name"
+          />
+        </div>
+        <div class="right-panel-container">
           <div class="main-image-container">
             <img
               class="main-image"
               :src="game.background_image"
-              alt="{{ game.name }}"
+              :alt="game.name"
             />
           </div>
-          <div class="secondary-container">
-            <img
-              class="secondary-image"
-              :src="game.background_image_additional"
-              alt="{{ game.name }}"
-            />
-            <div class="info-container">
-              <p class="released" v-if="releaseDate">
-                RELEASE DATE:
-                <span class="released-legend">{{ releaseDate }}</span>
-              </p>
-              <p class="developer">
-                DEVELOPER:
-                <span class="developer-legend">{{
-                  game.developers[0].name
-                }}</span>
-              </p>
-              <p class="rating">
-                ESRB:
-                <span class="rating-legend">{{ game.esrb_rating.name }}</span>
-              </p>
-              <p class="genres">
-                GENRES:
-                <span class="genres-legend"
-                  ><span v-for="(genre, index) in game.genres" :key="genre.id"
-                    >{{ genre.name
-                    }}<span v-if="index !== game.genres.length - 1">, </span>
-                  </span></span
-                >
-              </p>
-              <p class="platforms">
-                PLATFORMS:
-                <span class="platforms-legend"
-                  ><span
-                    v-for="(platform, index) in game.platforms"
-                    :key="platform.id"
-                    >{{ platform.platform.name
-                    }}<span v-if="index !== game.platforms.length - 1">, </span>
-                  </span></span
-                >
-              </p>
-            </div>
+          <div class="info-container">
+            <p class="released" v-if="releaseDate">
+              RELEASE DATE:
+              <span class="released-legend">{{ releaseDate }}</span>
+            </p>
+            <p class="developer">
+              DEVELOPER:
+              <span class="developer-legend">{{
+                game.developers[0].name
+              }}</span>
+            </p>
+            <p class="rating">
+              ESRB:
+              <span class="rating-legend">{{ game.esrb_rating.name }}</span>
+            </p>
+            <p class="genres">
+              GENRES:
+              <span class="genres-legend"
+                ><span v-for="(genre, index) in game.genres" :key="genre.id"
+                  >{{ genre.name
+                  }}<span v-if="index !== game.genres.length - 1">, </span>
+                </span></span
+              >
+            </p>
+            <p class="platforms">
+              PLATFORMS:
+              <span class="platforms-legend"
+                ><span
+                  v-for="(platform, index) in game.platforms"
+                  :key="platform.id"
+                  >{{ platform.platform.name
+                  }}<span v-if="index !== game.platforms.length - 1">, </span>
+                </span></span
+              >
+            </p>
           </div>
         </div>
       </div>
-
       <div class="description-container">
         <h3 class="description-title">About this game</h3>
         <hr />
         <p class="description">{{ game.description_raw }}</p>
       </div>
+      <!-- logged details -->
+      <div class="tracker" v-if="logged">Track</div>
+      <div class="tracker" v-else>Can't track, login</div>
     </div>
   </div>
 </template>
@@ -79,6 +81,11 @@ export default {
       game: null,
       releaseDate: null,
     };
+  },
+  computed: {
+    logged() {
+      return this.$store.state.logged;
+    },
   },
   async mounted() {
     await this.gameRequest();
@@ -153,17 +160,7 @@ hr {
 .description-title {
   font-size: 16px;
 }
-.top-container {
-  width: 70%;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-}
-.info-container {
-  width: 100%;
-  text-shadow: 1px 1px #000;
-  padding-left: 10px;
-}
+
 .released,
 .developer,
 .rating,
@@ -186,21 +183,26 @@ hr {
   color: #fff;
   font-style: normal;
 }
-.image-container {
-  width: 100%;
-  margin: 0 auto;
+.top-container {
+  gap: 10px;
+  width: 70%;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  gap: 15px;
+}
+.info-container {
+  width: 100%;
+  text-shadow: 1px 1px #000;
+  padding-left: 10px;
 }
 .secondary-container {
-  display: flex;
-  gap: 10px;
-  flex-direction: column;
-  align-items: flex-end;
+  width: 100%;
 }
-.image-container img {
+.right-panel-container {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+}
+img {
   box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.3);
   border: 5px solid rgba(54, 30, 148, 0.9);
   border-radius: 6px;
@@ -210,7 +212,7 @@ hr {
   height: auto;
 }
 .secondary-image {
-  max-width: 100%;
+  width: 100%;
   height: auto;
 }
 </style>
