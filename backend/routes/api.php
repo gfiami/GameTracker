@@ -27,6 +27,9 @@ Route::post('/signin', [UserController::class, 'signin']);//->middleware('thrott
 Route::post('/register', [UserController::class, 'register']);
 Route::get('/userinfo/{id}',[UserController::class, 'userInfo']);
 
+//review
+Route::post('/add-review', [UserController::class, 'addReview']);
+
 //owned relations
 Route::post('/owned', [UserController::class, 'addOwned']); //adiciona a owned
 Route::get('/check-owned', [UserController::class, 'checkOwnedGames']); //checa os jogos que ele tem na página atual

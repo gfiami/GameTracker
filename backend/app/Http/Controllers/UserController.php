@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\OwnedGame;
 use App\Models\FavoritedGame;
 use App\Models\WishlistGame;
+use App\Models\Review;
+
 
 
 
@@ -86,6 +88,36 @@ class UserController extends Controller
             //basicamente o user fez besteirinhas na digitação que não passou na minha função validate
         }
     }
+    // REVIEW
+
+    public function addReview(Request $request){
+    try{
+        $validateReviewInfo = $request->validate([
+            'review' => 'required|string|max:1000'
+        ]);
+        $user_id = $request->input('user_id');
+        $game_api_id = $request->input('game_api_id');
+        $review_text = $request->input('review');
+
+        $review = Review::create([
+            'user_id' => $user_id,
+            'game_api_id' => $game_api_id,
+            'review' => $review_text,
+        ]);
+
+        return response()->json([
+            'message' => 'Your review was submited successfully!',
+        ]);
+    }catch (ValidationException $e) {
+    return response()->json([
+        'message' => 'Validation error',
+        'validation' => $e->getMessage(),
+        'errors' => $e->errors(),
+    ], 422);
+}
+    }
+
+
     //get user info
     public function userInfo($id){
         $user = User::find($id);

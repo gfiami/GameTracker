@@ -1,6 +1,13 @@
 <template>
   <div class="main-wrapper">
-    <div class="main-container" v-if="game">
+    <div v class="loading" v-if="loading">
+      <div class="lds-facebook">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+    <div class="main-container" v-else-if="game">
       <div class="title-container">
         <h1 class="title">{{ game.name }}</h1>
       </div>
@@ -63,28 +70,50 @@
         <h3 class="description-title">About this game</h3>
         <hr />
         <p class="description">{{ game.description_raw }}</p>
+        <hr />
       </div>
       <!-- logged details -->
-      <div class="tracker" v-if="logged">Track</div>
-      <div class="tracker" v-else>Can't track, login</div>
+      <div class="tracker online" v-if="logged">
+        Adicionar área e Botões para Owned | Favorite | Wishlist
+      </div>
+      <div class="tracker offline" v-else>
+        <router-link to="/login">Login</router-link> or
+        <router-link to="/register">Register</router-link> to track your games
+        and write reviews.
+      </div>
+      <!-- logged details -->
+      <div class="review-container">
+        <h3 class="review-title">Reviews</h3>
+        <hr />
+        <ReviewsForm :game="game" :logged="logged" :userId="userId" />
+        <hr />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import ReviewsForm from "../components/ReviewsForm.vue";
 
 export default {
   name: "SpecificGameView",
+  components: {
+    ReviewsForm,
+  },
   data() {
     return {
       game: null,
       releaseDate: null,
+      loading: true,
     };
   },
   computed: {
     logged() {
       return this.$store.state.logged;
+    },
+    userId() {
+      return this.$store.state.user_id;
     },
   },
   async mounted() {
@@ -97,7 +126,7 @@ export default {
       );
       this.game = response.data.game;
       this.releaseDate = this.formatReleaseDate();
-
+      this.loading = false;
       console.log(this.game);
     },
     formatReleaseDate() {
@@ -127,6 +156,21 @@ export default {
 </script>
 
 <style scoped>
+.offline {
+  background-color: rgba(0, 0, 0, 0.315);
+  padding: 20px;
+  font-size: 16px;
+  margin: 10px;
+}
+.offline a {
+  color: #6842ff;
+  font-weight: 500;
+  text-decoration: none;
+  transition: 0.4s;
+}
+.offline a:hover {
+  color: #d9ff42;
+}
 .main-container {
   display: flex;
   flex-direction: column;
@@ -140,25 +184,26 @@ export default {
   padding: 15px;
   text-shadow: 2px 2px #000;
 }
-.description-container {
+.description-container,
+.review-container {
   margin: 0 auto;
   padding: 10px;
   width: 70%;
 }
-.description-title {
+.description-title,
+.review-title {
   text-shadow: 1px 1px #000;
+  font-size: 18px;
 }
 .description {
   text-align: justify;
   text-shadow: 2px 2px #000;
+  margin-bottom: 10px;
 }
 hr {
   margin-bottom: 10px;
   font-weight: 100;
   border: 1px solid rgba(54, 30, 148, 0.9);
-}
-.description-title {
-  font-size: 16px;
 }
 
 .released,
@@ -214,5 +259,63 @@ img {
 .secondary-image {
   width: 100%;
   height: auto;
+}
+
+/* loading */
+.loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.lds-facebook {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+}
+.lds-facebook div {
+  display: inline-block;
+  position: absolute;
+  left: 8px;
+  width: 16px;
+  background: #fff;
+  animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+}
+.lds-facebook div:nth-child(1) {
+  left: 8px;
+  animation-delay: -0.24s;
+}
+.lds-facebook div:nth-child(2) {
+  left: 32px;
+  animation-delay: -0.12s;
+}
+.lds-facebook div:nth-child(3) {
+  left: 56px;
+  animation-delay: 0;
+}
+@keyframes lds-facebook {
+  0% {
+    top: 8px;
+    height: 64px;
+  }
+  50%,
+  100% {
+    top: 24px;
+    height: 32px;
+  }
+}
+
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>
