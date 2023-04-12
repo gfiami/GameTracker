@@ -208,8 +208,8 @@
         <router-link
           class="info-link"
           :to="{
-            name: 'specificGame',
-            params: { id: game.id },
+            name: 'specificgame',
+            params: { slug: game.slug },
           }"
           ><i class="fa fa-info-circle game-info"></i>
         </router-link>

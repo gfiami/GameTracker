@@ -15,11 +15,11 @@ const routes = [
       import(/* webpackChunkName: "TestApiView" */ "../views/TestApiView.vue"),
   },
   {
-    path: "/testGame/:id",
-    name: "specificGame",
+    path: "/games/game/:slug",
+    name: "specificgame",
     component: () =>
       import(
-        /* webpackChunkName: "TestGameView" */ "../views/TestGameView.vue"
+        /* webpackChunkName: "SpecificGameView" */ "../views/SpecificGameView.vue"
       ),
   },
   {
