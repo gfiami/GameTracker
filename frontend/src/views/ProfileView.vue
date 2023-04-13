@@ -131,6 +131,8 @@ export default {
       }
     },
     async getUserInfo() {
+      this.loadingUser = true;
+      this.user = null;
       const id = this.$route.params.id;
       try {
         const response = await axios

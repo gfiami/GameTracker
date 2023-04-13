@@ -10,7 +10,10 @@
             <div></div>
           </div>
         </div>
-        <div class="empty-games" v-if="emptyOwned">No owned games</div>
+        <div class="empty-container" v-if="emptyOwned">
+          <div class="empty-games">No owned games</div>
+        </div>
+
         <div v-if="allGames && ownedIds">
           <div class="layout-container">
             <!--
@@ -57,7 +60,9 @@
             <div></div>
           </div>
         </div>
-        <div class="empty-games" v-if="emptyFavorite">No favorited games</div>
+        <div class="empty-container" v-if="emptyFavorite">
+          <div class="empty-games">No favorited games</div>
+        </div>
         <div v-if="allGames && favoriteIds">
           <div class="layout-container">
             <GameLayout
@@ -83,7 +88,9 @@
             <div></div>
           </div>
         </div>
-        <div class="empty-games" v-if="emptyWished">No wishlisted games</div>
+        <div class="empty-container" v-if="emptyWished">
+          <div class="empty-games">No wishlisted games</div>
+        </div>
 
         <div v-if="allGames && wishedIds">
           <div class="layout-container">
@@ -422,15 +429,25 @@ export default {
   padding: 15px;
   margin-bottom: 10px;
 }
+.empty-container {
+  margin: 0 auto;
+  width: 60%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: 15px;
+}
 .empty-games {
   color: #ffffffa4;
   font-weight: 300;
+  border-radius: 6px;
   font-size: 12px;
-
-  width: 60%;
-  padding: 20px;
-  margin: 0 auto;
+  background-color: rgba(48, 25, 189, 0.62);
+  width: 40%;
+  padding: 10px;
   margin-bottom: 0;
+  align-self: flex-start;
 }
 /*loading */
 .loading-games {
