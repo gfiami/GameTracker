@@ -10,7 +10,8 @@
             <div></div>
           </div>
         </div>
-        <div v-else-if="allGames && ownedIds">
+        <div class="empty-games" v-if="emptyOwned">No owned games</div>
+        <div v-if="allGames && ownedIds">
           <div class="layout-container">
             <!--
                 Com a função getOwned eu pego os jogos do usuario
@@ -56,6 +57,7 @@
             <div></div>
           </div>
         </div>
+        <div class="empty-games" v-if="emptyFavorite">No favorited games</div>
         <div v-if="allGames && favoriteIds">
           <div class="layout-container">
             <GameLayout
@@ -81,6 +83,8 @@
             <div></div>
           </div>
         </div>
+        <div class="empty-games" v-if="emptyWished">No wishlisted games</div>
+
         <div v-if="allGames && wishedIds">
           <div class="layout-container">
             <GameLayout
@@ -140,10 +144,18 @@ export default {
       wishedIds: "",
       allGames: "",
       loadingGames: true,
+      emptyOwned: false,
+      emptyFavorite: false,
+      emptyWished: false,
     };
   },
   methods: {
     async allGamesUserTracked(ids) {
+      if (this.emptyOwned && this.emptyFavorite && this.emptyWished) {
+        this.loadingGames = false;
+
+        return false;
+      }
       const response = await axios.get(
         `${process.env.VUE_APP_APIURL}all-rawg-games/${ids}`
       );
@@ -204,6 +216,11 @@ export default {
         );
         //pega os jogos "owned" e bota no array
         this.ownedIds = response.data;
+        if (this.ownedIds.length == 0) {
+          this.emptyOwned = true;
+        } else {
+          this.emptyOwned = false;
+        }
         return response.data;
       } catch (error) {
         console.log(error.response.data.error);
@@ -225,11 +242,14 @@ export default {
             },
           }
         );
-        console.log("Atualizando favoritos Ids");
 
         //pega os jogos "favorite" e bota no array
         this.favoriteIds = response.data;
-        console.log("Id dos favoritos: " + this.favoriteIds);
+        if (this.favoriteIds.length == 0) {
+          this.emptyFavorite = true;
+        } else {
+          this.emptyFavorite = false;
+        }
 
         return response.data;
       } catch (error) {
@@ -253,6 +273,11 @@ export default {
         );
         //pega os jogos "favorite" e bota no array
         this.wishedIds = response.data;
+        if (this.wishedIds.length == 0) {
+          this.emptyWished = true;
+        } else {
+          this.emptyWished = false;
+        }
         return response.data;
       } catch (error) {
         console.log(error.response.data.error);
@@ -396,6 +421,16 @@ export default {
 .layout-container .game-hover .info-link {
   padding: 15px;
   margin-bottom: 10px;
+}
+.empty-games {
+  color: #ffffffa4;
+  font-weight: 300;
+  font-size: 12px;
+
+  width: 60%;
+  padding: 20px;
+  margin: 0 auto;
+  margin-bottom: 0;
 }
 /*loading */
 .loading-games {
