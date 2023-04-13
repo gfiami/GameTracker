@@ -1,14 +1,52 @@
 <template>
   <div>
-    <p v-if="message">{{ message }}</p>
+    <p v-if="loginSuccess && showMessage && logged">
+      Login successeful! <i class="fas fa-check-circle"></i>
+      <br />
+      Welcome <b>{{ messageLogin }} </b>
+    </p>
+    <p v-if="message && showMessage">{{ message }}</p>
   </div>
 </template>
 
 <script>
 export default {
   name: "Message",
-  props: ["message"],
+  props: {
+    message: "",
+    messageLogin: "",
+    loginSuccess: "",
+  },
+  data() {
+    return {
+      showMessage: true,
+    };
+  },
+  mounted() {
+    if (this.message || this.messageLogin) {
+      setTimeout(() => {
+        this.showMessage = false;
+      }, 4000);
+    }
+  },
+  computed: {
+    logged() {
+      return this.$store.state.logged;
+    },
+  },
 };
 </script>
 
-<style></style>
+<style scoped>
+p {
+  margin: 0 auto;
+  width: 45%;
+  border-radius: 4px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  background-color: #1abc9c;
+  color: black;
+  text-align: center;
+  margin-top: 20px;
+}
+</style>

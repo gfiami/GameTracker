@@ -30,7 +30,7 @@ class UserController extends Controller
 
             $validateUserInfo = $request->validate([
                 'email' => 'required|email',
-                'password' => 'required'
+                'password' => 'required|min:6|max:10'
             ]);
             /*
             -autenticação com tabela de users, retorna true se achar

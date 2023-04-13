@@ -9,7 +9,11 @@
           <u>User Agreement</u> and <u>Privacy Policy</u>.
         </p>
         <div class="input-group">
-          <label for="email">Username</label>
+          <div class="label-container">
+            <label for="username">Username</label>
+            <span v-if="usernameError" class="error">*{{ usernameError }}</span>
+          </div>
+
           <input
             v-model="username"
             type="username"
@@ -18,7 +22,10 @@
           />
         </div>
         <div class="input-group">
-          <label for="email">Email</label>
+          <div class="label-container">
+            <label for="email">Email</label>
+            <span v-if="emailError" class="error">*{{ emailError }}</span>
+          </div>
           <input
             v-model="email"
             type="email"
@@ -27,7 +34,10 @@
           />
         </div>
         <div class="input-group">
-          <label for="password">Password</label>
+          <div class="label-container">
+            <label for="password">Password</label>
+            <span v-if="passwordError" class="error">*{{ passwordError }}</span>
+          </div>
           <input
             v-model="password"
             type="password"
@@ -36,7 +46,13 @@
           />
         </div>
         <div class="input-group">
-          <label for="passwordConfirmation">Password confirmation</label>
+          <div class="label-container">
+            <label for="passwordConfirmation">Password confirmation</label>
+            <span v-if="confirmationError" class="error"
+              >*{{ confirmationError }}</span
+            >
+          </div>
+
           <input
             v-model="passwordConfirmation"
             type="password"
@@ -65,6 +81,10 @@ export default {
       email: null,
       password: null,
       passwordConfirmation: null,
+      emailError: null,
+      usernameError: null,
+      passwordError: null,
+      confirmationError: null,
     };
   },
   methods: {
@@ -91,11 +111,48 @@ export default {
         });
       } catch (error) {
         //caso haja erro
-        console.log(error.response.data.message);
-        console.log(error.response.data.validation);
+        //console.log(error.response.data.message);
+        //console.log(error.response.data.validation);
         //aqui vai mostrar os erros pra cada uma das validações!
         console.log(error.response.data.errors);
+        //email error
+        if (error.response.data.errors.email !== undefined) {
+          this.emailErrors(error.response.data.errors.email);
+        } else {
+          this.emailErrors = null;
+        }
+        //username eror
+        if (error.response.data.errors.username !== undefined) {
+          this.usernameErrors(error.response.data.errors.username);
+        } else {
+          this.usernameErrors = null;
+        }
+        //password error
+        if (error.response.data.errors.password !== undefined) {
+          this.passwordErrors(error.response.data.errors.password);
+        } else {
+          this.passwordErrors = null;
+        }
       }
+    },
+    emailErrors(error) {
+      this.emailError = error[0];
+      this.email = null;
+    },
+    usernameErrors(error) {
+      this.usernameError = error[0];
+      this.username = null;
+    },
+    passwordErrors(error) {
+      if (error.length == 2) {
+        this.passwordError = error[0];
+        this.confirmationError = error[1];
+      } else if (error[0] == "The password confirmation does not match.") {
+        this.confirmationError = error[0];
+      } else this.passwordError = error[0];
+
+      this.password = null;
+      this.passwordConfirmation = null;
     },
   },
 };
@@ -106,6 +163,9 @@ export default {
   font-size: 12px;
   text-align: center;
   margin-bottom: 10px;
+}
+.termsMessage u {
+  cursor: pointer;
 }
 .loginMessage {
   font-weight: 800;
@@ -121,9 +181,21 @@ export default {
 .loginMessage a:hover {
   color: #fff;
 }
+.label-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+}
 label {
   font-weight: 800;
   font-size: 20px;
+  display: inline;
+}
+.error {
+  color: #d9ff42;
+  font-size: 12px;
+  font-weight: 500;
 }
 .title {
   font-size: 32px;

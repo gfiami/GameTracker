@@ -4,8 +4,12 @@
     <h1 class="title">Login</h1>
     <div class="login-container">
       <form class="login-form" action="" method="post" @submit.prevent>
+        <p class="main-error" v-if="error">*{{ error }}</p>
         <div class="input-group">
-          <label for="email">Email</label>
+          <div class="label-container">
+            <label for="email">Email</label>
+            <span v-if="emailError" class="error">*{{ emailError }}</span>
+          </div>
           <input
             v-model="email"
             type="email"
@@ -14,7 +18,11 @@
           />
         </div>
         <div class="input-group">
-          <label for="password">Password</label>
+          <div class="label-container">
+            <label for="password">Password</label>
+            <span v-if="passwordError" class="error">*{{ passwordError }}</span>
+          </div>
+
           <input
             v-model="password"
             type="password"
@@ -46,6 +54,9 @@ export default {
       email: null,
       password: null,
       message: this.$route.query.message || null,
+      error: null,
+      emailError: null,
+      passwordError: null,
     };
   },
   components: {
@@ -73,18 +84,75 @@ export default {
         //chama a função do store.js que é a setlogged que importei no method
         this.$store.commit("login", true);
         //redirecionar para algum lugar pois deu certo o login!
-        this.$router.push("/");
+        this.$router.push({
+          path: "/",
+          query: {
+            loginSuccess: "true",
+            messageLogin: `${this.$store.state.token} `,
+          },
+        });
       } catch (error) {
-        //console.log(error);
-        console.log(error.response.data.message); // aqui mostra a mensagem que eu defini!
+        console.log(error);
+        console.log(error.response.data.message); //aqui mostra minha mensagem definida no backend
         console.log(error.response.data.errors); //aqui mostra oque foi errado, caso senha seja invalida ou email invalido
+        if (
+          "Login failed, please check your credentials" ==
+          error.response.data.message
+        ) {
+          this.error = error.response.data.message;
+          this.emailError = null;
+          this.passwordError = null;
+
+          this.email = null;
+          this.password = null;
+
+          return false;
+        }
+        if (error.response.data.errors.email !== undefined) {
+          this.emailErrors(error.response.data.errors.email);
+          this.email = null;
+        } else {
+          this.emailError = null;
+        }
+
+        if (error.response.data.errors.password !== undefined) {
+          console.log("há password error");
+          this.passwordErrors(error.response.data.errors.password);
+          this.password = null;
+        } else {
+          this.passwordError = null;
+        }
       }
+    },
+    emailErrors(error) {
+      this.emailError = error[0];
+    },
+    passwordErrors(error) {
+      this.passwordError = error[0];
+      console.log(this.passwordError);
     },
   },
 };
 </script>
 
 <style scoped>
+.label-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.main-error {
+  text-align: center;
+  color: #d9ff42;
+  font-size: 16px;
+  font-weight: 700;
+}
+.error {
+  color: #d9ff42;
+  font-size: 12px;
+  font-weight: 500;
+}
 .registerMessage {
   font-weight: 800;
   font-size: 16px;
