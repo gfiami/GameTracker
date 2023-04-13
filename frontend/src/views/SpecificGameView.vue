@@ -73,7 +73,7 @@
         <hr />
       </div>
       <!-- logged details -->
-      <div class="tracker online" v-if="logged">
+      <div class="tracker online" v-if="logged && !showForm">
         <button v-if="!emptyOwned" @click="removeOwned(game.id)" type="button">
           <i class="fas fa-gamepad removeOwned"></i>
           <p class="button-legend">Remove from owned</p>
@@ -117,8 +117,19 @@
           <i class="far fa-star addFavorite"></i>
           <p class="button-legend">Add favorite</p>
         </button>
+        <button @click="showReviewForm()" type="button">
+          <i class="fas fa-comments showReview"></i>
+          <p class="button-legend">Write a review</p>
+        </button>
       </div>
-      <div class="tracker offline" v-else>
+      <ReviewsForm
+        @hideReviewForm="hideReviewForm"
+        v-if="showForm"
+        :game="game"
+        :logged="logged"
+        :userId="userId"
+      />
+      <div class="tracker offline" v-if="!logged">
         <router-link to="/login">Login</router-link> or
         <router-link to="/register">Register</router-link> to track your games
         and write reviews.
@@ -127,7 +138,7 @@
       <div class="review-container">
         <h3 class="review-title">Reviews</h3>
         <hr />
-        <ReviewsForm :game="game" :logged="logged" :userId="userId" />
+
         <hr />
       </div>
     </div>
@@ -154,7 +165,8 @@ export default {
       emptyOwned: false,
       emptyFavorite: false,
       emptyWished: false,
-      trackerActive: false,
+      showForm: false,
+      loadingTracker: true,
     };
   },
   computed: {
@@ -194,6 +206,12 @@ export default {
     await this.gameRequest();
   },
   methods: {
+    showReviewForm() {
+      this.showForm = true;
+    },
+    hideReviewForm() {
+      this.showForm = false;
+    },
     async gameRequest() {
       const response = await axios.get(
         `${process.env.VUE_APP_APIURL}game/${this.$route.params.slug}`

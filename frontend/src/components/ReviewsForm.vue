@@ -4,6 +4,8 @@
     <div class="form-container" v-if="logged">
       <form class="review-form" action="" method="post" @submit.prevent>
         <div class="form-data-container">
+          <button @click="$emit('hideReviewForm')">Close</button>
+
           <label for="review" class="review"
             >Write a review for {{ game.name }}</label
           >
