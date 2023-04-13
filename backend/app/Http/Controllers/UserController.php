@@ -319,7 +319,7 @@ class UserController extends Controller
                 ->toArray();
     }
 
-     public function AddWishlist(Request $request){
+     public function addWishlist(Request $request){
         try {
             $user_id = $request->input('user_id');
             $game_api_id = $request->input('game_api_id');
@@ -351,4 +351,155 @@ class UserController extends Controller
         return response()->json(['Erro ao deletar jogo da lista de desejos' => $e->getMessage()], 500);
     }
     }
+
+    /* Interações com jogos específicos na specific game page */
+    //fetch asll specific tracker
+    public function fetchTrackedSpecific(Request $request){
+        try {
+            $user_id = $request->input('user_id');
+            $game_api_id = $request->input('game_api_id');
+
+            $owned_game = OwnedGame::where('user_id', $user_id)
+            ->where('game_api_id', $game_api_id)
+            ->first();
+            $favorited_game = FavoritedGame::where('user_id', $user_id)
+            ->where('game_api_id', $game_api_id)
+            ->first();
+            $wishlisted_game = WishlistGame::where('user_id', $user_id)
+            ->where('game_api_id', $game_api_id)
+            ->first();
+
+
+            $response = [
+                'owned_game' => $owned_game,
+                'favorited_game' => $favorited_game,
+                'wishlisted_game' => $wishlisted_game,
+            ];
+            return response()->json($response);
+
+        } catch (\Exception $e) {
+            return response()->json(['Erro na requisição' => $e->getMessage()], 500);
+        }
+    }
+    //specific owned
+    public function addSpecificOwned(Request $request){
+        try {
+            $user_id = $request->input('user_id');
+            $game_api_id = $request->input('game_api_id');
+            $game_api_ids = $request->input('game_api_ids');
+
+            $owned_game = OwnedGame::create([
+                'user_id' => $user_id,
+                'game_api_id' => $game_api_id,
+            ]);
+            //caso exista o jogo na lista de desejos, remove
+        $remove_wishlist = WishlistGame::where('user_id', $user_id)
+        ->where('game_api_id', $game_api_id)
+        ->first();
+        if($remove_wishlist){
+            $remove_wishlist->delete();
+        }
+
+        $response = [
+            'owned_game' => $owned_game,
+            'wishlisted_game' => null,
+        ];
+        return response()->json($response);
+
+        }catch (\Exception $e) {
+            return response()->json(['Erro ao adicionar jogo' => $e->getMessage()], 500);
+        }
+    }
+
+    //deleta o jodo da lista de owned e retorna o novo conjunto do owned games
+    public function removeSpecificOwned (Request $request){
+        try{
+        $user_id = $request->input('user_id');
+        $game_api_id = $request->input('game_api_id');
+
+        OwnedGame::where('user_id', $user_id)
+        ->where('game_api_id', $game_api_id)
+        ->delete();
+
+        $remove_favorite = FavoritedGame::where('user_id', $user_id)
+        ->where('game_api_id', $game_api_id)
+        ->first();
+
+        //caso exista o jogo nos favoritos, deleta ele de lá
+        if($remove_favorite){
+            $remove_favorite->delete();
+        }
+    $response = [
+        'owned_game' => null,
+        'favorite_game' => null,
+    ];
+    return response()->json($response);
+
+    }catch (\Exception $e) {
+        return response()->json(['Erro ao deletar jogo' => $e->getMessage()], 500);
+    }
+    }
+    //specific favorite
+     //adiciona jogo a lista de favoritos
+     public function addSpecificFavorite(Request $request){
+        try {
+            $user_id = $request->input('user_id');
+            $game_api_id = $request->input('game_api_id');
+
+            $favorite_game = FavoritedGame::create([
+                'user_id' => $user_id,
+                'game_api_id' => $game_api_id,
+            ]);
+            return response()->json($favorite_game); //add aos fav
+        }catch (\Exception $e) {
+            return response()->json(['Erro ao favoritar jogo' => $e->getMessage()], 500);
+        }
+    }
+
+    public function removeSpecificFavorite (Request $request){
+        try{
+        $user_id = $request->input('user_id');
+        $game_api_id = $request->input('game_api_id');
+        FavoritedGame::where('user_id', $user_id)
+        ->where('game_api_id', $game_api_id)
+        ->first()
+        ->delete();
+        return response()->json(null); //mostra que agora o jogo nao tá nos fav
+    }catch (\Exception $e) {
+        return response()->json(['Erro ao remover jogo dos favoritos' => $e->getMessage()], 500);
+    }
+    }
+    //specific wishlist
+
+    public function addSpecificWishlist(Request $request){
+        try {
+            $user_id = $request->input('user_id');
+            $game_api_id = $request->input('game_api_id');
+
+            $wishlist_games = WishlistGame::create([
+                'user_id' => $user_id,
+                'game_api_id' => $game_api_id,
+            ]);
+            return response()->json($wishlist_games);//indicando q foi add
+        }catch (\Exception $e) {
+            return response()->json(['Erro ao wishlistar jogo' => $e->getMessage()], 500);
+        }
+    }
+
+     public function removeSpecificWishlist (Request $request){
+        try{
+        $user_id = $request->input('user_id');
+        $game_api_id = $request->input('game_api_id');
+
+        WishlistGame::where('user_id', $user_id)
+        ->where('game_api_id', $game_api_id)
+        ->first()
+        ->delete();
+        return response()->json(null); //mostra que agora o jogo nao tá nos wishlisted
+    }catch (\Exception $e) {
+        return response()->json(['Erro ao deletar jogo da lista de desejos' => $e->getMessage()], 500);
+    }
+    }
+
+
 }

@@ -1,14 +1,8 @@
 <template>
   <div id="review">
     <!-- <p>Teste: {{ game }}</p>-->
-    <div class="form-container">
-      <form
-        class="review-form"
-        action=""
-        method="post"
-        v-if="logged"
-        @submit.prevent
-      >
+    <div class="form-container" v-if="logged">
+      <form class="review-form" action="" method="post" @submit.prevent>
         <div class="form-data-container">
           <label for="review" class="review"
             >Write a review for {{ game.name }}</label

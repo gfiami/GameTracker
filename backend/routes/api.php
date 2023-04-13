@@ -67,3 +67,17 @@ Route::get('/game-api-wished/{ids}', [GamesController::class, 'fetchWished']);
 
 //pegar TODOS os jogos da api QUE O USUARIO TEM
 Route::get('/all-rawg-games/{ids}', [GamesController::class, 'allGamesUserTracked']);
+
+
+//specific page relations
+Route::get('/specific-tracked-game', [UserController::class, 'fetchTrackedSpecific']); //adiciona a owned
+
+Route::post('/specific-owned', [UserController::class, 'addSpecificOwned']); //adiciona a owned
+Route::delete('/remove-specific-owned', [UserController::class, 'removeSpecificOwned']); //remove o jogo de owned
+
+Route::post('/specific-favorite', [UserController::class, 'addSpecificFavorite']);   //favorita o jogo
+Route::delete('/remove-specific-favorite', [UserController::class, 'removeSpecificFavorite']); //deleta o jogo dos favoritos
+
+Route::post('/specific-wishlist', [UserController::class, 'addSpecificWishlist']); //adiciona a wishlist
+Route::delete('/remove-specific-wishlist', [UserController::class, 'removeSpecificWishlist']); //deleta o jogo da wishlist
+

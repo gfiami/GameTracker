@@ -492,7 +492,6 @@ export default {
       }
     },
   },
-  created() {},
 };
 </script>
 
@@ -536,7 +535,6 @@ export default {
 }
 .wish {
   padding: 2px;
-
   color: rgba(250, 45, 45, 0.849);
 }
 
@@ -695,6 +693,58 @@ export default {
   }
   .game img {
     height: 100px;
+    margin-bottom: 5px;
+  }
+}
+@media only screen and (max-width: 768px) {
+  .game-list {
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+  }
+  .game {
+    width: 80%;
+    margin: 20px 0;
+  }
+  .game img {
+    height: auto;
+    margin-bottom: 10px;
+  }
+  .game-title {
+    position: static;
+    padding: 10px 0;
+    border-radius: 0;
+    text-align: center;
+  }
+  .game-hover {
+    height: 150px;
+  }
+  .logged-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  .logged-container button {
+    font-size: 14px;
+    margin: 5px;
+  }
+  .button-legend {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+}
+@media only screen and (max-width: 768px) {
+  .game-list {
+    justify-content: center;
+  }
+  .game {
+    width: 40%;
+    margin: 20px;
+  }
+  .game-hover {
+    height: 150px;
+  }
+  .game img {
+    height: 150px;
     margin-bottom: 5px;
   }
 }

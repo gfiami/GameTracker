@@ -74,7 +74,49 @@
       </div>
       <!-- logged details -->
       <div class="tracker online" v-if="logged">
-        Adicionar área e Botões para Owned | Favorite | Wishlist
+        <button v-if="!emptyOwned" @click="removeOwned(game.id)" type="button">
+          <i class="fas fa-gamepad removeOwned"></i>
+          <p class="button-legend">Remove from owned</p>
+        </button>
+        <button v-if="emptyOwned" @click="addOwned(game.id)" type="button">
+          <i class="fas fa-gamepad"></i>
+          <p class="button-legend">Add as owned</p>
+        </button>
+
+        <button
+          v-if="!emptyWished"
+          @click="removeWishList(game.id)"
+          type="button"
+        >
+          <i class="fas fa-heart removeWishlist"></i>
+          <p class="button-legend">Remove from Wishlist</p>
+        </button>
+        <button
+          v-if="emptyWished && emptyOwned"
+          @click="addWishList(game.id)"
+          type="button"
+        >
+          <i class="far fa-heart"></i>
+          <p class="button-legend">Add to Wishlist</p>
+        </button>
+
+        <button
+          v-if="!emptyFavorite"
+          @click="removeFavorite(game.id)"
+          type="button"
+        >
+          <i class="fas fa-star removeFavorite"></i>
+          <p class="button-legend">Remove favorite</p>
+        </button>
+
+        <button
+          v-if="emptyFavorite && !emptyOwned"
+          @click="addFavorite(game.id)"
+          type="button"
+        >
+          <i class="far fa-star addFavorite"></i>
+          <p class="button-legend">Add favorite</p>
+        </button>
       </div>
       <div class="tracker offline" v-else>
         <router-link to="/login">Login</router-link> or
@@ -106,6 +148,13 @@ export default {
       game: null,
       releaseDate: null,
       loading: true,
+      ownedGame: [],
+      favoriteGame: [],
+      wishListedGame: [],
+      emptyOwned: false,
+      emptyFavorite: false,
+      emptyWished: false,
+      trackerActive: false,
     };
   },
   computed: {
@@ -114,6 +163,31 @@ export default {
     },
     userId() {
       return this.$store.state.user_id;
+    },
+  },
+
+  watch: {
+    game(newVal, oldVal) {
+      console.log("Usuario: " + this.userId);
+      console.log(newVal);
+      // Promise.all([
+      if (this.logged) {
+        console.log("online");
+        this.fetchTrackedSpecific(newVal, this.userId);
+      } else {
+        console.log("offline");
+      }
+      /*]).then((values) => {
+        const owned_fetcher = this.ownedIds;
+        const wished_fetcher = this.wishedIds;
+        const favorte_fetcher = this.favoriteIds;
+        const fetcher = [].concat(
+          owned_fetcher,
+          wished_fetcher,
+          favorte_fetcher
+        );
+        this.allGamesUserTracked(fetcher);
+      });*/
     },
   },
   async mounted() {
@@ -151,11 +225,219 @@ export default {
       const formattedMonth = months[parseInt(month) - 1];
       return `${year}/${formattedMonth}/${day}`;
     },
+    async fetchTrackedSpecific(game, user_id) {
+      try {
+        const response = await axios.get(
+          `${process.env.VUE_APP_APIURL}specific-tracked-game`,
+          {
+            params: {
+              user_id: user_id,
+              game_api_id: game,
+            },
+          }
+        );
+        //pega os jogos e bota no array
+        this.ownedGame = response.data.owned_game;
+        this.favoriteGame = response.data.favorited_game;
+        this.wishListedGame = response.data.wishlisted_game;
+        if (this.ownedGame == null) {
+          this.emptyOwned = true;
+          console.log("game  not owned");
+        } else {
+          this.emptyOwned = false;
+          console.log("game owned");
+        }
+        if (this.favoriteGame == null) {
+          console.log("game not favorite");
+          this.emptyFavorite = true;
+        } else {
+          console.log("gam favorited");
+          this.emptyFavorite = false;
+        }
+        if (this.wishListedGame == null) {
+          console.log("game not wishlisted");
+          this.emptyWished = true;
+        } else {
+          console.log("game is wishlisted");
+
+          this.emptyWished = false;
+        }
+        console.log(this.ownedGame);
+        console.log(this.favoriteGame);
+        console.log(this.wishListedGame);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async addOwned(game) {
+      const user_id = this.userId;
+      try {
+        const response = await axios.post(
+          `${process.env.VUE_APP_APIURL}specific-owned`,
+          {
+            user_id: user_id,
+            game_api_id: game,
+          }
+        );
+        this.ownedGame = response.data.owned_game;
+        this.wishListedGame = response.data.wishlisted_game;
+        this.emptyOwned = false;
+        this.emptyWished = true;
+        //this.$emit("button-clicked", "addOwned");
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async removeOwned(game) {
+      const user_id = this.userId;
+      try {
+        console.log("Entrou no try do remove Owned");
+        const response = await axios.delete(
+          `${process.env.VUE_APP_APIURL}remove-specific-owned`,
+          {
+            params: {
+              user_id: user_id,
+              game_api_id: game,
+            },
+          }
+        );
+        this.ownedGame = response.data.owned_game;
+        this.favoriteGame = response.data.favorite_game;
+        this.emptyOwned = true;
+        this.emptyFavorite = true;
+        //        this.$emit("button-clicked", "removeOwned");
+      } catch (error) {
+        console.log(error);
+        console.log("Entrou no erro do Remove owned");
+      }
+    },
+    async addFavorite(game) {
+      const user_id = this.userId;
+
+      try {
+        const response = await axios.post(
+          `${process.env.VUE_APP_APIURL}specific-favorite`,
+          {
+            user_id: user_id,
+            game_api_id: game,
+          }
+        );
+        this.favoriteGame = response.data;
+        this.emptyFavorite = false;
+        //this.$emit("button-clicked", "addFavorite");
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    async removeFavorite(game) {
+      const user_id = this.userId;
+
+      try {
+        console.log("entrou no try do remove favorite");
+        const response = await axios.delete(
+          `${process.env.VUE_APP_APIURL}remove-specific-favorite`,
+          {
+            params: {
+              user_id: user_id,
+              game_api_id: game,
+            },
+          }
+        );
+        this.favoriteGame = response.data;
+        this.emptyFavorite = true;
+        //this.$emit("button-clicked", "removeFavorite");
+      } catch (error) {
+        console.log(error);
+
+        console.log("entrou no error do remove favorite");
+      }
+    },
+    async addWishList(game) {
+      const user_id = this.userId;
+      try {
+        const response = await axios.post(
+          `${process.env.VUE_APP_APIURL}specific-wishlist`,
+          {
+            user_id: user_id,
+            game_api_id: game,
+          }
+        );
+        this.wishListedGame = response.data;
+        this.emptyWished = false;
+        //this.$emit("button-clicked", "addWishList");
+      } catch (error) {
+        console.log(error);
+
+        console.log(error.response.data.error);
+      }
+    },
+
+    async removeWishList(game) {
+      const user_id = this.userId;
+
+      try {
+        const response = await axios.delete(
+          `${process.env.VUE_APP_APIURL}remove-specific-wishlist`,
+          {
+            params: {
+              user_id: user_id,
+              game_api_id: game,
+            },
+          }
+        );
+
+        this.wishListedGame = response.data;
+        this.emptyWished = true;
+        //  this.$emit("button-clicked", "removeWishlist");
+      } catch (error) {
+        //console.log(error.response.data.error);
+        console.log("jogo nao estava na wishlist");
+      }
+    },
   },
 };
 </script>
 
 <style scoped>
+.tracker {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  gap: 30px;
+}
+.tracker button {
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+  font-size: 30px;
+  margin: 2px;
+  text-shadow: 2px 2px 4px #000000;
+}
+.button-legend {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  text-shadow: 2px 2px 4px #000000;
+}
+.addFavorite {
+  background: transparent;
+}
+.removeFavorite {
+  color: rgba(250, 250, 45, 0.849);
+}
+.removeOwned {
+  color: rgba(45, 250, 45, 0.849);
+}
+.removeWishlist {
+  color: rgba(250, 45, 45, 0.849);
+}
 .offline {
   background-color: rgba(0, 0, 0, 0.315);
   padding: 20px;
