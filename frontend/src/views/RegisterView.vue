@@ -162,18 +162,19 @@ export default {
 
 <style scoped>
 .termsMessage {
-  font-size: 12px;
+  font-size: 1.5vh;
   text-align: center;
-  margin-bottom: 10px;
+  margin: 2vh 0;
 }
 .termsMessage u {
   cursor: pointer;
 }
 .loginMessage {
   font-weight: 800;
-  font-size: 16px;
+  font-size: 1.8vh;
   align-self: center;
-  padding: 10px;
+  padding: 2vh 2vw;
+  text-align: center;
 }
 .loginMessage a {
   color: #1abc9c;
@@ -186,62 +187,124 @@ export default {
 .label-container {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   align-items: flex-start;
 }
 label {
+  margin-left: 1vw;
   font-weight: 800;
-  font-size: 20px;
+  font-size: 1.8vh;
   display: inline;
 }
 .error {
   color: #d9ff42;
-  font-size: 12px;
+  font-size: 1.4vh;
   font-weight: 500;
+  text-shadow: 1px 1px 1px #000000;
 }
 .title {
-  font-size: 32px;
+  font-size: 5vh;
   font-weight: 800;
   text-align: center;
   width: 100%;
   margin-top: 10px;
 }
 .register-container {
+  padding: 2vh 2vw;
   background: rgba(48, 25, 189, 0.62);
-  border-radius: 15px;
+  border-radius: 20px;
   margin: auto;
-  margin-top: 10px;
-  width: 420px;
-  height: 640px;
+  margin-top: 1vh;
+  width: 40vw;
+  height: 80vh;
+  max-height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 40px;
+  margin-bottom: 10vh;
 }
 .input-group {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 90%;
+  max-width: 100%;
 }
 .input-group input {
-  height: 40px;
-  margin-bottom: 30px;
-  padding: 20px;
-  font-size: 18px;
+  width: 90%;
+  height: 6vh;
+  margin-bottom: 3.3vh;
+  padding: 2vh 1.2vw;
+  font-size: 2vh;
+  align-self: center;
 }
 .register-form {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  width: 290px;
+  max-width: 85%;
+  max-height: 100%;
 }
 .register-form button {
   background: #1abc9c;
+  padding: 2vh 2vw;
   border-radius: 35px;
-  height: 50px;
-  width: 250px;
-  align-self: center;
+  width: 15vw;
   cursor: pointer;
+  font-size: 1.5vh;
+  font-weight: bolder;
+  border: none;
+  box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.3);
+  transition: 0.4s;
+}
+.register-form button:hover {
+  color: #4c1bbc;
+}
+@media screen and (max-width: 991px) {
+  .register-container {
+    width: 70vw;
+  }
+  .input-group {
+    width: 70%;
+  }
+  .input-group input {
+    width: 100%;
+  }
+  .label {
+    margin-left: 0;
+  }
+  .register-form button {
+    width: 30vw;
+    height: 100%;
+  }
+}
+@media screen and (max-width: 768px) {
+  .title {
+    font-size: 4.3vh;
+  }
+  .register-container {
+    width: 85vw;
+  }
+  .register-form button {
+    width: 35vw;
+    height: 100%;
+  }
+  .input-group {
+    width: 70vw;
+  }
+  .termsMessage {
+    font-size: 1.5vh;
+  }
+  label {
+    font-weight: 600;
+    font-size: 1.7vh;
+  }
+  input {
+    width: 100%;
+  }
+  .error {
+    font-size: 1.2vh;
+    font-weight: 300;
+    text-shadow: 1px 1px 1px #000000;
+  }
 }
 </style>
