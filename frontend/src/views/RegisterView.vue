@@ -119,19 +119,20 @@ export default {
         if (error.response.data.errors.email !== undefined) {
           this.emailErrors(error.response.data.errors.email);
         } else {
-          this.emailErrors = null;
+          this.emailError = null;
         }
         //username eror
         if (error.response.data.errors.username !== undefined) {
           this.usernameErrors(error.response.data.errors.username);
         } else {
-          this.usernameErrors = null;
+          this.usernameError = null;
         }
         //password error
         if (error.response.data.errors.password !== undefined) {
           this.passwordErrors(error.response.data.errors.password);
         } else {
-          this.passwordErrors = null;
+          this.passwordError = null;
+          this.confirmationError = null;
         }
       }
     },
@@ -149,6 +150,7 @@ export default {
         this.confirmationError = error[1];
       } else if (error[0] == "The password confirmation does not match.") {
         this.confirmationError = error[0];
+        this.passwordError = error[0];
       } else this.passwordError = error[0];
 
       this.password = null;
