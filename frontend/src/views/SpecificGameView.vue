@@ -420,10 +420,14 @@ export default {
 <style scoped>
 .tracker {
   display: flex;
+  flex-wrap: wrap;
   width: 100%;
   justify-content: center;
   gap: 30px;
 }
+
+/* estilos para telas médias */
+
 .tracker button {
   background: none;
   color: inherit;
@@ -432,14 +436,15 @@ export default {
   font: inherit;
   cursor: pointer;
   outline: inherit;
-  font-size: 30px;
-  margin: 2px;
+  font-size: 4vh;
+  margin: 0.5vh;
   text-shadow: 2px 2px 4px #000000;
 }
 .button-legend {
-  font-size: 12px;
+  text-align: center;
+  font-size: 3vh;
   font-weight: 700;
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
   text-align: center;
   text-shadow: 2px 2px 4px #000000;
@@ -459,7 +464,7 @@ export default {
 .offline {
   background-color: rgba(0, 0, 0, 0.315);
   padding: 20px;
-  font-size: 16px;
+  font-size: 4vh;
   margin: 10px;
 }
 .offline a {
@@ -481,27 +486,29 @@ export default {
   margin: 0 auto;
 }
 .title {
-  padding: 15px;
+  padding: 4vh;
   text-shadow: 2px 2px #000;
 }
 .description-container,
 .review-container {
   margin: 0 auto;
-  padding: 10px;
+  padding: 2vh;
   width: 70%;
+  max-width: 70%;
 }
 .description-title,
 .review-title {
   text-shadow: 1px 1px #000;
-  font-size: 18px;
+  font-size: 5vh;
 }
 .description {
+  font-size: 2.2vh;
   text-align: justify;
   text-shadow: 2px 2px #000;
-  margin-bottom: 10px;
+  margin-bottom: 2vh;
 }
 hr {
-  margin-bottom: 10px;
+  margin-bottom: 2vh;
   font-weight: 100;
   border: 1px solid rgba(54, 30, 148, 0.9);
 }
@@ -511,8 +518,8 @@ hr {
 .rating,
 .genres,
 .platforms {
-  padding-top: 2px;
-  font-size: 12px;
+  padding-top: 0.5vh;
+  font-size: 2vh;
   font-weight: 300;
   color: #999;
   font-style: italic;
@@ -523,13 +530,13 @@ hr {
 .rating-legend,
 .genres-legend,
 .platforms-legend {
-  font-size: 14px;
+  font-size: 2vh;
   font-weight: 500;
   color: #fff;
   font-style: normal;
 }
 .top-container {
-  gap: 10px;
+  gap: 1vh;
   width: 70%;
   display: flex;
   justify-content: center;
@@ -538,6 +545,11 @@ hr {
   width: 100%;
   text-shadow: 1px 1px #000;
   padding-left: 10px;
+}
+@media screen and (max-width: 768px) {
+  .info-container {
+    width: 100%;
+  }
 }
 .secondary-container {
   width: 100%;
@@ -617,5 +629,77 @@ img {
   100% {
     transform: rotate(360deg);
   }
+}
+
+/* TELAS MENORES */
+@media screen and (max-width: 768px) {
+  .tracker button {
+    width: 100%;
+  }
+  .description-container,
+  .review-container {
+    width: 90%;
+    max-width: 90%;
+    padding: 0px;
+  }
+  .description-title,
+  .review-title {
+    text-shadow: 1px 1px #000;
+    font-size: 3vh;
+  }
+  .description {
+    width: 100%;
+    font-size: 2.2vh;
+    text-align: justify;
+    text-shadow: 2px 2px #000;
+    margin-bottom: 2vh;
+  }
+  .title-container {
+    width: 90%;
+    margin: 0 auto;
+  }
+  .title {
+    padding: 0;
+    text-align: center;
+    font-size: 5vh;
+    text-shadow: 2px 2px #000;
+  }
+  .top-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .right-panel-container {
+    display: flex;
+    width: 90vw;
+    flex-direction: column;
+    align-items: center;
+  }
+  .secondary-container {
+    width: 90vw;
+  }
+  .main-image {
+    max-width: 90vw;
+    height: auto;
+  }
+  .secondary-image {
+    width: 90vw;
+    height: auto;
+  }
+
+  .info-container {
+    width: 80vw;
+  }
+  .info-container {
+    padding: 1vh;
+  }
+  .right-panel-container {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+  }
+}
+@media screen and (max-width: 480px) {
+  /* */
 }
 </style>
