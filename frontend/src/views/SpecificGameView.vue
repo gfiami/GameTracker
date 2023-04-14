@@ -80,7 +80,7 @@
         <hr v-show="about == 'show'" />
       </div>
       <!-- logged details -->
-      <div class="tracker online" v-if="logged && !showForm">
+      <div class="tracker online" v-if="logged">
         <button v-if="!emptyOwned" @click="removeOwned(game.id)" type="button">
           <i class="fas fa-gamepad removeOwned"></i>
           <p class="button-legend">Remove from owned</p>
@@ -124,28 +124,36 @@
           <i class="far fa-star addFavorite"></i>
           <p class="button-legend">Add favorite</p>
         </button>
-        <button v-if="!userHasReview" @click="showReviewForm()" type="button">
+        <button v-if="!showForm" @click="showAddReview()" type="button">
           <i class="fas fa-comments showReview"></i>
           <p class="button-legend">Write a review</p>
         </button>
-        <button v-if="userHasReview" @click="showEditReview()" type="button">
+        <button v-if="showForm" @click="showEditReview()" type="button">
           <i class="fas fa-comments editReview"></i>
           <p class="button-legend">Edit your review</p>
         </button>
       </div>
+
       <ReviewsForm
+        @fetchNewData_All="fetchNewData_All"
+        @userReview="userReview"
         @hideReviewForm="hideReviewForm"
-        v-if="showForm"
+        @reviewChecker="reviewChecker"
+        v-if="showHideAdd"
         :game="game"
         :logged="logged"
         :userId="userId"
       />
+
       <ReviewsForm
+        @fetchNewData_All="fetchNewData_All"
+        @userReview="userReview"
         @hideReviewForm="hideReviewForm"
-        v-if="showEdit"
-        :loggedUserReview="loggedUserReview"
+        v-if="showHideEdit"
+        :loggedUserReview="editReview"
         :game="game"
         :userId="userId"
+        :reviewChecker="userHasReview"
       />
 
       <div class="tracker offline" v-if="!logged">
@@ -162,6 +170,8 @@
           :game="game"
           :userId="userId"
           :logged="logged"
+          :fetchNewDataUser="fetchNewDataUser"
+          :fetchNewDataAll="fetchNewDataAll"
         />
         <hr />
       </div>
@@ -191,12 +201,14 @@ export default {
       emptyOwned: false,
       emptyFavorite: false,
       emptyWished: false,
-      showForm: false,
-      showEdit: false,
       loadingTracker: true,
+      showHideAdd: null,
+      showHideEdit: null,
       about: "hide",
       userHasReview: false,
       loggedUserReview: "",
+      fetchNewDataUser: null,
+      fetchNewDataAll: null,
     };
   },
   computed: {
@@ -206,20 +218,22 @@ export default {
     userId() {
       return this.$store.state.user_id;
     },
-
     hideShowClass() {
       return "fas fa-angle" + (this.about === "hide" ? "-right" : "-down");
+    },
+    showForm() {
+      return this.userHasReview;
+    },
+    editReview() {
+      return this.loggedUserReview;
     },
   },
 
   watch: {
     game(newVal, oldVal) {
       if (this.logged) {
-        console.log("jogo: " + newVal);
-        console.log("online");
         this.fetchTrackedSpecific(newVal.id, this.userId);
       } else {
-        console.log("offline");
       }
     },
   },
@@ -227,24 +241,30 @@ export default {
     await this.gameRequest();
   },
   methods: {
+    fetchNewData_All(reviews) {
+      this.fetchNewDataAll = reviews;
+    },
     reviewChecker(checker) {
       this.userHasReview = checker;
     },
     changeAbout() {
       this.about = this.about === "hide" ? "show" : "hide";
     },
-    showReviewForm() {
-      this.showForm = true;
+
+    showAddReview() {
+      this.showHideAdd = true;
     },
     showEditReview() {
-      this.showEdit = true;
+      this.showHideEdit = true;
     },
     userReview(review) {
       this.loggedUserReview = review;
+      this.fetchNewDataUser = review;
     },
+    //usado no botão de x do formulário
     hideReviewForm() {
-      this.showForm = false;
-      this.showEdit = false;
+      this.showHideAdd = false;
+      this.showHideEdit = false;
     },
     async gameRequest() {
       const response = await axios.get(
@@ -294,29 +314,19 @@ export default {
         this.wishListedGame = response.data.wishlisted_game;
         if (this.ownedGame == null) {
           this.emptyOwned = true;
-          console.log("game  not owned");
         } else {
           this.emptyOwned = false;
-          console.log("game owned");
         }
         if (this.favoriteGame == null) {
-          console.log("game not favorite");
           this.emptyFavorite = true;
         } else {
-          console.log("gam favorited");
           this.emptyFavorite = false;
         }
         if (this.wishListedGame == null) {
-          console.log("game not wishlisted");
           this.emptyWished = true;
         } else {
-          console.log("game is wishlisted");
-
           this.emptyWished = false;
         }
-        console.log(this.ownedGame);
-        console.log(this.favoriteGame);
-        console.log(this.wishListedGame);
       } catch (error) {
         console.log(error);
       }

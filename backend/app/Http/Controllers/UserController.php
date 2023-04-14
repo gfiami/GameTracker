@@ -135,7 +135,26 @@ class UserController extends Controller
             'rating' => $rating,
         ]);
 
+        //mandar de volta as reviews atualizadas
+            $reviews = Review::where('game_api_id', $game_api_id)
+            ->where('approved', 1)
+            ->with('user')
+            ->get();
+
+            $reviewsData = $reviews->map(function($review) {
+                return [
+                    'user_id' => $review->user_id,
+                    'username' => $review->user->name,
+                    'review' => $review->review,
+                    //depois lembrar de por coisa para imagem que o user terá! para mostrar na review uma imagemzinha
+                    'rating' => $review->rating,
+                    'created_at' => $review->created_at,
+                    'updated_at' => $review->updated_at
+                ];
+            });
+
         return response()->json([
+            'reviews' => $reviewsData,
             'message' => 'Your review was submited successfully!',
         ]);
     }catch (ValidationException $e) {
@@ -167,7 +186,26 @@ class UserController extends Controller
                 $review->review = $review_text;
                 $review->rating = $rating;
                 $review->save();
-                return response()->json([
+                //mandar de volta as reviews atualizadas
+            $reviews = Review::where('game_api_id', $game_api_id)
+            ->where('approved', 1)
+            ->with('user')
+            ->get();
+
+            $reviewsData = $reviews->map(function($review) {
+                return [
+                    'user_id' => $review->user_id,
+                    'username' => $review->user->name,
+                    'review' => $review->review,
+                    //depois lembrar de por coisa para imagem que o user terá! para mostrar na review uma imagemzinha
+                    'rating' => $review->rating,
+                    'created_at' => $review->created_at,
+                    'updated_at' => $review->updated_at
+                ];
+            });
+
+        return response()->json([
+            'reviews' => $reviewsData,
                     'message' => 'Your review was edited successfully!',
                 ]);
             }else {

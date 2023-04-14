@@ -1,6 +1,8 @@
 <template>
   <div id="reviewArticles">
     <h1>review articles</h1>
+    <h2>User review: {{ changeUserReview }}</h2>
+    <h2>Todas reviews: {{ changeAllReviews }}</h2>
   </div>
 </template>
 
@@ -9,11 +11,40 @@ import axios from "axios";
 
 export default {
   name: "ReviewsArticles",
-  props: { game: "", userId: "", logged: Boolean },
+  props: {
+    game: "",
+    userId: "",
+    logged: Boolean,
+    fetchNewDataUser: null,
+    fetchNewDataAll: null,
+  },
   data() {
     return {
-      userHasReview: false,
+      reviews: null,
+      userReview: null,
     };
+  },
+  computed: {
+    changeUserReview() {
+      console.log("user reviews: ");
+      console.log(this.fetchNewDataUser);
+
+      if (this.fetchNewDataUser !== null) {
+        return (this.userReview = this.fetchNewDataUser);
+      } else {
+        return this.userReview;
+      }
+    },
+    changeAllReviews() {
+      console.log("all reviews: ");
+      console.log(this.fetchNewDataAll);
+
+      if (this.fetchNewDataAll !== null) {
+        return (this.reviews = this.fetchNewDataAll);
+      } else {
+        return this.reviews;
+      }
+    },
   },
   methods: {
     async fetchReviews(game) {
@@ -27,15 +58,18 @@ export default {
           }
         );
         console.log(response.data);
+        this.reviews = response.data;
 
+        //Se o usuario estiver logado, irá pegar a review dele.
         if (this.logged) {
-          response.data.forEach((review) => {
+          for (const review of response.data) {
             if (this.userId == review.user_id) {
-              this.userHasReview = true;
               this.$emit("userReview", review);
+              this.userReview = review;
+              this.$emit("reviewChecker", true);
+              break;
             }
-          });
-          this.$emit("reviewChecker", this.userHasReview);
+          }
         }
       } catch (error) {
         console.log(error);

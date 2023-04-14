@@ -1,7 +1,7 @@
 <template>
   <div id="review">
     <!-- edit review -->
-    <div v-if="loggedUserReview !== null" class="form-container">
+    <div v-if="reviewChecker" class="form-container">
       <form class="review-form" action="" method="post" @submit.prevent>
         <div class="form-data-container">
           <div class="simple-container">
@@ -100,6 +100,7 @@ export default {
     logged: Boolean,
     userId: "",
     loggedUserReview: null,
+    reviewChecker: null,
   },
   data() {
     return {
@@ -132,7 +133,17 @@ export default {
           }
         );
         //aqui recebo o que o laravel me retornou
-        console.log(response);
+        console.log("no edit");
+        console.log(response.data.reviews);
+        this.$emit("fetchNewData_All", response.data.reviews);
+
+        for (const review of response.data.reviews) {
+          if (this.userId == review.user_id) {
+            this.$emit("userReview", review);
+            break;
+          }
+        }
+
         this.$emit("hideReviewForm");
         this.review = null;
         this.rating = null;
@@ -158,7 +169,16 @@ export default {
           }
         );
         //aqui recebo o que o laravel me retornou
-        console.log(response);
+        console.log(response.data);
+        this.$emit("fetchNewData_All", response.data.reviews);
+        for (const review of response.data.reviews) {
+          if (this.userId == review.user_id) {
+            this.$emit("userReview", review);
+            this.$emit("reviewChecker", true);
+            break;
+          }
+        }
+
         this.$emit("hideReviewForm");
         this.review = null;
         this.rating = null;
