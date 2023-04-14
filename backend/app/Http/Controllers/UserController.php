@@ -92,22 +92,24 @@ class UserController extends Controller
     public function fetchReviews(Request $request){
         try {
             $game_api_id = $request->input('game_api_id');
-
-            //pega em reviews: user_id, review, rating
-            //pega em users: username
-            //join serve para pegar os username só onde user.id e use_id das reviews forem iguais
-            //além de só pegar as reviews "aprovadas" (que por enquanto o padrão é todas aprovadas)
-            /*$reviews = Review::select('reviews.user_id', 'reviews.review', 'reviews.rating', 'users.username', )
-                 ->join('users', 'reviews.user_id', '=', 'users.id')
-                 ->where('reviews.approved', 1)
-                 ->where('reviews.game_api_id', $game_api_id)
-                 ->get();
-*/
             $reviews = Review::where('game_api_id', $game_api_id)
             ->where('approved', 1)
+            ->with('user')
             ->get();
+            $reviewsData = $reviews->map(function($review) {
+                return [
+                    'user_id' => $review->user_id,
+                    'username' => $review->user->name,
+                    'review' => $review->review,
+                    //depois lembrar de por coisa para imagem que o user terá! para mostrar na review uma imagemzinha
+                    'rating' => $review->rating,
+                    'created_at' => $review->created_at,
+                    'updated_at' => $review->updated_at
+                ];
+            });
 
-            return response()->json($reviews);
+            return response()->json($reviewsData);
+
 
         } catch (\Exception $e) {
             return response()->json(['Erro na requisição' => $e->getMessage()], 500);
