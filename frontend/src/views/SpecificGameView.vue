@@ -67,10 +67,17 @@
         </div>
       </div>
       <div class="description-container">
-        <h3 class="description-title">About this game</h3>
+        <h3 class="description-title">
+          About this game
+          <span class="hideShowAbout"
+            ><i @click="changeAbout()" :class="hideShowClass"></i
+          ></span>
+        </h3>
         <hr />
-        <p class="description">{{ game.description_raw }}</p>
-        <hr />
+        <p v-show="about == 'show'" class="description">
+          {{ game.description_raw }}
+        </p>
+        <hr v-show="about == 'show'" />
       </div>
       <!-- logged details -->
       <div class="tracker online" v-if="logged && !showForm">
@@ -167,6 +174,7 @@ export default {
       emptyWished: false,
       showForm: false,
       loadingTracker: true,
+      about: "hide",
     };
   },
   computed: {
@@ -175,6 +183,10 @@ export default {
     },
     userId() {
       return this.$store.state.user_id;
+    },
+
+    hideShowClass() {
+      return "fas fa-angle" + (this.about === "hide" ? "-right" : "-down");
     },
   },
 
@@ -206,6 +218,9 @@ export default {
     await this.gameRequest();
   },
   methods: {
+    changeAbout() {
+      this.about = this.about === "hide" ? "show" : "hide";
+    },
     showReviewForm() {
       this.showForm = true;
     },
@@ -484,6 +499,9 @@ export default {
 .title-container {
   width: 70%;
   margin: 0 auto;
+}
+.hideShowAbout {
+  cursor: pointer;
 }
 .title {
   padding: 4vh;

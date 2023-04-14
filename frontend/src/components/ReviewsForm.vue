@@ -4,11 +4,14 @@
     <div class="form-container" v-if="logged">
       <form class="review-form" action="" method="post" @submit.prevent>
         <div class="form-data-container">
-          <button @click="$emit('hideReviewForm')">Close</button>
-
-          <label for="review" class="review"
-            >Write a review for {{ game.name }}</label
-          >
+          <div class="simple-container">
+            <label for="review" class="review"
+              >Write a review for {{ game.name }}</label
+            >
+            <button class="closeReview" @click="$emit('hideReviewForm')">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
           <p class="review-tips">
             Write what you like or dislike about the game. Be polite and follow
             the <u class="link">Review Rules</u>.
@@ -59,8 +62,10 @@ export default {
         );
         //aqui recebo o que o laravel me retornou
         console.log(response);
+        this.$emit("hideReviewForm");
       } catch (error) {
         //caso haja erro
+        this.$emit("hideReviewForm");
         console.log(error.response.data.message);
         console.log(error.response.data.validation);
         //aqui vai mostrar os erros pra cada uma das validações!
@@ -73,20 +78,21 @@ export default {
 
 <style scoped>
 #review {
-  margin: 10px;
+  margin: 2.5vh;
 }
 .review-tips {
-  font-size: 12px;
+  font-size: 2vh;
   color: #ffffffa4;
   font-weight: 300;
   text-shadow: 1px 1px #000;
-  padding: 2px;
+  padding: 0.5vh;
 }
 .link {
   cursor: pointer;
 }
 .form-container {
-  padding: 20px;
+  padding: 2vh 4vh;
+  width: 60vw;
   max-width: 60%;
   height: auto;
   background: rgba(48, 25, 189, 0.62);
@@ -103,7 +109,7 @@ export default {
   align-content: center;
 }
 .review {
-  font-size: 14px;
+  font-size: 3vh;
   font-weight: 400;
   text-shadow: 1px 1px #000;
   align-self: flex-start;
@@ -111,18 +117,50 @@ export default {
 .review-button {
   background: #1abc9c;
   border-radius: 6px;
-  height: 50px;
-  width: 125px;
+  height: 7vh;
+  width: 11vw;
+  padding: 1vh;
   align-self: flex-end;
   cursor: pointer;
+  font-size: 1.8vh;
 }
 
 .form-data-container textarea {
   width: 100%;
-  padding: 5px;
+  padding: 0.5vh;
   border: 1px solid #d9ff42;
+  font-size: 2vh;
   outline: none;
   resize: none;
   align-self: center;
+}
+.simple-container {
+  display: flex;
+  justify-content: space-between;
+}
+.form-data-container .closeReview {
+  border: none;
+  box-shadow: none;
+  outline: none;
+  background: none;
+  align-self: flex-end;
+  color: #fff;
+  padding: 1.5vh;
+  font-size: 2vh;
+  cursor: pointer;
+}
+
+/* TELAS MENORES */
+@media screen and (max-width: 768px) {
+  .form-container {
+    width: 90vw;
+    max-width: 90%;
+    padding: 1vh 2vh;
+  }
+  .review-button {
+    height: 7vh;
+    width: 25vw;
+    padding: 1vh;
+  }
 }
 </style>
