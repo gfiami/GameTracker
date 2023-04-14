@@ -1,6 +1,50 @@
 <template>
   <div id="review">
-    <!-- <p>Teste: {{ game }}</p>-->
+    <!-- edit review -->
+    <div v-if="loggedUserReview !== null" class="form-container">
+      <form class="review-form" action="" method="post" @submit.prevent>
+        <div class="form-data-container">
+          <div class="simple-container">
+            <label for="review" class="review"
+              >Edit your review for {{ game.name }}</label
+            >
+            <button
+              type="button"
+              class="closeReview"
+              @click="$emit('hideReviewForm')"
+            >
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <p class="review-tips">
+            Write what you like or dislike about the game. Be polite and follow
+            the <u class="link">Review Rules</u>.
+          </p>
+          <textarea
+            :placeholder="loggedUserReview.review"
+            cols="30"
+            rows="10"
+            maxlength="1000"
+            v-model="review"
+            id="editReview"
+          ></textarea>
+          <div class="thumbs-container">
+            <i class="thumbs fas fa-thumbs-up" ref="thumbsUp" @click="like"></i>
+            <i
+              class="thumbs fas fa-thumbs-down"
+              ref="thumbsDown"
+              @click="dislike"
+            ></i>
+          </div>
+
+          <button class="review-button" @click="editReview" type="button">
+            Edit Review
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- create review -->
     <div class="form-container" v-if="logged">
       <form class="review-form" action="" method="post" @submit.prevent>
         <div class="form-data-container">
@@ -43,7 +87,6 @@
         </div>
       </form>
     </div>
-    <div class="reviews-container"></div>
   </div>
 </template>
 
@@ -56,6 +99,7 @@ export default {
     game: "", //id do jogo
     logged: Boolean,
     userId: "",
+    loggedUserReview: null,
   },
   data() {
     return {
@@ -76,6 +120,31 @@ export default {
       event.target.style.color = "rgba(250, 45, 45, 0.849)";
       this.rating = "negative";
     },
+    async editReview() {
+      try {
+        const response = await axios.put(
+          `${process.env.VUE_APP_APIURL}edit-review`,
+          {
+            user_id: this.userId,
+            game_api_id: this.game.id,
+            review: this.review,
+            rating: this.rating,
+          }
+        );
+        //aqui recebo o que o laravel me retornou
+        console.log(response);
+        this.$emit("hideReviewForm");
+        this.review = null;
+        this.rating = null;
+      } catch (error) {
+        //caso haja erro
+        this.$emit("hideReviewForm");
+        console.log(error.response.data.message);
+        console.log(error.response.data.validation);
+        //aqui vai mostrar os erros pra cada uma das validações!
+        console.log(error.response.data.errors);
+      }
+    },
 
     async submitReview() {
       try {
@@ -91,6 +160,8 @@ export default {
         //aqui recebo o que o laravel me retornou
         console.log(response);
         this.$emit("hideReviewForm");
+        this.review = null;
+        this.rating = null;
       } catch (error) {
         //caso haja erro
         this.$emit("hideReviewForm");
@@ -105,7 +176,8 @@ export default {
 </script>
 
 <style scoped>
-#review {
+#review,
+#editReview {
   margin: 2.5vh;
 }
 .review-tips {

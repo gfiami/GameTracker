@@ -29,6 +29,7 @@ Route::get('/userinfo/{id}',[UserController::class, 'userInfo']);
 
 //review
 Route::post('/add-review', [UserController::class, 'addReview']);
+Route::put('/edit-review',[UserController::class, 'editReview']);
 Route::get('/fetch-game-reviews', [UserController::class, 'fetchReviews']);
 
 //owned relations

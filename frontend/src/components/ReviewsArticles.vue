@@ -26,20 +26,16 @@ export default {
             },
           }
         );
-        console.log("pegando reviews");
         console.log(response.data);
 
         if (this.logged) {
-          console.log("online, checando se tem review...");
           response.data.forEach((review) => {
             if (this.userId == review.user_id) {
               this.userHasReview = true;
-              console.log("tem review");
+              this.$emit("userReview", review);
             }
           });
-        }
-        if (!this.userHasReview) {
-          console.log("user não tem review");
+          this.$emit("reviewChecker", this.userHasReview);
         }
       } catch (error) {
         console.log(error);

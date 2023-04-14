@@ -146,7 +146,44 @@ class UserController extends Controller
     ], 422);
 }
     }
+    //edit review
+    public function editReview(Request $request){
+        try{
+            $validateReviewInfo = $request->validate([
+                'review' => 'required|string|max:1000',
+                'rating' => 'required|string|max:10',
 
+            ]);
+            $user_id = $request->input('user_id');
+            $game_api_id = $request->input('game_api_id');
+            $review_text = $request->input('review');
+            $rating = $request->input('rating');
+
+
+            $review = Review::where('user_id', $user_id)
+                            ->where('game_api_id', $game_api_id)
+                            ->first();
+            if($review){
+                $review->review = $review_text;
+                $review->rating = $rating;
+                $review->save();
+                return response()->json([
+                    'message' => 'Your review was edited successfully!',
+                ]);
+            }else {
+                return response()->json([
+                    'message' => 'Review not found',
+                ], 404);
+            }
+
+        }catch (ValidationException $e) {
+        return response()->json([
+            'message' => 'Validation error',
+            'validation' => $e->getMessage(),
+            'errors' => $e->errors(),
+        ], 422);
+    }
+        }
 
     //get user info
     public function userInfo($id){

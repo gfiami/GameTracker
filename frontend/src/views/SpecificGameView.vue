@@ -124,9 +124,13 @@
           <i class="far fa-star addFavorite"></i>
           <p class="button-legend">Add favorite</p>
         </button>
-        <button @click="showReviewForm()" type="button">
+        <button v-if="!userHasReview" @click="showReviewForm()" type="button">
           <i class="fas fa-comments showReview"></i>
           <p class="button-legend">Write a review</p>
+        </button>
+        <button v-if="userHasReview" @click="showEditReview()" type="button">
+          <i class="fas fa-comments editReview"></i>
+          <p class="button-legend">Edit your review</p>
         </button>
       </div>
       <ReviewsForm
@@ -136,6 +140,14 @@
         :logged="logged"
         :userId="userId"
       />
+      <ReviewsForm
+        @hideReviewForm="hideReviewForm"
+        v-if="showEdit"
+        :loggedUserReview="loggedUserReview"
+        :game="game"
+        :userId="userId"
+      />
+
       <div class="tracker offline" v-if="!logged">
         <router-link to="/login">Login</router-link> or
         <router-link to="/register">Register</router-link> to track your games
@@ -144,7 +156,13 @@
       <div class="review-container">
         <h3 class="review-title">Reviews</h3>
         <hr />
-        <ReviewsArticles :game="game" :userId="userId" :logged="logged" />
+        <ReviewsArticles
+          @reviewChecker="reviewChecker"
+          @userReview="userReview"
+          :game="game"
+          :userId="userId"
+          :logged="logged"
+        />
         <hr />
       </div>
     </div>
@@ -174,8 +192,11 @@ export default {
       emptyFavorite: false,
       emptyWished: false,
       showForm: false,
+      showEdit: false,
       loadingTracker: true,
       about: "hide",
+      userHasReview: false,
+      loggedUserReview: "",
     };
   },
   computed: {
@@ -206,14 +227,24 @@ export default {
     await this.gameRequest();
   },
   methods: {
+    reviewChecker(checker) {
+      this.userHasReview = checker;
+    },
     changeAbout() {
       this.about = this.about === "hide" ? "show" : "hide";
     },
     showReviewForm() {
       this.showForm = true;
     },
+    showEditReview() {
+      this.showEdit = true;
+    },
+    userReview(review) {
+      this.loggedUserReview = review;
+    },
     hideReviewForm() {
       this.showForm = false;
+      this.showEdit = false;
     },
     async gameRequest() {
       const response = await axios.get(
