@@ -141,11 +141,10 @@
         <router-link to="/register">Register</router-link> to track your games
         and write reviews.
       </div>
-      <!-- logged details -->
       <div class="review-container">
         <h3 class="review-title">Reviews</h3>
         <hr />
-
+        <ReviewsArticles :game="game" :userId="userId" :logged="logged" />
         <hr />
       </div>
     </div>
@@ -155,11 +154,13 @@
 <script>
 import axios from "axios";
 import ReviewsForm from "../components/ReviewsForm.vue";
+import ReviewsArticles from "../components/ReviewsArticles.vue";
 
 export default {
   name: "SpecificGameView",
   components: {
     ReviewsForm,
+    ReviewsArticles,
   },
   data() {
     return {
@@ -192,26 +193,13 @@ export default {
 
   watch: {
     game(newVal, oldVal) {
-      console.log("Usuario: " + this.userId);
-      console.log(newVal);
-      // Promise.all([
       if (this.logged) {
+        console.log("jogo: " + newVal);
         console.log("online");
-        this.fetchTrackedSpecific(newVal, this.userId);
+        this.fetchTrackedSpecific(newVal.id, this.userId);
       } else {
         console.log("offline");
       }
-      /*]).then((values) => {
-        const owned_fetcher = this.ownedIds;
-        const wished_fetcher = this.wishedIds;
-        const favorte_fetcher = this.favoriteIds;
-        const fetcher = [].concat(
-          owned_fetcher,
-          wished_fetcher,
-          favorte_fetcher
-        );
-        this.allGamesUserTracked(fetcher);
-      });*/
     },
   },
   async mounted() {

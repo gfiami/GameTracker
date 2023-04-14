@@ -8,7 +8,11 @@
             <label for="review" class="review"
               >Write a review for {{ game.name }}</label
             >
-            <button class="closeReview" @click="$emit('hideReviewForm')">
+            <button
+              type="button"
+              class="closeReview"
+              @click="$emit('hideReviewForm')"
+            >
               <i class="fas fa-times"></i>
             </button>
           </div>
@@ -24,6 +28,15 @@
             v-model="review"
             id="review"
           ></textarea>
+          <div class="thumbs-container">
+            <i class="thumbs fas fa-thumbs-up" ref="thumbsUp" @click="like"></i>
+            <i
+              class="thumbs fas fa-thumbs-down"
+              ref="thumbsDown"
+              @click="dislike"
+            ></i>
+          </div>
+
           <button class="review-button" @click="submitReview" type="button">
             Post Review
           </button>
@@ -47,9 +60,23 @@ export default {
   data() {
     return {
       review: null,
+      rating: null,
     };
   },
   methods: {
+    like(event) {
+      const dislike = this.$refs.thumbsDown;
+      dislike.style.color = "";
+      event.target.style.color = "rgba(45, 250, 45, 0.849)";
+      this.rating = "positive";
+    },
+    dislike(event) {
+      const like = this.$refs.thumbsUp;
+      like.style.color = "";
+      event.target.style.color = "rgba(250, 45, 45, 0.849)";
+      this.rating = "negative";
+    },
+
     async submitReview() {
       try {
         const response = await axios.post(
@@ -58,6 +85,7 @@ export default {
             user_id: this.userId,
             game_api_id: this.game.id,
             review: this.review,
+            rating: this.rating,
           }
         );
         //aqui recebo o que o laravel me retornou
@@ -148,6 +176,18 @@ export default {
   padding: 1.5vh;
   font-size: 2vh;
   cursor: pointer;
+}
+.thumbs-container {
+  display: flex;
+  width: 30%;
+  max-width: 80%;
+  cursor: pointer;
+  margin: 0 auto;
+  justify-content: space-around;
+}
+.thumbs {
+  padding: 1.5vh;
+  font-size: 2.5vh;
 }
 
 /* TELAS MENORES */

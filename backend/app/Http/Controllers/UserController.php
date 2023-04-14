@@ -89,20 +89,48 @@ class UserController extends Controller
         }
     }
     // REVIEW
+    public function fetchReviews(Request $request){
+        try {
+            $game_api_id = $request->input('game_api_id');
 
+            //pega em reviews: user_id, review, rating
+            //pega em users: username
+            //join serve para pegar os username só onde user.id e use_id das reviews forem iguais
+            //além de só pegar as reviews "aprovadas" (que por enquanto o padrão é todas aprovadas)
+            /*$reviews = Review::select('reviews.user_id', 'reviews.review', 'reviews.rating', 'users.username', )
+                 ->join('users', 'reviews.user_id', '=', 'users.id')
+                 ->where('reviews.approved', 1)
+                 ->where('reviews.game_api_id', $game_api_id)
+                 ->get();
+*/
+            $reviews = Review::where('game_api_id', $game_api_id)
+            ->where('approved', 1)
+            ->get();
+
+            return response()->json($reviews);
+
+        } catch (\Exception $e) {
+            return response()->json(['Erro na requisição' => $e->getMessage()], 500);
+        }
+    }
     public function addReview(Request $request){
     try{
         $validateReviewInfo = $request->validate([
-            'review' => 'required|string|max:1000'
+            'review' => 'required|string|max:1000',
+            'rating' => 'required|string|max:10',
+
         ]);
         $user_id = $request->input('user_id');
         $game_api_id = $request->input('game_api_id');
         $review_text = $request->input('review');
+        $rating = $request->input('rating');
+
 
         $review = Review::create([
             'user_id' => $user_id,
             'game_api_id' => $game_api_id,
             'review' => $review_text,
+            'rating' => $rating,
         ]);
 
         return response()->json([
@@ -358,7 +386,6 @@ class UserController extends Controller
         try {
             $user_id = $request->input('user_id');
             $game_api_id = $request->input('game_api_id');
-
             $owned_game = OwnedGame::where('user_id', $user_id)
             ->where('game_api_id', $game_api_id)
             ->first();

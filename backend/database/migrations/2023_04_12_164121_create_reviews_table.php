@@ -17,6 +17,8 @@ class CreateReviewsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id'); //usuario que fez a review
             $table->unsignedBigInteger('game_api_id'); //id do jogo que corresponde a review
+            $table->string('rating', 10);
+            $table->boolean('approved')->nullable()->default(true);
             $table->timestamps();
 
             //aqio coloca uma chave estrangeira user_id que faz referencia ao id de usuarios
