@@ -67,11 +67,9 @@
         </div>
       </div>
       <div class="description-container">
-        <h3 class="description-title">
+        <h3 @click="changeAbout()" class="description-title hideShowAbout">
           About this game
-          <span class="hideShowAbout"
-            ><i @click="changeAbout()" :class="hideShowClass"></i
-          ></span>
+          <span><i :class="hideShowClass"></i></span>
         </h3>
         <hr />
         <p v-show="about == 'show'" class="description">
@@ -157,9 +155,11 @@
       />
 
       <div class="tracker offline" v-if="!logged">
-        <router-link to="/login">Login</router-link> or
-        <router-link to="/register">Register</router-link> to track your games
-        and write reviews.
+        <p class="offline-text">
+          <router-link to="/login">Login</router-link> or
+          <router-link to="/register">Register</router-link> to track your games
+          and write reviews.
+        </p>
       </div>
       <div class="review-container">
         <h3 class="review-title">Reviews</h3>
@@ -469,8 +469,13 @@ export default {
   justify-content: center;
   gap: 30px;
 }
-
-/* estilos para telas médias */
+div .offline {
+  width: 100%;
+  display: inline;
+}
+.offline-text {
+  text-align: center;
+}
 
 .tracker button {
   background: none;
@@ -483,6 +488,11 @@ export default {
   font-size: 4vh;
   margin: 0.5vh;
   text-shadow: 2px 2px 4px #000000;
+}
+
+.tracker a {
+  font: inherit;
+  font-size: 2.2vh;
 }
 .button-legend {
   text-align: center;
@@ -508,9 +518,10 @@ export default {
 .offline {
   background-color: rgba(0, 0, 0, 0.315);
   padding: 20px;
-  font-size: 4vh;
+  font-size: 2.2vh;
   margin: 10px;
 }
+
 .offline a {
   color: #6842ff;
   font-weight: 500;
@@ -546,7 +557,7 @@ export default {
 .description-title,
 .review-title {
   text-shadow: 1px 1px #000;
-  font-size: 5vh;
+  font-size: 4vh;
 }
 .description {
   font-size: 2.2vh;
@@ -593,11 +604,7 @@ hr {
   text-shadow: 1px 1px #000;
   padding-left: 10px;
 }
-@media screen and (max-width: 768px) {
-  .info-container {
-    width: 100%;
-  }
-}
+
 .secondary-container {
   width: 100%;
 }
@@ -680,6 +687,10 @@ img {
 
 /* TELAS MENORES */
 @media screen and (max-width: 768px) {
+  .tracker .offline {
+    display: inline;
+    margin: 0 auto;
+  }
   .tracker button {
     width: 100%;
   }
@@ -745,8 +756,5 @@ img {
     display: flex;
     flex-direction: column;
   }
-}
-@media screen and (max-width: 480px) {
-  /* */
 }
 </style>
