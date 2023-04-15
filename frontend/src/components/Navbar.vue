@@ -37,7 +37,13 @@ export default {
       this.$store.commit("logout", false);
       localStorage.removeItem("gameTrackerUserToken");
       localStorage.removeItem("user_id");
-      this.$router.push("/");
+      this.$router.push({
+        path: "/",
+        query: {
+          messageLogout:
+            "Your logout was successful. Come back soon to track and review your games on GameTracker!",
+        },
+      });
     },
     username(name) {
       this.userName = name;

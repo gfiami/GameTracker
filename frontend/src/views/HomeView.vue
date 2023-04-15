@@ -1,7 +1,11 @@
 <template>
   <div class="main-wrapper">
     <h1>HOME</h1>
-    <Message :messageLogin="messageLogin" :loginSuccess="loginSuccess" />
+    <Message
+      :messageLogin="messageLogin"
+      :loginSuccess="loginSuccess"
+      :messageLogout="messageLogout"
+    />
   </div>
 </template>
 
@@ -16,8 +20,22 @@ export default {
       loginSuccess: this.$route.query.loginSuccess || null,
     };
   },
+  computed: {
+    messageLogout() {
+      return this.$route.query.messageLogout || null;
+    },
+  },
   components: {
     Message,
+  },
+  mounted() {
+    if (this.messageLogin || this.messageLogout) {
+      setTimeout(() => {
+        this.messageLogin = null;
+        this.messageLogout = null;
+        this.loginSuccess = null;
+      }, 4000);
+    }
   },
 };
 </script>
