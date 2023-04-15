@@ -53,8 +53,16 @@
             \/ coisas que aparecem on hover \/ -->
       <div class="game-hover">
         <p v-if="!logged" class="login-register-offline">
-          <router-link to="/login">Login</router-link> or
-          <router-link to="/register">Register</router-link> to track your games
+          <router-link
+            :to="{ path: '/login', query: { redirect: $route.path } }"
+            >Login</router-link
+          >
+          or
+          <router-link
+            :to="{ path: '/register', query: { redirect: $route.path } }"
+            >Register</router-link
+          >
+          to track your games
         </p>
         <p
           v-if="logged && !ownProfile && !gameRoute"

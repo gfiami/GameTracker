@@ -101,12 +101,14 @@ export default {
             password_confirmation: this.passwordConfirmation,
           }
         );
-        //aqui recebo o que o laravel me retornou
-        console.log(response);
+        const redirect = this.$route.query.redirect || "/";
+
         this.$router.push({
           path: "/login",
           query: {
-            message: "Your GameTracker account has been successfully created!",
+            redirect: redirect,
+            loginSuccess: "true",
+            messageLogin: `${this.$store.state.token} `,
           },
         });
       } catch (error) {

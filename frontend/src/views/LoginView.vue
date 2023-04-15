@@ -84,8 +84,10 @@ export default {
         //chama a função do store.js que é a setlogged que importei no method
         this.$store.commit("login", true);
         //redirecionar para algum lugar pois deu certo o login!
+        const redirect = this.$route.query.redirect || "/";
+
         this.$router.push({
-          path: "/",
+          path: redirect,
           query: {
             loginSuccess: "true",
             messageLogin: `${this.$store.state.token} `,
