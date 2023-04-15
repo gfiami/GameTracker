@@ -103,7 +103,7 @@ export default {
         );
         //aqui recebo o que o laravel me retornou
         console.log(response);
-        const redirect = this.$route.query.redirect || ";";
+        const redirect = this.$route.query.redirect || "/";
         this.$router.push({
           path: "/login",
           query: {

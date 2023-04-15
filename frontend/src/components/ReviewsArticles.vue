@@ -45,8 +45,8 @@
       <h3 class="review-title" v-if="changeUserReview">
         Reviews from other users
       </h3>
-      <div v-for="review in reviews" :key="review.id">
-        <div class="review-container" v-if="!(userId == review.user_id)">
+      <div v-for="review in paginatedReviews" :key="review.id">
+        <div class="review-container">
           <div class="container-left">
             <div class="personnal-info">
               <router-link
@@ -83,14 +83,25 @@
         </div>
       </div>
     </div>
+    <div class="pages">
+      <PaginationReview
+        :totalPages="totalPages"
+        :currentPage="currentPage"
+        @goToPage="goToPage"
+      />
+    </div>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import PaginationReview from "./PaginationReview.vue";
 
 export default {
   name: "ReviewsArticles",
+  components: {
+    PaginationReview,
+  },
   props: {
     game: "",
     userId: "",
@@ -101,10 +112,38 @@ export default {
   data() {
     return {
       reviews: null,
+      filteredReviews: [],
       userReview: null,
+      currentPage: 1,
+      reviewsPerPage: 5,
     };
   },
   computed: {
+    paginatedReviews() {
+      const startIndex = (this.currentPage - 1) * this.reviewsPerPage;
+      let filteredReviews = this.reviews;
+      if (this.changeUserReview !== null) {
+        filteredReviews = this.reviews.filter(
+          (review) => review.user_id !== this.userReview.user_id
+        );
+      }
+      const endIndex = startIndex + this.reviewsPerPage;
+      this.filteredReviews = filteredReviews.slice(startIndex, endIndex);
+      if (this.filteredReviews.length == 0) {
+        return (this.filteredReviews = null);
+      }
+      return this.filteredReviews;
+    },
+    totalPages() {
+      if (this.changeAllReviews !== null) {
+        if (this.changeUserReview !== null) {
+          return (
+            Math.ceil(this.changeAllReviews.length / this.reviewsPerPage) - 1
+          );
+        }
+        return Math.ceil(this.changeAllReviews.length / this.reviewsPerPage);
+      }
+    },
     changeUserReview() {
       if (this.fetchNewDataUser !== null) {
         this.userReview = this.fetchNewDataUser;
@@ -149,6 +188,9 @@ export default {
     },
   },
   methods: {
+    goToPage(page) {
+      this.currentPage = page;
+    },
     async fetchReviews(game) {
       try {
         const response = await axios.get(
