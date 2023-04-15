@@ -199,6 +199,7 @@ hr {
   height: 10vh;
   width: auto;
   border-radius: 50%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 .review-title {
   font-weight: 300;
@@ -210,6 +211,8 @@ hr {
 .review-container {
   border-radius: 12px;
   margin: 0 auto;
+  box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.5), 0 0 40px 10px rgba(0, 0, 0, 0.2);
+
   background-color: #330066;
   padding: 2vh 5vw;
   width: 95%;
@@ -231,15 +234,15 @@ hr {
   gap: 1vh;
 }
 .rating {
-  padding: 2vh 3vw;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+  width: 60%;
+  align-self: center;
+  padding: 1.2vh 1.4vw;
   border-radius: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #161b3a;
-  width: 90%;
-  margin: 0 auto;
-
   max-width: 100%;
   max-height: 10vh;
   font-size: 2.2vh;
@@ -255,14 +258,13 @@ hr {
 .username {
   display: flex;
   align-items: flex-start;
+  font-size: 2.3vh;
 }
 .personnal-info a {
   display: flex;
   margin: 0 auto;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 0.6vw;
-  padding: 2vh 2vw;
-  width: 40%;
   font-size: 2.6vh;
   text-decoration: none;
   transition: 0.4s;
@@ -292,7 +294,7 @@ hr {
   .container-left {
     flex-direction: row;
     gap: 2vw;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     margin: 0;
   }
@@ -321,7 +323,7 @@ hr {
     gap: 2vw;
   }
   .rating {
-    width: 40%;
+    width: 50%;
   }
 }
 </style>
