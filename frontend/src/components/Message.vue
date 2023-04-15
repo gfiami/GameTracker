@@ -25,11 +25,11 @@ export default {
     };
   },
   mounted() {
-    /*if (this.message || this.messageLogin || this.messageLogout) {
+    if (this.message || this.messageLogin || this.messageLogout) {
       setTimeout(() => {
         this.showMessage = false;
       }, 4000);
-    }*/
+    }
   },
   computed: {
     logged() {
