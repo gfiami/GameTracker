@@ -180,7 +180,7 @@
           :fetchNewDataUser="fetchNewDataUser"
           :fetchNewDataAll="fetchNewDataAll"
         />
-        <hr />
+        <hr v-if="fetchNewDataAll" />
       </div>
     </div>
   </div>

@@ -40,11 +40,54 @@
     </div>
 
     <!-- all reviews, except user if exists -->
+
     <div v-if="changeAllReviews">
       <hr v-if="changeUserReview" />
-      <h3 class="review-title" v-if="changeUserReview">
+      <h3
+        id="otherUsers"
+        class="review-title"
+        v-if="changeUserReview && changeAllReviews.length - 1 == 0"
+      >
+        No reviews found from other users.
+      </h3>
+      <h3 id="otherUsers" class="review-title" v-else>
         Reviews from other users
       </h3>
+      <p
+        class="review-title"
+        v-if="
+          changeAllReviews.length <= 5 &&
+          changeUserReview &&
+          changeAllReviews.length - 1 !== 0
+        "
+      >
+        Showing 1 to {{ changeAllReviews.length - 1 }} of
+        {{ changeAllReviews.length - 1 }}
+      </p>
+      <p
+        class="review-title"
+        v-else-if="changeAllReviews.length <= 5 && changeUserReview == null"
+      >
+        Showing 1 to {{ changeAllReviews.length }} of
+        {{ changeAllReviews.length }}
+      </p>
+
+      <p
+        class="review-title"
+        v-else-if="changeUserReview && changeAllReviews.length - 1 != 0"
+      >
+        Showing {{ (currentPage - 1) * 5 + 1 }} to {{ currentPage * 5 }} of
+        {{ changeAllReviews.length - 1 }}
+      </p>
+      <p
+        class="review-title"
+        v-else-if="
+          changeUserReview == null && !changeAllReviews.length - 1 != 0
+        "
+      >
+        Showing {{ (currentPage - 1) * 5 + 1 }} to {{ currentPage * 5 }} of
+        {{ changeAllReviews.length }}
+      </p>
       <div v-for="review in paginatedReviews" :key="review.id">
         <div class="review-container">
           <div class="container-left">
@@ -153,6 +196,7 @@ export default {
       }
     },
     changeAllReviews() {
+      console.log("teste");
       if (this.fetchNewDataAll !== null) {
         this.reviews = this.fetchNewDataAll;
         return this.reviews;
@@ -190,6 +234,8 @@ export default {
   methods: {
     goToPage(page) {
       this.currentPage = page;
+      var section = document.querySelector("#otherUsers");
+      section.scrollIntoView();
     },
     async fetchReviews(game) {
       try {
@@ -201,7 +247,9 @@ export default {
             },
           }
         );
-        console.log(response.data);
+        if (response.data.length == 0) {
+          return false;
+        }
         this.reviews = response.data;
 
         //Se o usuario estiver logado, irá pegar a review dele.

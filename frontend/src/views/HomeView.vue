@@ -18,13 +18,10 @@ export default {
     return {
       messageLogin: this.$route.query.messageLogin || null,
       loginSuccess: this.$route.query.loginSuccess || null,
+      messageLogout: this.$route.query.messageLogout || null,
     };
   },
-  computed: {
-    messageLogout() {
-      return this.$route.query.messageLogout || null;
-    },
-  },
+
   components: {
     Message,
   },

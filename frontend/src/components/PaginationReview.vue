@@ -1,13 +1,107 @@
 <template>
   <div>
-    total: {{ totalPages }} atual: {{ currentPage }}
-    <div class="pagination" v-if="totalPages">
-      <button class="page-button" @click="changePage(2)">Previous</button>
-      <button class="page-button" @click="changePage(2)"></button>
-      <button class="page-button" @click="changePage(2)"></button>
-      <button class="page-button" @click="changePage(2)"></button>
-      <button class="page-button" @click="changePage()"></button>
-      <button></button>
+    <div class="pagination" id="desktop" v-if="totalPages">
+      <!-- pagina anterior -->
+      <button
+        v-if="previous"
+        class="page-button"
+        @click="changePage(currentPage - 1)"
+      >
+        Previous
+      </button>
+
+      <!-- pagina inicial se a página atual nao for 1 -->
+      <button
+        v-if="currentPage !== 1"
+        class="page-button"
+        @click="changePage(1)"
+      >
+        1
+      </button>
+      <span v-if="currentPage - 3 > 1">...</span>
+      <!-- pagina atual -2 -->
+      <button
+        v-if="currentPage - 2 > 1"
+        class="page-button"
+        @click="changePage(currentPage - 2)"
+      >
+        {{ currentPage - 2 }}
+      </button>
+      <!-- pagina atual - 1 -->
+      <button
+        v-if="currentPage - 1 > 1"
+        class="page-button"
+        @click="changePage(currentPage - 1)"
+      >
+        {{ currentPage - 1 }}
+      </button>
+      <!-- pagina atual -->
+      <button id="currentPage" class="page-button">{{ currentPage }}</button>
+
+      <!-- pagina atual mais um -->
+      <button
+        v-if="currentPage + 1 < totalPages"
+        class="page-button"
+        @click="changePage(currentPage + 1)"
+      >
+        {{ currentPage + 1 }}
+      </button>
+      <!-- pagina atual mais 2 -->
+      <button
+        v-if="currentPage + 2 < totalPages"
+        class="page-button"
+        @click="changePage(currentPage + 2)"
+      >
+        {{ currentPage + 2 }}
+      </button>
+
+      <!-- se a pagina atual mais 2 for menor que a ultima página n mostra reticiencias -->
+      <span v-if="currentPage + 3 < totalPages">...</span>
+      <button
+        v-if="currentPage !== totalPages"
+        class="page-button"
+        @click="changePage(totalPages)"
+      >
+        {{ totalPages }}
+      </button>
+      <button
+        v-if="next"
+        class="page-button"
+        @click="changePage(currentPage + 1)"
+      >
+        Next
+      </button>
+    </div>
+
+    <!-- mobile -->
+    <div class="pagination" id="mobile" v-if="totalPages">
+      <!-- pagina anterior -->
+      <button
+        v-if="previous"
+        class="page-button"
+        @click="changePage(currentPage - 1)"
+      >
+        Previous
+      </button>
+
+      <!-- pagina atual -->
+      <select
+        name=""
+        id=""
+        v-model="selectedPage"
+        @change="changePage(selectedPage)"
+      >
+        <option v-for="i in totalPages" :key="i" :value="i">
+          {{ i }}
+        </option>
+      </select>
+      <button
+        v-if="next"
+        class="page-button"
+        @click="changePage(currentPage + 1)"
+      >
+        Next
+      </button>
     </div>
   </div>
 </template>
@@ -25,10 +119,37 @@ export default {
       previousButton: "",
       firstButton: true,
       lastButton: true,
+      buttonsOnSide: 2,
+      selectedPage: 1,
     };
+  },
+  computed: {
+    previous() {
+      if (this.totalPages !== null) {
+        if (this.currentPage > 1) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    },
+    next() {
+      if (this.totalPages !== null) {
+        if (this.currentPage < this.totalPages) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    },
   },
   methods: {
     changePage(page) {
+      this.selectedPage = page;
       this.$emit("goToPage", page);
     },
   },
@@ -36,31 +157,45 @@ export default {
 </script>
 
 <style scoped>
+#desktop {
+  display: none;
+}
+select {
+  width: 10vw;
+  text-align: center;
+  background-color: #23272a;
+  color: #fff;
+  font-weight: 1.3vh;
+  border-radius: 10px;
+}
 .pagination {
   bottom: 0;
   display: flex;
   justify-content: center;
-  margin-top: 40px;
-  margin-bottom: 20px;
+  margin-top: 5vh;
+  margin-bottom: 5vh;
 }
-.pagination {
-  width: 100%;
-  height: 90px;
-  position: absolute;
-  bottom: 0;
+span {
+  display: flex;
+  align-items: flex-end;
 }
-
+.pagination button {
+  display: flex;
+  align-items: center;
+  padding: 1vh 2vw;
+  margin: 0 1vw;
+}
 .page-button {
-  font-weight: 700;
+  text-align: center;
+  font-weight: 800;
   background-color: #23272a;
   color: #fff;
-  font-size: 16px;
-  margin: 0 5px;
-  padding: 5px 10px;
+  font-size: 1.3vh;
+  margin: 0 0.6vw;
   border: 1px solid #fff;
   border-radius: 10px;
   cursor: pointer;
-  height: 35px;
+  height: 4vh;
 }
 .dots {
   color: #fff;
@@ -68,5 +203,16 @@ export default {
 }
 #currentPage {
   background-color: #546e7a;
+}
+@media screen and (min-width: 768px) {
+  .page-button {
+    padding: 2vh 1.6vw;
+  }
+  #desktop {
+    display: flex;
+  }
+  #mobile {
+    display: none;
+  }
 }
 </style>
