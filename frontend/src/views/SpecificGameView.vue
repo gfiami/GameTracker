@@ -340,12 +340,19 @@ export default {
     },
     async addOwned(game) {
       const user_id = this.userId;
+      const personal_token = this.$store.state.personal_token;
+
       try {
         const response = await axios.post(
           `${process.env.VUE_APP_APIURL}specific-owned`,
           {
             user_id: user_id,
             game_api_id: game,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
+            },
           }
         );
         this.ownedGame = response.data.owned_game;
@@ -359,6 +366,8 @@ export default {
     },
     async removeOwned(game) {
       const user_id = this.userId;
+      const personal_token = this.$store.state.personal_token;
+
       try {
         console.log("Entrou no try do remove Owned");
         const response = await axios.delete(
@@ -367,6 +376,9 @@ export default {
             params: {
               user_id: user_id,
               game_api_id: game,
+            },
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
             },
           }
         );
