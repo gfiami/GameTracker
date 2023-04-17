@@ -71,35 +71,36 @@ class OwnedGameController extends Controller
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
 
-            //id do token na database e pegamos o token lá
-            $tokenId = explode('|', $token)[0];
-            $personalAccessToken = PersonalAccessToken::where('id', $tokenId)->first();
+            //$tokenId = explode('|', $token)[0]; isso era qndo só tinha uma sessão permitida
+            $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
 
             //se o token existir, entra
-            if ($personalAccessToken) {
+            if ($personalAccessTokens) {
                 $token_value = explode('|', $token)[1];
-                if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
-                    $owned_game = OwnedGame::create([
-                        'user_id' => $user_id,
-                        'game_api_id' => $game_api_id,
-                    ]);
-                    //caso exista o jogo na lista de desejos, remove
-                    $remove_wishlist = WishlistGame::where('user_id', $user_id)
-                    ->where('game_api_id', $game_api_id)
-                    ->first();
-                    if($remove_wishlist){
-                        $remove_wishlist->delete();
+                foreach ($personalAccessTokens as $personalAccessToken) {
+                    if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
+                        $owned_game = OwnedGame::create([
+                            'user_id' => $user_id,
+                            'game_api_id' => $game_api_id,
+                        ]);
+                        //caso exista o jogo na lista de desejos, remove
+                        $remove_wishlist = WishlistGame::where('user_id', $user_id)
+                        ->where('game_api_id', $game_api_id)
+                        ->first();
+                        if($remove_wishlist){
+                            $remove_wishlist->delete();
+                        }
+                        $owned_games = $this->checkOwnedGames($user_id, $game_api_ids);
+                        $wishlisted_games = $this->checkWishlist($user_id, $game_api_ids);
+                        $response = [
+                        'owned_games' => $owned_games,
+                        'wishlisted_games' => $wishlisted_games
+                        ];
+                        return response()->json($response);
                     }
-                    $owned_games = $this->checkOwnedGames($user_id, $game_api_ids);
-                    $wishlisted_games = $this->checkWishlist($user_id, $game_api_ids);
-                    $response = [
-                    'owned_games' => $owned_games,
-                    'wishlisted_games' => $wishlisted_games
-                    ];
-                    return response()->json($response);
-                } else{
-                    return response()->json(['error' => 'Unauthorized'], 401);
                 }
+                return response()->json(['error' => 'Unauthorized'], 401);
+
             } else{
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
@@ -111,6 +112,7 @@ class OwnedGameController extends Controller
     //deleta o jodo da lista de owned e retorna o novo conjunto do owned games
     public function removeOwned (Request $request){
         try{
+
             $token = $request->bearerToken();
             $user_id = $request->input('user_id');
             $game_api_id = $request->input('game_api_id');
@@ -121,33 +123,36 @@ class OwnedGameController extends Controller
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
 
-            //id do token na database e pegamos o token lá
-            $tokenId = explode('|', $token)[0];
-            $personalAccessToken = PersonalAccessToken::where('id', $tokenId)->first();
-            if ($personalAccessToken) {
+            //$tokenId = explode('|', $token)[0]; isso era qndo só tinha uma sessão permitida
+            //$personalAccessToken = PersonalAccessToken::where('id', $tokenId)->first(); isso tbm
+            $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
+
+            if ($personalAccessTokens) {
                 $token_value = explode('|', $token)[1];
-                if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
-                    Log::info("Entrou no remove owned autenticado!");
-                    OwnedGame::where('user_id', $user_id)
-                    ->where('game_api_id', $game_api_id)
-                    ->delete();
-                    $remove_favorite = FavoritedGame::where('user_id', $user_id)
-                    ->where('game_api_id', $game_api_id)
-                    ->first();
-                    //caso exista o jogo nos favoritos, deleta ele de lá
-                    if($remove_favorite){
-                        $remove_favorite->delete();
+
+                foreach ($personalAccessTokens as $personalAccessToken) {
+                    if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
+                        Log::info("Entrou no remove owned autenticado!");
+                        OwnedGame::where('user_id', $user_id)
+                        ->where('game_api_id', $game_api_id)
+                        ->delete();
+                        $remove_favorite = FavoritedGame::where('user_id', $user_id)
+                        ->where('game_api_id', $game_api_id)
+                        ->first();
+                        //caso exista o jogo nos favoritos, deleta ele de lá
+                        if($remove_favorite){
+                            $remove_favorite->delete();
+                        }
+                        $owned_games = $this->checkOwnedGames($user_id, $game_api_ids);
+                        $favorite_games = $this->checkFavoriteGames($user_id, $game_api_ids);
+                        $response = [
+                            'owned_games' => $owned_games,
+                            'favorite_games' => $favorite_games
+                        ];
+                        return response()->json($response);
                     }
-                    $owned_games = $this->checkOwnedGames($user_id, $game_api_ids);
-                    $favorite_games = $this->checkFavoriteGames($user_id, $game_api_ids);
-                    $response = [
-                        'owned_games' => $owned_games,
-                        'favorite_games' => $favorite_games
-                    ];
-                    return response()->json($response);
-                } else{
-                     return response()->json(['error' => 'Unauthorized'], 401);
                 }
+                return response()->json(['error' => 'Unauthorized'], 401);
             }else{
                 return response()->json(['error' => 'Unauthorized'], 401);
             }

@@ -23,6 +23,7 @@ use App\Http\Controllers\WishlistGameController;
 */
 Route::post('/signin', [UserController::class, 'signin']);//->middleware('throttle:5,1'); //isso serve para permitir apenas 5 tentativas de login por minuto e retorna erro de muitas tentativas 429
 Route::post('/register', [UserController::class, 'register']);
+Route::delete('/logout', [UserController::class, 'logout']);
 Route::get('/userinfo/{id}',[UserController::class, 'userInfo']);
 
 //games da api

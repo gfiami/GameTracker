@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import { mapMutations } from "vuex";
 
 export default {
@@ -34,6 +35,7 @@ export default {
     ...mapMutations(["logout"]),
 
     logout() {
+      this.deleteTokenDatabase();
       this.$store.commit("logout", false);
       localStorage.removeItem("gameTrackerUserToken");
       localStorage.removeItem("user_id");
@@ -47,6 +49,28 @@ export default {
     },
     username(name) {
       this.userName = name;
+    },
+    async deleteTokenDatabase() {
+      //removes token from database
+      const user_id = this.$store.state.user_id;
+      const personal_token = this.$store.state.personal_token;
+      try {
+        const response = await axios.delete(
+          `${process.env.VUE_APP_APIURL}logout`,
+          {
+            params: {
+              user_id: user_id,
+            },
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
+            },
+          }
+        );
+        console.log(response.data);
+      } catch (error) {
+        console.log(error.response.data.error);
+        console.log("Entrou no erro do logou");
+      }
     },
   },
 };

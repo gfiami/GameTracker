@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\OwnedGame;
 use App\Models\FavoritedGame;
 use App\Models\WishlistGame;
+use App\Models\PersonalAccessToken;
+
 
 //esse validation serve para pegar erros vindos da $request->validate
 use Illuminate\Validation\ValidationException;
@@ -37,7 +39,7 @@ class UserController extends Controller
                 //aqui o ($user vira o usuario achado)
 
                 $user = $request->user();
-                $user->tokens()->delete();
+                //$user->tokens()->delete(); desabilitado para permitir multiplas sessões
                 $token = $user->createToken('MyAppToken')->plainTextToken;
 
                 /*token é criado a cada login e podemos usar para
@@ -84,6 +86,38 @@ class UserController extends Controller
             ], 422);
             //retornar junto esse erro 422 significa que "deu tudo certo", mas não passou na validação
             //basicamente o user fez besteirinhas na digitação que não passou na minha função validate
+        }
+    }
+    //logout
+    public function logout(Request $request){
+        try{
+            $token = $request->bearerToken();
+            $user_id = $request->input('user_id');
+
+            //requisição nao enviou token junto
+            if (!$token) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+
+            $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
+
+            if ($personalAccessTokens) {
+                $token_value = explode('|', $token)[1];
+                foreach ($personalAccessTokens as $personalAccessToken) {
+                    if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
+                        $personalAccessToken->delete();
+                        $response = [
+                            'message' => "Logout realizado com sucesso",
+                        ];
+                        return response()->json($response);
+                    }
+                }
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }else{
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+        }catch (\Exception $e) {
+            return response()->json(['Erro ao realizar logout' => $e->getMessage()], 400);
         }
     }
 
