@@ -164,7 +164,7 @@ export default {
         return false;
       }
       const response = await axios.get(
-        `${process.env.VUE_APP_APIURL}all-rawg-games/${ids}`
+        `${process.env.VUE_APP_APIURL}all-tracked-games/${ids}`
       );
       console.log(response.data.games.results);
       this.allGames = response.data.games.results;
