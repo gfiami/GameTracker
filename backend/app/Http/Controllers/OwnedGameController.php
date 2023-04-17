@@ -100,7 +100,9 @@ class OwnedGameController extends Controller
                     'owned_games' => $owned_games,
                     'wishlisted_games' => $wishlisted_games
                     ];
-                return response()->json($response);
+                    return response()->json($response);
+                } else{
+                    return response()->json(['error' => 'Unauthorized'], 401);
                 }
             } else{
                 return response()->json(['error' => 'Unauthorized'], 401);
