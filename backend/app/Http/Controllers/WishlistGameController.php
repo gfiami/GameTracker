@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\WishlistGame;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\ValidationException;
+use App\Models\PersonalAccessToken;
+
 
 class WishlistGameController extends Controller
 {
@@ -40,16 +42,33 @@ class WishlistGameController extends Controller
 
      public function addWishlist(Request $request){
         try {
+            $token = $request->bearerToken();
             $user_id = $request->input('user_id');
             $game_api_id = $request->input('game_api_id');
             $game_api_ids = $request->input('game_api_ids');
+            //requisição nao enviou token junto
+            if (!$token) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
 
-            $wishlist_games = WishlistGame::create([
-                'user_id' => $user_id,
-                'game_api_id' => $game_api_id,
-            ]);
-            $wishlist_games = $this->checkWishlist($user_id, $game_api_ids);
-            return response()->json($wishlist_games);
+            $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
+             //se o token existir, entra
+            if ($personalAccessTokens) {
+                $token_value = explode('|', $token)[1];
+                foreach ($personalAccessTokens as $personalAccessToken) {
+                    if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
+                        $wishlist_games = WishlistGame::create([
+                            'user_id' => $user_id,
+                            'game_api_id' => $game_api_id,
+                        ]);
+                        $wishlist_games = $this->checkWishlist($user_id, $game_api_ids);
+                        return response()->json($wishlist_games);
+                    }
+                }
+                return response()->json(['error' => 'Unauthorized'], 401);
+            } else{
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
         }catch (\Exception $e) {
             return response()->json(['Erro ao wishlistar jogo' => $e->getMessage()], 500);
         }
@@ -57,19 +76,37 @@ class WishlistGameController extends Controller
 
      public function removeWishlist (Request $request){
         try{
-        $user_id = $request->input('user_id');
-        $game_api_id = $request->input('game_api_id');
-        $game_api_ids = $request->input('game_api_ids');
-        WishlistGame::where('user_id', $user_id)
-        ->where('game_api_id', $game_api_id)
-        ->first()
-        ->delete();
-        $wishlist_games = $this->checkWishList($user_id, $game_api_ids);
-        return response()->json($wishlist_games);
-    }catch (\Exception $e) {
-        return response()->json(['Erro ao deletar jogo da lista de desejos' => $e->getMessage()], 500);
-    }
-    }
+            $token = $request->bearerToken();
+            $user_id = $request->input('user_id');
+            $game_api_id = $request->input('game_api_id');
+            $game_api_ids = $request->input('game_api_ids');
+            //requisição nao enviou token junto
+            if (!$token) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+            $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
+            if ($personalAccessTokens) {
+                $token_value = explode('|', $token)[1];
+
+                foreach ($personalAccessTokens as $personalAccessToken) {
+                    if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
+                        WishlistGame::where('user_id', $user_id)
+                        ->where('game_api_id', $game_api_id)
+                        ->first()
+                        ->delete();
+                        $wishlist_games = $this->checkWishList($user_id, $game_api_ids);
+                        return response()->json($wishlist_games);
+
+                    }
+                }
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }else{
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+        }catch (\Exception $e) {
+            return response()->json(['Erro ao deletar jogo da lista de desejos' => $e->getMessage()], 500);
+        }
+        }
 
     //specific page
      public function addSpecificWishlist(Request $request){
