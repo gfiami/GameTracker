@@ -382,6 +382,8 @@ export default {
     async addFavorite(game) {
       const user_id = this.user;
       const gameIds = this.games.map((game) => game.id);
+      const personal_token = this.$store.state.personal_token;
+      console.log(personal_token);
 
       try {
         const response = await axios.post(
@@ -390,6 +392,11 @@ export default {
             user_id: user_id,
             game_api_id: game,
             game_api_ids: gameIds,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
+            },
           }
         );
 
@@ -425,6 +432,7 @@ export default {
     async removeFavorite(game) {
       const user_id = this.user;
       const gameIds = this.games.map((game) => game.id);
+      const personal_token = this.$store.state.personal_token;
 
       try {
         console.log("entrou no try do remove favorite");
@@ -435,6 +443,9 @@ export default {
               user_id: user_id,
               game_api_id: game,
               game_api_ids: gameIds,
+            },
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
             },
           }
         );

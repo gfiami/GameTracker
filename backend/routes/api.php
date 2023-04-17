@@ -50,11 +50,11 @@ Route::get('/fetch-favorite', [FavoritedGameController::class, 'fetchAllFavorite
 Route::delete('/remove-favorite', [FavoritedGameController::class, 'removeFavorite']); //deleta o jogo dos favoritos
 
 //wishlist relations
-Route::post('/wishlist', [WishlistGameController::class, 'addWishlist']); //adiciona a wishlist
+Route::post('/wishlist', [WishlistGameController::class, 'addWishlist']); //adiciona a wishlist -AUTH
 Route::get('/check-wishlist', [WishlistGameController::class, 'checkWishlist']); //checa todos os jogos na página atual que estão na wishlist
 Route::get('/check-wishlist-starter', [WishlistGameController::class, 'checkWishlistStarter']); //checa os loading
 Route::get('/fetch-wished', [WishlistGameController::class, 'fetchAllWished']); //pegar todos os jogos que o user botou na wishlist
-Route::delete('/remove-wishlist', [WishlistGameController::class, 'removeWishlist']); //deleta o jogo da wishlist
+Route::delete('/remove-wishlist', [WishlistGameController::class, 'removeWishlist']); //deleta o jogo da wishlist - AUTH
 
 //check all if any update
 
