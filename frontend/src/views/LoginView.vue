@@ -80,10 +80,13 @@ export default {
         //definindo localStorage (ajustar depois para que tenha um tempo de expiração para deslogar automaticamente)
         localStorage.setItem("gameTrackerUserToken", response.data.user.name);
         localStorage.setItem("user_id", response.data.user.id);
-
+        localStorage.setItem("personal_token", response.data.personal_token);
         //chama a função do store.js que é a setlogged que importei no method
         this.$store.commit("login", true);
+        console.log("token");
+        console.log(this.$store.state.personal_token);
         //redirecionar para algum lugar pois deu certo o login!
+
         const redirect = this.$route.query.redirect || "/";
 
         this.$router.push({

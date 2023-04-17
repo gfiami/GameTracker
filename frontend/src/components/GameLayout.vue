@@ -300,7 +300,8 @@ export default {
     async addOwned(game) {
       const gameIds = this.games.map((game) => game.id);
       const user_id = this.user;
-
+      const personal_token = this.$store.state.personal_token;
+      console.log(personal_token);
       try {
         const response = await axios.post(
           `${process.env.VUE_APP_APIURL}owned`,
@@ -308,6 +309,11 @@ export default {
             user_id: user_id,
             game_api_id: game,
             game_api_ids: gameIds,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
+            },
           }
         );
         this.ownedGames = response.data.owned_games;

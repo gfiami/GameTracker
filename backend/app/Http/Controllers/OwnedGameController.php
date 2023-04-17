@@ -8,6 +8,9 @@ use App\Models\FavoritedGame;
 use App\Models\WishlistGame;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
+use App\Models\PersonalAccessToken;
+
 
 class OwnedGameController extends Controller
 {
@@ -57,31 +60,51 @@ class OwnedGameController extends Controller
 
     //adiciona o jogo a lista de owned e retorna o novo conjunto do owned games
     public function addOwned(Request $request){
+        Log::info('teste1');
+
         try {
+            Log::info('teste2');
+
+            $token = $request->bearerToken();
             $user_id = $request->input('user_id');
             $game_api_id = $request->input('game_api_id');
             $game_api_ids = $request->input('game_api_ids');
 
-            $owned_game = OwnedGame::create([
-                'user_id' => $user_id,
-                'game_api_id' => $game_api_id,
-            ]);
-            //caso exista o jogo na lista de desejos, remove
-        $remove_wishlist = WishlistGame::where('user_id', $user_id)
-        ->where('game_api_id', $game_api_id)
-        ->first();
-        if($remove_wishlist){
-            $remove_wishlist->delete();
-        }
+            //requisição nao enviou token junto
+            if (!$token) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
 
-            $owned_games = $this->checkOwnedGames($user_id, $game_api_ids);
-            $wishlisted_games = $this->checkWishlist($user_id, $game_api_ids);
-        $response = [
-            'owned_games' => $owned_games,
-            'wishlisted_games' => $wishlisted_games
-        ];
-        return response()->json($response);
+            //id do token na database e pegamos o token lá
+            $tokenId = explode('|', $token)[0];
+            $personalAccessToken = PersonalAccessToken::where('id', $tokenId)->first();
 
+            //se o token existir, entra
+            if ($personalAccessToken) {
+                $token_value = explode('|', $token)[1];
+                if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
+                    $owned_game = OwnedGame::create([
+                        'user_id' => $user_id,
+                        'game_api_id' => $game_api_id,
+                    ]);
+                    //caso exista o jogo na lista de desejos, remove
+                    $remove_wishlist = WishlistGame::where('user_id', $user_id)
+                    ->where('game_api_id', $game_api_id)
+                    ->first();
+                    if($remove_wishlist){
+                        $remove_wishlist->delete();
+                    }
+                    $owned_games = $this->checkOwnedGames($user_id, $game_api_ids);
+                    $wishlisted_games = $this->checkWishlist($user_id, $game_api_ids);
+                    $response = [
+                    'owned_games' => $owned_games,
+                    'wishlisted_games' => $wishlisted_games
+                    ];
+                return response()->json($response);
+                }
+            } else{
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
         }catch (\Exception $e) {
             return response()->json(['Erro ao adicionar jogo' => $e->getMessage()], 500);
         }

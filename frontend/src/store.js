@@ -6,6 +6,7 @@ const store = createStore({
       logged: false,
       token: null,
       user_id: null,
+      personal_token: null,
     };
   },
   mutations: {
@@ -14,12 +15,14 @@ const store = createStore({
       localStorage.setItem("userState", true);
       state.token = localStorage.getItem("gameTrackerUserToken"); //username
       state.user_id = localStorage.getItem("user_id");
+      state.personal_token = localStorage.getItem("personal_token");
     },
     logout(state) {
       state.logged = false;
       localStorage.removeItem("userState");
       localStorage.removeItem("gameTrackerUserToken");
       localStorage.removeItem("user_id");
+      localStorage.removeItem("personal_token");
     },
   },
 });

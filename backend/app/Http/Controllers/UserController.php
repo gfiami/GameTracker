@@ -35,12 +35,17 @@ class UserController extends Controller
             */
             if (Auth::attempt($validateUserInfo)){
                 //aqui o ($user vira o usuario achado)
+
                 $user = $request->user();
+                $user->tokens()->delete();
+                $token = $user->createToken('MyAppToken')->plainTextToken;
+
                 /*token é criado a cada login e podemos usar para
                 interagir com user sem usar dados sensiveis*/
                 //criando um cookie que deve expirar em 15 dias
                 return response()->json([
                     'user' => $user,
+                    'personal_token' => $token,
                     'message' => "Login successeful!",
                 ]);
             }
