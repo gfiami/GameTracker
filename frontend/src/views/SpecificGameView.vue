@@ -394,6 +394,7 @@ export default {
     },
     async addFavorite(game) {
       const user_id = this.userId;
+      const personal_token = this.$store.state.personal_token;
 
       try {
         const response = await axios.post(
@@ -401,6 +402,11 @@ export default {
           {
             user_id: user_id,
             game_api_id: game,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
+            },
           }
         );
         this.favoriteGame = response.data;
@@ -413,6 +419,7 @@ export default {
 
     async removeFavorite(game) {
       const user_id = this.userId;
+      const personal_token = this.$store.state.personal_token;
 
       try {
         console.log("entrou no try do remove favorite");
@@ -422,6 +429,9 @@ export default {
             params: {
               user_id: user_id,
               game_api_id: game,
+            },
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
             },
           }
         );
@@ -436,12 +446,19 @@ export default {
     },
     async addWishList(game) {
       const user_id = this.userId;
+      const personal_token = this.$store.state.personal_token;
+
       try {
         const response = await axios.post(
           `${process.env.VUE_APP_APIURL}specific-wishlist`,
           {
             user_id: user_id,
             game_api_id: game,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
+            },
           }
         );
         this.wishListedGame = response.data;
@@ -456,6 +473,7 @@ export default {
 
     async removeWishList(game) {
       const user_id = this.userId;
+      const personal_token = this.$store.state.personal_token;
 
       try {
         const response = await axios.delete(
@@ -464,6 +482,9 @@ export default {
             params: {
               user_id: user_id,
               game_api_id: game,
+            },
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
             },
           }
         );

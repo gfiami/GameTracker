@@ -43,11 +43,11 @@ Route::get('/fetch-owned', [OwnedGameController::class, 'fetchAllOwned']); //peg
 Route::delete('/remove-owned', [OwnedGameController::class, 'removeOwned']); //remove o jogo de owned - AUTH
 
 //favorite relations
-Route::post('/favorite', [FavoritedGameController::class, 'addFavorite']);   //favorita o jogo
+Route::post('/favorite', [FavoritedGameController::class, 'addFavorite']);   //favorita o jogo - AUTH
 Route::get('/check-favorite', [FavoritedGameController::class, 'checkFavoriteGames']); //checa os jogos que estão na página atual se são favoritos
 Route::get('/check-favorite-starter', [FavoritedGameController::class, 'checkFavoriteGamesStarter']); // checa no loading
 Route::get('/fetch-favorite', [FavoritedGameController::class, 'fetchAllFavorite']); //pegar todos os jogos que o user favoritou
-Route::delete('/remove-favorite', [FavoritedGameController::class, 'removeFavorite']); //deleta o jogo dos favoritos
+Route::delete('/remove-favorite', [FavoritedGameController::class, 'removeFavorite']); //deleta o jogo dos favoritos - AUTH
 
 //wishlist relations
 Route::post('/wishlist', [WishlistGameController::class, 'addWishlist']); //adiciona a wishlist -AUTH
@@ -64,11 +64,11 @@ Route::get('/all-tracked-games/{ids}', [GamesController::class, 'allGamesUserTra
 //start of specific page relations
 Route::get('/specific-tracked-game', [GamesController::class, 'fetchTrackedSpecific']); //adiciona a owned
 
-Route::post('/specific-owned', [OwnedGameController::class, 'addSpecificOwned']); //adiciona a owned
-Route::delete('/remove-specific-owned', [OwnedGameController::class, 'removeSpecificOwned']); //remove o jogo de owned
+Route::post('/specific-owned', [OwnedGameController::class, 'addSpecificOwned']); //adiciona a owned - AUTH
+Route::delete('/remove-specific-owned', [OwnedGameController::class, 'removeSpecificOwned']); //remove o jogo de owned - AUTH
 
-Route::post('/specific-favorite', [FavoritedGameController::class, 'addSpecificFavorite']);   //favorita o jogo
-Route::delete('/remove-specific-favorite', [FavoritedGameController::class, 'removeSpecificFavorite']); //deleta o jogo dos favoritos
+Route::post('/specific-favorite', [FavoritedGameController::class, 'addSpecificFavorite']);   //favorita o jogo - AUTH
+Route::delete('/remove-specific-favorite', [FavoritedGameController::class, 'removeSpecificFavorite']); //deleta o jogo dos favoritos - AUTH
 
 Route::post('/specific-wishlist', [WishlistGameController::class, 'addSpecificWishlist']); //adiciona a wishlist
 Route::delete('/remove-specific-wishlist', [WishlistGameController::class, 'removeSpecificWishlist']); //deleta o jogo da wishlist
