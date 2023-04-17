@@ -123,6 +123,8 @@ export default {
     },
     async editReview() {
       try {
+        const personal_token = this.$store.state.personal_token;
+
         const response = await axios.put(
           `${process.env.VUE_APP_APIURL}edit-review`,
           {
@@ -130,6 +132,11 @@ export default {
             game_api_id: this.game.id,
             review: this.review,
             rating: this.rating,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
+            },
           }
         );
         //aqui recebo o que o laravel me retornou
@@ -159,13 +166,20 @@ export default {
 
     async submitReview() {
       try {
+        const personal_token = this.$store.state.personal_token;
         const response = await axios.post(
           `${process.env.VUE_APP_APIURL}add-review`,
+
           {
             user_id: this.userId,
             game_api_id: this.game.id,
             review: this.review,
             rating: this.rating,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
+            },
           }
         );
         //aqui recebo o que o laravel me retornou
