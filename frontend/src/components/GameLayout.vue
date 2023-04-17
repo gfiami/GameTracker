@@ -330,6 +330,7 @@ export default {
     },
     async checkIfOwn(gameIds) {
       const user_id = this.user;
+
       try {
         const response = await axios.get(
           `${process.env.VUE_APP_APIURL}check-owned-starter`,
@@ -348,6 +349,9 @@ export default {
     async removeOwned(game) {
       const gameIds = this.games.map((game) => game.id);
       const user_id = this.user;
+      const personal_token = this.$store.state.personal_token;
+      console.log(personal_token);
+
       try {
         console.log("Entrou no try do remove Owned");
         const response = await axios.delete(
@@ -357,6 +361,9 @@ export default {
               user_id: user_id,
               game_api_id: game,
               game_api_ids: gameIds,
+            },
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
             },
           }
         );

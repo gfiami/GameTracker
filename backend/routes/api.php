@@ -25,10 +25,6 @@ Route::post('/signin', [UserController::class, 'signin']);//->middleware('thrott
 Route::post('/register', [UserController::class, 'register']);
 Route::get('/userinfo/{id}',[UserController::class, 'userInfo']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 //games da api
 Route::get('/games/{page?}/{search?}', [GamesController::class, 'games']);
 Route::get('/game/{id}', [GamesController::class, 'specificGameInfo']);
@@ -39,11 +35,11 @@ Route::put('/edit-review',[ReviewController::class, 'editReview']);
 Route::get('/fetch-game-reviews', [ReviewController::class, 'fetchReviews']);
 
 //owned relations
-Route::post('/owned', [OwnedGameController::class, 'addOwned']); //adiciona a owned
+Route::post('/owned', [OwnedGameController::class, 'addOwned']); //adiciona a owned - AUTH
 Route::get('/check-owned', [OwnedGameController::class, 'checkOwnedGames']); //checa os jogos que ele tem na página atual
 Route::get('/check-owned-starter', [OwnedGameController::class, 'checkOwnedGamesStarter']); //checa os jogos que ele tem na página atual no loading
 Route::get('/fetch-owned', [OwnedGameController::class, 'fetchAllOwned']); //pegar todos os jogos que o user tem
-Route::delete('/remove-owned', [OwnedGameController::class, 'removeOwned']); //remove o jogo de owned
+Route::delete('/remove-owned', [OwnedGameController::class, 'removeOwned']); //remove o jogo de owned - AUTH
 
 //favorite relations
 Route::post('/favorite', [FavoritedGameController::class, 'addFavorite']);   //favorita o jogo
