@@ -18,9 +18,10 @@ Route::get('/games/{page?}/{search?}', [GamesController::class, 'games']);
 Route::get('/game/{id}', [GamesController::class, 'specificGameInfo']);
 
 //review
-Route::post('/add-review', [ReviewController::class, 'addReview']);
-Route::put('/edit-review',[ReviewController::class, 'editReview']);
+Route::post('/add-review', [ReviewController::class, 'addReview']); // AUTH
+Route::put('/edit-review',[ReviewController::class, 'editReview']); //AUTH
 Route::get('/fetch-game-reviews', [ReviewController::class, 'fetchReviews']);
+Route::delete('/delete-review', [ReviewController::class, 'deleteReview']); // AUTH
 
 //owned relations
 Route::post('/owned', [OwnedGameController::class, 'addOwned']); // AUTH

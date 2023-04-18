@@ -171,4 +171,63 @@ class ReviewController extends Controller
         }
     }
 
+    public function deleteReview(Request $request){
+        try{
+
+            $token = $request->bearerToken();
+            $user_id = $request->input('user_id');
+            $game_api_id = $request->input('game_api_id');
+
+            $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
+             //se o token existir, entra
+            if ($personalAccessTokens) {
+                $token_value = explode('|', $token)[1];
+                foreach ($personalAccessTokens as $personalAccessToken) {
+                    if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
+                        $review = Review::where('user_id', $user_id)
+                                ->where('game_api_id', $game_api_id)
+                                ->first();
+                        if($review){
+                            $review->delete();
+
+                            $reviews = Review::where('game_api_id', $game_api_id)
+                            ->where('approved', 1)
+                            ->with('user')
+                            ->get();
+
+                            $reviewsData = $reviews->map(function($review) {
+                                return [
+                                    'user_id' => $review->user_id,
+                                    'username' => $review->user->name,
+                                    'review' => $review->review,
+                                    //depois lembrar de por coisa para imagem que o user terá! para mostrar na review uma imagemzinha
+                                    'rating' => $review->rating,
+                                    'created_at' => $review->created_at,
+                                    'updated_at' => $review->updated_at
+                                ];
+                            });
+                            return response()->json([
+                                'reviews' => $reviewsData,
+                                'message' => 'Your review was deleted successfully!',
+                            ]);
+                        }else {
+                            return response()->json([
+                                'message' => 'Review not found',
+                            ], 404);
+                        }
+                    }
+                }
+                return response()->json(['error' => 'Unauthorized'], 401);
+            } else{
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+        }catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation error',
+                'validation' => $e->getMessage(),
+                'errors' => $e->errors(),
+            ], 422);
+        }
+    }
+
 }
