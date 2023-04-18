@@ -194,6 +194,29 @@ export default {
   width: 80px;
   height: 80px;
 }
+.personnal-info {
+  display: flex;
+  gap: 20px;
+  width: 90%;
+  margin: 0 auto;
+  margin-top: 30px;
+}
+
+.username {
+  font-size: 36px;
+  font-weight: 700;
+}
+.profile-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+.edit-profile {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 400;
+  font-size: 12px;
+}
 .lds-facebook div {
   display: inline-block;
   position: absolute;

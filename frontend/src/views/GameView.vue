@@ -52,21 +52,4 @@ export default {
 };
 </script>
 
-<style>
-.game-layout-gameview .indicators {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  justify-content: center;
-  position: absolute;
-  top: 0;
-  left: 0;
-  padding: 2px;
-  background-color: rgba(0, 0, 0, 0.6);
-  border-top-left-radius: 12px;
-  border-bottom-right-radius: 12px;
-}
-.game-layout-gameview .game:hover .indicators {
-  display: none;
-}
-</style>
+<style></style>

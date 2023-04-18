@@ -225,6 +225,16 @@
 
       <!-- /\ coisas que aparecem on hover -->
       <div class="game-title">{{ game.name }}</div>
+      <div class="game-title-mobile">
+        <router-link
+          class="info-link-mobile"
+          :to="{
+            name: 'specificgame',
+            params: { slug: game.slug },
+          }"
+          >{{ game.name }}</router-link
+        >
+      </div>
     </div>
   </div>
 </template>
@@ -540,18 +550,21 @@ export default {
 
 <style>
 .game-list {
+  width: 90%;
+  margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  margin: 20px 20px;
+  justify-content: center;
+  margin-bottom: 7vh;
 }
 
 .game {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 15%;
-  margin-bottom: 40px;
+  width: 45%;
+  height: 35vh;
+  margin: 1vh 1vw;
   position: relative;
   border-radius: 12px;
   padding-bottom: 0;
@@ -561,19 +574,31 @@ export default {
 .game img {
   border-radius: 12px;
   width: 100%;
-  height: 250px;
+  height: 35vh;
   object-fit: cover;
   box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.3);
+}
+.indicators {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 2px;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-top-left-radius: 12px;
+  border-bottom-right-radius: 12px;
 }
 
 .fav {
   padding: 2px;
   color: rgba(250, 250, 45, 0.849);
-  font-size: 12px;
+  font-size: 2vh;
 }
 .own {
   padding: 2px;
-
   color: rgba(45, 250, 45, 0.849);
 }
 .wish {
@@ -599,26 +624,11 @@ export default {
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
 }
-.game:hover .game-title {
-  background-image: none;
-}
-/* add hover */
-.game:hover .game-hover {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-}
-.game:hover {
-  transform: scale(1.15);
-  z-index: 100;
-}
 
 .game-hover {
   display: none;
   width: 100%;
-  height: 250px;
+  height: 35vh;
   position: absolute;
   top: 0;
   left: 0;
@@ -706,89 +716,111 @@ export default {
   color: rgba(250, 45, 45, 0.849);
 }
 
-/* AJUSTES MOBILE (nem sei se tão bom mas no chrome ficou ok*/
-@media only screen and (max-width: 768px) {
-  .game-list {
+/* AJUSTES Desktop (nem sei se tão bom mas no chrome ficou ok*/
+@media screen and (min-width: 768px) {
+  .game {
+    width: 15%;
+    margin: 1vh 0.3vw;
+  }
+}
+@media (hover: hover) {
+  .game-title-mobile {
+    display: none;
+  }
+  .game:hover .game-title,
+  .game:active .game-title {
+    background-image: none;
+  }
+  .game:hover .game-hover,
+  .game:active .game-hover {
+    display: flex;
+    flex-direction: column;
     justify-content: center;
-  }
-  .game {
-    width: 40%;
-    margin: 20px;
-  }
-  .game-hover {
-    height: 150px;
-  }
-  .game img {
-    height: 150px;
-    margin-bottom: 5px;
-  }
-}
-@media only screen and (max-width: 480px) {
-  .game-list {
-    margin: 10px;
-  }
-  .game {
-    width: 80%;
-    margin: 10px;
-  }
-  .game-hover {
-    height: 100px;
-  }
-  .game img {
-    height: 100px;
-    margin-bottom: 5px;
-  }
-}
-@media only screen and (max-width: 768px) {
-  .game-list {
-    flex-direction: column;
     align-items: center;
-    margin: 20px 0;
+    gap: 20px;
   }
-  .game {
-    width: 80%;
-    margin: 20px 0;
+  .game:hover,
+  .game:active {
+    transform: scale(1.05);
+    z-index: 100;
   }
-  .game img {
-    height: auto;
-    margin-bottom: 10px;
+  .game:hover .indicators,
+  .game:active .indicators {
+    display: none;
   }
+}
+
+@media (hover: none) {
+  /* mobile styles */
   .game-title {
-    position: static;
-    padding: 10px 0;
-    border-radius: 0;
+    display: none;
+  }
+  .info-link {
+    display: none;
+  }
+  .info-link-mobile {
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    font-weight: bolder;
     text-align: center;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 15px;
+    background-image: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.5788690476190477) 40%,
+      rgba(0, 0, 0, 0.8029586834733894) 100%
+    );
+    width: 100%;
+    text-shadow: 2px 2px 4px #000000;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
   }
-  .game-hover {
-    height: 150px;
-  }
-  .logged-container {
+  .game-hover .logged-container {
+    padding: 2px;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 0px;
+    margin-top: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 25%;
     flex-direction: column;
-    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5788690476190477);
   }
   .logged-container button {
-    font-size: 14px;
-    margin: 5px;
+    font-size: 5px;
+    margin: 2px;
   }
-  .button-legend {
-    font-size: 16px;
-    margin-bottom: 10px;
+  .logged-container .button-legend {
+    font-size: 1vh;
+    font-weight: 700;
+    text-shadow: none;
   }
-}
-@media only screen and (max-width: 768px) {
-  .game-list {
+  .game-hover i {
+    font-size: 2vh;
+  }
+  .game-hover .info-link {
+    background-color: blue;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  }
+  .game .indicators {
+    display: none;
+  }
+  .game .game-hover {
+    display: flex;
+    flex-direction: column;
     justify-content: center;
-  }
-  .game {
-    width: 40%;
-    margin: 20px;
-  }
-  .game-hover {
-    height: 150px;
-  }
-  .game img {
-    height: 150px;
-    margin-bottom: 5px;
+    align-items: center;
+    gap: 20px;
+    background: none;
   }
 }
 </style>

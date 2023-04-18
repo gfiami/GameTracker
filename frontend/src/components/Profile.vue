@@ -315,52 +315,41 @@ export default {
 .owned-games,
 .favorite-games,
 .wishlist-games {
-  margin-bottom: 20px;
+  margin-bottom: 4vh;
 }
-.personnal-info {
-  display: flex;
-  gap: 20px;
-  width: 90%;
-  margin: 0 auto;
-  margin-top: 30px;
+.owned-games {
+  margin-top: 2vh;
 }
+
 .category-title {
   width: 70%;
   margin: 0 auto;
   margin-bottom: 0;
 }
-.user-edit-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-around;
-}
-.username {
-  font-size: 36px;
-  font-weight: 700;
-}
-.profile-image {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-}
-.edit-profile {
-  text-decoration: none;
-  color: #fff;
-  font-weight: 400;
-  font-size: 12px;
-}
+
 .layout-container {
-  width: 70%;
+  width: 80%;
   margin: 0 auto;
 }
 
+.layout-container .indicators {
+  display: none;
+}
 .layout-container .game-list {
   display: block;
   overflow-x: scroll;
   overflow-y: hidden;
   white-space: nowrap;
   margin: 0;
+}
+.layout-container .game-list .game-hover .logged-container {
+  text-align: center;
+  white-space: pre-wrap;
+  width: 30%;
+}
+.layout-container .game-list .game-title,
+.layout-container .game-list .game-title-mobile {
+  white-space: pre-wrap;
 }
 ::-webkit-scrollbar {
   height: 7px;
@@ -373,62 +362,9 @@ export default {
 }
 .layout-container .game-list .game {
   display: inline-block;
-  margin: 10px;
+  margin: 5px;
 }
 
-.layout-container .game-list .game-title {
-  font-size: 10px;
-  font-weight: bold;
-  padding: 10px;
-  word-wrap: break-word;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-.layout-container .game img {
-  width: 100%;
-  height: 200px;
-}
-.layout-container .game-hover {
-  width: 100%;
-  height: 200px;
-}
-.layout-container .game-hover .login-register-offline,
-.layout-container .game-hover .login-container-another-profile {
-  white-space: initial;
-  font-size: 12px;
-}
-.layout-container .game-hover .login-register-offline a,
-.layout-container .game-hover .login-container-another-profile a {
-  white-space: initial;
-  font-size: 12px;
-}
-.layout-container .game:hover {
-  transform: scale(1.1);
-}
-.layout-container .game-hover i {
-  font-size: 20px;
-}
-.layout-container .game-hover {
-  gap: 5px;
-}
-.layout-container .game-hover .logged-container {
-  margin-top: 10px;
-  flex-direction: column;
-  align-content: center;
-  justify-content: flex-start;
-  margin-top: 10px;
-}
-.layout-container .logged-container button {
-  font-size: 8px;
-}
-.layout-container .logged-container .button-legend {
-  font-size: 10px;
-  font-weight: 500;
-}
-.layout-container .game-hover .info-link {
-  padding: 15px;
-  margin-bottom: 10px;
-}
 .empty-container {
   margin: 0 auto;
   width: 60%;
