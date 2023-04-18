@@ -188,11 +188,16 @@ export default {
       }
     },
     changeUserReview() {
+      console.log("no change user:");
+      console.log("newdata user: ");
+      console.log(this.fetchNewDataUser);
+      console.log("user review:");
+      console.log(this.userReview);
       if (this.fetchNewDataUser !== null) {
         this.userReview = this.fetchNewDataUser;
         return this.userReview;
       } else {
-        return this.userReview;
+        return (this.userReview = null);
       }
     },
     changeAllReviews() {

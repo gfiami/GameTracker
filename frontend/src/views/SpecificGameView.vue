@@ -130,8 +130,13 @@
           <i class="fas fa-comments editReview"></i>
           <p class="button-legend">Edit your review</p>
         </button>
+        <button v-if="showForm" @click="deleteReview()" type="button">
+          <i class="fas fa-comments editReview"></i>
+          <p class="button-legend">Delete your review</p>
+        </button>
       </div>
 
+      <!--Create-->
       <ReviewsForm
         @fetchNewData_All="fetchNewData_All"
         @userReview="userReview"
@@ -143,6 +148,7 @@
         :userId="userId"
       />
 
+      <!--Edit-->
       <ReviewsForm
         @fetchNewData_All="fetchNewData_All"
         @userReview="userReview"
@@ -153,7 +159,6 @@
         :userId="userId"
         :reviewChecker="userHasReview"
       />
-
       <div class="tracker offline" v-if="!logged">
         <p class="offline-text">
           <router-link
@@ -281,6 +286,40 @@ export default {
       this.releaseDate = this.formatReleaseDate();
       this.loading = false;
       console.log(this.game);
+    },
+    async deleteReview() {
+      try {
+        const personal_token = this.$store.state.personal_token;
+        const response = await axios.delete(
+          `${process.env.VUE_APP_APIURL}delete-review`,
+          {
+            params: {
+              user_id: this.userId,
+              game_api_id: this.game.id,
+            },
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
+            },
+          }
+        );
+        //aqui recebo o que o laravel me retornou
+        console.log("no delete");
+        console.log(response.data.reviews);
+        this.fetchNewData_All(response.data.reviews);
+        this.userReview(null);
+        this.userHasReview = false;
+        this.loggedUserReview = "";
+        this.fetchNewDataUser = null;
+        this.review = null;
+        this.rating = null;
+      } catch (error) {
+        //caso haja erro
+        this.hideReviewForm();
+        console.log(error.response.data.message);
+        console.log(error.response.data.validation);
+        //aqui vai mostrar os erros pra cada uma das validações!
+        console.log(error.response.data.errors);
+      }
     },
     formatReleaseDate() {
       const months = [
@@ -554,6 +593,9 @@ div .offline {
 }
 .removeWishlist {
   color: rgba(250, 45, 45, 0.849);
+}
+.deleteReview {
+  color: rgba(128, 19, 19, 0.849);
 }
 .offline {
   background-color: rgba(0, 0, 0, 0.315);
