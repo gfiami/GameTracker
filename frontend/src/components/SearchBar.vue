@@ -164,4 +164,12 @@ export default {
 i.fas.fa-search {
   font-size: 18px;
 }
+@media screen and (max-width: 768px) {
+  .search-container {
+    flex-direction: column;
+  }
+  .search-features {
+    flex-direction: column;
+  }
+}
 </style>
