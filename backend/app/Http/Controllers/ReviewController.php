@@ -174,7 +174,25 @@ class ReviewController extends Controller
                                     'updated_at' => $review->updated_at
                                 ];
                             });
+
+                            $reviews = Review::where('user_id', $user_id)
+                            ->where('approved', 1)
+                            ->get();
+                            $profileReviews = $reviews->map(function($review) {
+                                return [
+                                    'username' => $review->user->name,
+                                    'user_id' => $review->user_id,
+                                    'review' => $review->review,
+                                    'game_name' => $review->game_name,
+                                    'game_api_id'=> $review->game_api_id,
+                                    //depois lembrar de por coisa para imagem que o user terá! para mostrar na review uma imagemzinha
+                                    'rating' => $review->rating,
+                                    'created_at' => $review->created_at,
+                                    'updated_at' => $review->updated_at
+                                    ];
+                                });
                             return response()->json([
+                                'profileReviews' => $profileReviews,
                                 'reviews' => $reviewsData,
                                 'message' => 'Your review was edited successfully!',
                             ]);
@@ -247,8 +265,8 @@ class ReviewController extends Controller
                                     'rating' => $review->rating,
                                     'created_at' => $review->created_at,
                                     'updated_at' => $review->updated_at
-            ];
-        });
+                                    ];
+                                });
                             return response()->json([
                                 'reviews' => $reviewsData,
                                 'profileReviews' => $profileReviews,
