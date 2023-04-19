@@ -646,8 +646,13 @@ export default {
   border-radius: 5px;
 }
 .game-hover i {
-  font-size: 40px;
+  font-size: 4vh;
 }
+.game-hover .wish,
+.game-hover .removeWishlist {
+  font-size: 3.6vh;
+}
+
 .game-hover a {
   color: white;
   font-size: 16px;

@@ -454,7 +454,9 @@ export default {
   width: 80%;
   margin: 0 auto;
 }
-
+.layout-container .indicators i {
+  font-size: 1px;
+}
 .layout-container .indicators {
   display: none;
 }
