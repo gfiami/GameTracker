@@ -25,7 +25,7 @@
       </div>
       <Profile :user="user.id" />
     </div>
-    <div v class="loading-user" v-if="loadingUser">
+    <div class="loading-user" v-if="loadingUser">
       <div class="lds-facebook">
         <div></div>
         <div></div>
