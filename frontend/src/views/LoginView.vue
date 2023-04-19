@@ -83,7 +83,6 @@ export default {
         localStorage.setItem("personal_token", response.data.personal_token);
         //chama a função do store.js que é a setlogged que importei no method
         this.$store.commit("login", true);
-        console.log("token");
         console.log(this.$store.state.personal_token);
         //redirecionar para algum lugar pois deu certo o login!
 
@@ -121,7 +120,6 @@ export default {
         }
 
         if (error.response.data.errors.password !== undefined) {
-          console.log("há password error");
           this.passwordErrors(error.response.data.errors.password);
           this.password = null;
         } else {

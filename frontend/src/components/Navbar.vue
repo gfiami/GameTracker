@@ -105,7 +105,6 @@ export default {
         console.log(response.data);
       } catch (error) {
         console.log(error.response.data.error);
-        console.log("Entrou no erro do logou");
       }
     },
   },

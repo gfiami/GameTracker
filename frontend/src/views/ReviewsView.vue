@@ -33,6 +33,7 @@
 
       <hr />
       <ReviewsArticles
+        @updatingReview="updateUserReviews"
         :profileReviews="userReviews"
         :logged="checkOwnProfile"
         @deleteClicked="deleteProfileReview"
@@ -76,6 +77,9 @@ export default {
     },
   },
   methods: {
+    updateUserReviews(reviews) {
+      this.userReviews = reviews;
+    },
     async fetchUserReviews() {
       this.loadingReviews = true;
       try {
@@ -88,14 +92,18 @@ export default {
           }
         );
         if (response.data.length == 0) {
+          this.loadingReviews = false;
+
           return false;
         }
+        this.loadingReviews = false;
+
         this.userReviews = response.data;
-        console.log(this.userReviews);
       } catch (error) {
+        this.loadingReviews = false;
+
         console.log(error);
       }
-      this.loadingReviews = false;
     },
     async deleteProfileReview(userId, gameId) {
       try {
@@ -113,8 +121,6 @@ export default {
           }
         );
         //aqui recebo o que o laravel me retornou
-        console.log("no delete");
-        console.log(response.data.profileReviews);
         if (response.data.profileReviews.length == 0) {
           this.userReviews = null;
           return false;
@@ -137,8 +143,6 @@ export default {
           .then((response) => {
             this.user = response.data.user;
           });
-
-        console.log(this.user);
       } catch (error) {
         this.loadingReviews = false;
 

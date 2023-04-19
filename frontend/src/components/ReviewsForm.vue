@@ -1,5 +1,49 @@
 <template>
   <div id="review">
+    <!-- edit profile review -->
+    <div v-if="editProfileReview">
+      <form class="review-form" action="" method="post" @submit.prevent>
+        <div class="form-data-container">
+          <div class="simple-container">
+            <label for="review" class="review"
+              >Edit your review for {{ editProfileReview.game_name }}</label
+            >
+            <button type="button" class="closeReview" @click="hideAndReset">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <p class="review-tips">
+            Write what you like or dislike about the game. Be polite and follow
+            the <u class="link">Review Rules</u>.
+          </p>
+          <textarea
+            :placeholder="editProfileReview.review"
+            cols="30"
+            rows="10"
+            maxlength="1000"
+            v-model="review"
+            id="editReview"
+          ></textarea>
+          <div class="thumbs-container">
+            <i class="thumbs fas fa-thumbs-up" ref="thumbsUp" @click="like"></i>
+            <i
+              class="thumbs fas fa-thumbs-down"
+              ref="thumbsDown"
+              @click="dislike"
+            ></i>
+          </div>
+
+          <button
+            class="review-button"
+            type="button"
+            @click="profileEditReview(editProfileReview.game_api_id)"
+          >
+            Edit Review
+          </button>
+        </div>
+      </form>
+    </div>
+
     <!-- edit review -->
     <div v-if="reviewChecker" class="form-container">
       <form class="review-form" action="" method="post" @submit.prevent>
@@ -101,6 +145,7 @@ export default {
     userId: "",
     loggedUserReview: null,
     reviewChecker: null,
+    editProfileReview: null,
   },
   data() {
     return {
@@ -163,6 +208,41 @@ export default {
         console.log(error.response.data.errors);
       }
     },
+    async profileEditReview(gameId) {
+      try {
+        const userId = this.$route.params.id;
+        const personal_token = this.$store.state.personal_token;
+        const response = await axios.put(
+          `${process.env.VUE_APP_APIURL}edit-review`,
+          {
+            user_id: userId,
+            game_api_id: gameId,
+            review: this.review,
+            rating: this.rating,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
+            },
+          }
+        );
+
+        //aqui recebo o que o laravel me retornou
+        console.log(response.data.profileReviews);
+        this.$emit("updateProfileReviews", response.data.profileReviews);
+
+        this.$emit("hideProfileEdit");
+        this.review = null;
+        this.rating = null;
+      } catch (error) {
+        //caso haja erro
+        this.$emit("hideProfileEdit");
+        console.log(error.response.data.message);
+        console.log(error.response.data.validation);
+        //aqui vai mostrar os erros pra cada uma das validações!
+        console.log(error.response.data.errors);
+      }
+    },
 
     async submitReview() {
       try {
@@ -205,6 +285,10 @@ export default {
         //aqui vai mostrar os erros pra cada uma das validações!
         console.log(error.response.data.errors);
       }
+    },
+    hideAndReset() {
+      this.review = null;
+      this.$emit("hideProfileEdit");
     },
   },
 };

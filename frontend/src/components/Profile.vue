@@ -122,7 +122,6 @@ export default {
   },
   watch: {
     user(newVal, oldVal) {
-      console.log("novo user: " + newVal);
       Promise.all([
         this.getWishedGames(),
         this.getFavoriteGames(),
@@ -168,13 +167,11 @@ export default {
       );
       console.log(response.data.games.results);
       this.allGames = response.data.games.results;
-      console.log("teste tamanho: " + this.allGames.length);
       this.loadingGames = false;
     },
 
     async onButtonClicked(buttonType) {
       //removeOwned | addOwned | removeWishlist | addWishList | removeFavorite | addFavorite
-      console.log("Botão clickado: " + buttonType);
       switch (buttonType) {
         case "removeOwned":
           await this.getOwnedGames();
@@ -211,7 +208,6 @@ export default {
     /* owned functions */
     async getOwnedGames() {
       const user_id = this.user;
-      console.log("get owned: " + this.user);
       try {
         const response = await axios.get(
           `${process.env.VUE_APP_APIURL}fetch-owned`,

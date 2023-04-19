@@ -1,7 +1,15 @@
 <template>
   <div id="reviewArticles">
     <!-- profile review -->
-    <div v-if="profileReviewsChecker && profileReviews" id="profileReviews">
+    <ReviewsForm
+      :editProfileReview="profileEditReview"
+      @hideProfileEdit="hideProfileEdit"
+      @updateProfileReviews="updateProfileReviews"
+    />
+    <div
+      v-if="profileReviewsChecker && profileReviews && !editingReview"
+      id="profileReviews"
+    >
       <div v-for="review in paginatedProfile" :key="review.id">
         <div class="review-container">
           <div class="container-left">
@@ -24,23 +32,8 @@
                 recommended
               </p>
             </div>
-            <div class="button-container" v-if="logged">
-              <button class="edit-button" type="button">
-                <i class="fas fa-comments editReview"></i>
-                <p class="button-legend">Edit your review</p>
-              </button>
-              <button
-                class="delete-button"
-                type="button"
-                @click="
-                  $emit('deleteClicked', review.user_id, review.game_api_id)
-                "
-              >
-                <i class="fas fa-comments deleteReview"></i>
-                <p class="button-legend">Delete your review</p>
-              </button>
-            </div>
           </div>
+
           <div class="container-right">
             <div class="info">
               <p class="date">
@@ -48,6 +41,23 @@
               </p>
               <p class="review-text">{{ review.review }}</p>
             </div>
+          </div>
+          <div class="button-container" v-if="logged">
+            <!-- logged aqui é = perfil do usuario e nao logged exatamente -->
+            <button class="edit-button" type="button" @click="showEdit(review)">
+              <i class="fas fa-comments editReview"></i>
+              <p class="button-legend">Edit this review</p>
+            </button>
+            <button
+              class="delete-button"
+              type="button"
+              @click="
+                $emit('deleteClicked', review.user_id, review.game_api_id)
+              "
+            >
+              <i class="fas fa-comments deleteReview"></i>
+              <p class="button-legend">Delete this review</p>
+            </button>
           </div>
         </div>
       </div>
@@ -179,7 +189,7 @@
         </div>
       </div>
     </div>
-    <div class="pages">
+    <div class="pages" v-if="!editingReview">
       <PaginationReview
         :totalPages="totalPages"
         :currentPage="currentPage"
@@ -192,11 +202,13 @@
 <script>
 import axios from "axios";
 import PaginationReview from "./PaginationReview.vue";
+import ReviewsForm from "./ReviewsForm.vue";
 
 export default {
   name: "ReviewsArticles",
   components: {
     PaginationReview,
+    ReviewsForm,
   },
   props: {
     game: null,
@@ -214,6 +226,8 @@ export default {
       userReview: null,
       currentPage: 1,
       reviewsPerPage: 5,
+      profileEditReview: null,
+      editingReview: false,
     };
   },
   computed: {
@@ -311,6 +325,17 @@ export default {
     },
   },
   methods: {
+    showEdit(review) {
+      this.profileEditReview = review;
+      this.editingReview = true;
+    },
+    hideProfileEdit() {
+      this.editingReview = false;
+      this.profileEditReview = null;
+    },
+    updateProfileReviews(reviews) {
+      this.$emit("updatingReview", reviews);
+    },
     goToPage(page) {
       this.currentPage = page;
       let section;

@@ -311,7 +311,6 @@ export default {
       const gameIds = this.games.map((game) => game.id);
       const user_id = this.user;
       const personal_token = this.$store.state.personal_token;
-      console.log(personal_token);
       try {
         const response = await axios.post(
           `${process.env.VUE_APP_APIURL}owned`,
@@ -360,7 +359,6 @@ export default {
       const gameIds = this.games.map((game) => game.id);
       const user_id = this.user;
       const personal_token = this.$store.state.personal_token;
-      console.log(personal_token);
 
       try {
         console.log("Entrou no try do remove Owned");
@@ -386,14 +384,12 @@ export default {
         this.$emit("button-clicked", "removeOwned");
       } catch (error) {
         console.log(error.response.data.error);
-        console.log("Entrou no erro do Remove owned");
       }
     },
     async addFavorite(game) {
       const user_id = this.user;
       const gameIds = this.games.map((game) => game.id);
       const personal_token = this.$store.state.personal_token;
-      console.log(personal_token);
 
       try {
         const response = await axios.post(
@@ -459,7 +455,6 @@ export default {
             },
           }
         );
-        console.log("estou no removeFavorite" + response.data);
         this.favoriteGames = response.data;
         this.$emit("favoriteGamesUpdate", this.favoriteGames);
         this.$emit("ownedGamesUpdate", this.ownedGames);
@@ -467,7 +462,7 @@ export default {
         this.$emit("wishListedGamesUpdate", this.wishListedGames);
         this.$emit("button-clicked", "removeFavorite");
       } catch (error) {
-        console.log("entrou no error do remove favorite");
+        console.log(error);
       }
     },
     async addWishList(game) {
@@ -540,8 +535,7 @@ export default {
         this.$emit("wishListedGamesUpdate", this.wishListedGames);
         this.$emit("button-clicked", "removeWishlist");
       } catch (error) {
-        //console.log(error.response.data.error);
-        console.log("jogo nao estava na wishlist");
+        console.log(error);
       }
     },
   },

@@ -99,7 +99,6 @@ export default {
         );
         //pega os jogos "owned" e bota no array
         this.ownedGames = response.data;
-        //console.log("owned: " + this.ownedGames);
       } catch (error) {
         console.log(error.response.data.error);
       }
@@ -117,7 +116,6 @@ export default {
         );
         //pega os jogos "favorited" e bota no array
         this.favoriteGames = response.data;
-        // console.log("favorite: " + this.favoriteGames);
       } catch (error) {
         console.log(error.response.data.error);
       }
@@ -135,7 +133,6 @@ export default {
         );
         //pega os jogos "wishlisted" e bota no array
         this.wishListedGames = response.data;
-        // console.log("wishlisted: " + this.wishListedGames);
       } catch (error) {
         console.log(error.response.data.error);
       }

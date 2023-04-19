@@ -89,7 +89,6 @@ export default {
   },
   methods: {
     async register() {
-      console.log("teste se botão funciona");
       //Lembrar de ajustar para tratar erros e coisas invalidas, mas por hora fazer com se tudo fosse perfeito e nenhum user mal intencionado
       try {
         const response = await axios.post(
@@ -114,8 +113,7 @@ export default {
         });
       } catch (error) {
         //caso haja erro
-        //console.log(error.response.data.message);
-        //console.log(error.response.data.validation);
+
         //aqui vai mostrar os erros pra cada uma das validações!
         console.log(error.response.data.errors);
         //email error
