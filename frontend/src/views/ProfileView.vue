@@ -17,7 +17,6 @@
         <div class="nav-profile">
           <div class="user-reviews">
             <router-link
-              v-if="logged"
               :to="{ name: 'reviews', params: { id: user.id } }"
               :key="$route.fullPath"
               >Reviews</router-link

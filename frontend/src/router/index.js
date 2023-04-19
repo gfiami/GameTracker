@@ -64,6 +64,14 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "ProfileView" */ "../views/ReviewsView.vue"),
   },
+  {
+    path: "/profile/owned-games/:id",
+    name: "owned",
+    component: () =>
+      import(
+        /* webpackChunkName: "ProfileView" */ "../views/TrackedGames/OwnedView.vue"
+      ),
+  },
 ];
 
 const router = createRouter({

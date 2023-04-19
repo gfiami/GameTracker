@@ -4,8 +4,18 @@
       <div class="owned-games">
         <div class="category-title">
           <h3>Owned</h3>
+        </div>
+        <div class="category-title">
           <div class="games-counter" v-if="ownedIds.length !== 0">
             <i>Showing {{ ownedCounter }} of {{ ownedIds.length }} games </i>
+          </div>
+          <div class="tracked-games" v-if="ownedIds.length !== 0">
+            <router-link
+              v-if="ownedIds.length > ownedCounter"
+              :to="{ name: 'owned', params: { id: $route.params.id } }"
+              :key="$route.fullPath"
+              >Check all</router-link
+            >
           </div>
         </div>
         <div class="loading-games" v-if="loadingGames">
@@ -59,6 +69,8 @@
       <div class="favorite-games">
         <div class="category-title">
           <h3>Favorite</h3>
+        </div>
+        <div class="category-title">
           <div class="games-counter" v-if="favoriteIds.length !== 0">
             <i
               >Showing {{ favoriteCounter }} of {{ favoriteIds.length }} games
@@ -94,6 +106,8 @@
       <div class="wishlist-games">
         <div class="category-title">
           <h3>Wishlist</h3>
+        </div>
+        <div class="category-title">
           <div class="games-counter" v-if="wishedIds.length !== 0">
             <i>Showing {{ wishedCounter }} of {{ wishedIds.length }} games </i>
           </div>

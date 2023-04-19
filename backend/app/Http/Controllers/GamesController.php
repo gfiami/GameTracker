@@ -28,6 +28,35 @@ class GamesController extends Controller
         ])->get("https://api.rawg.io/api/games?key=".env('RAWG_API_KEY') ."&ids={$ids}");
         $games = $response->json();
         return compact('games'); */
+    public function trackedGameCategory(Request $request){
+        $game_ids = $request->input('game_ids');
+        $page = $request->input('page');
+        if($game_ids == null){
+            $games = [];
+        } else{
+            sort($game_ids);
+            $ids = implode(",", $game_ids);
+            $cacheKey = 'all_user_games_owned' . implode('_', $game_ids);
+            $games = Cache::get($cacheKey);
+            if(!$games){
+                Log::info("Requisição do usuário feita a API Rawg");
+                $response = Http::withOptions([
+                    'verify' => false
+                    ])->get("https://api.rawg.io/api/games?key=".env('RAWG_API_KEY') ."&ids={$ids}&page_size=18&page={$page}");
+                    if ($response->failed()) {
+                    $exception = $response->toException();
+                    Log::error("Request to RAWG API failed: " . $exception->getMessage() . "\n" . $exception->getTraceAsString());
+                }
+                $games = $response->json();
+                //salvando no cache por 2 meses
+                Cache::put($cacheKey, $games, 86400);
+            }else{
+                Log::info("Dados do usuário resgatados do cache");
+            }
+        }
+        return compact('games');
+
+    }
     public function allGamesUserTracked(Request $request){
         $ownedArray = $request->input('owned_games');
         $favoriteArray = $request->input('favorite_games');

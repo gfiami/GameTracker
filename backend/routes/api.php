@@ -47,9 +47,11 @@ Route::delete('/remove-wishlist', [WishlistGameController::class, 'removeWishlis
 
 //pegar TODOS os jogos da api QUE O USUARIO TEM
 Route::get('/all-tracked-games', [GamesController::class, 'allGamesUserTracked']);
+Route::get('/category-tracked-games', [GamesController::class, 'trackedGameCategory']);
 
 //start of specific page relations
 Route::get('/specific-tracked-game', [GamesController::class, 'fetchTrackedSpecific']); //adiciona a owned
+
 
 Route::post('/specific-owned', [OwnedGameController::class, 'addSpecificOwned']); //AUTH
 Route::delete('/remove-specific-owned', [OwnedGameController::class, 'removeSpecificOwned']); // AUTH
