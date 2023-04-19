@@ -179,15 +179,47 @@ export default {
           },
         }
       );
-      const allGames = response.data.ownedGames.results.concat(
-        response.data.favoriteGames.results,
-        response.data.wishedGames.results
-      );
-      console.log(allGames);
       this.fetchedOwned = response.data.ownedGames.results;
       this.fetchedFavorite = response.data.favoriteGames.results;
       this.fetchedWished = response.data.wishedGames.results;
-      this.allGames = allGames;
+      if (this.fetchOwned === undefined && this.fetchedFavorite === undefined) {
+        const allGames = this.fetchWished;
+        this.allGames = allGames;
+      } else if (
+        this.fetchedOwned === undefined &&
+        this.fetchedWished === undefined
+      ) {
+        const allGames = this.fetchedFavorite;
+        this.allGames = allGames;
+      } else if (
+        this.fetchedFavorite === undefined &&
+        this.fetchedWished === undefined
+      ) {
+        const allGames = this.fetchedOwned;
+        this.allGames = allGames;
+      } else if (this.fetchedOwned === undefined) {
+        const allGames = response.data.favoriteGames.results.concat(
+          response.data.wishedGames.results
+        );
+        this.allGames = allGames;
+      } else if (this.fetchedFavorite === undefined) {
+        const allGames = response.data.ownedGames.results.concat(
+          response.data.wishedGames.results
+        );
+        this.allGames = allGames;
+      } else if (this.fetchedWished === undefined) {
+        const allGames = response.data.ownedGames.results.concat(
+          response.data.favoriteGames.results
+        );
+        this.allGames = allGames;
+      } else {
+        const allGames = response.data.ownedGames.results.concat(
+          response.data.favoriteGames.results,
+          response.data.wishedGames.results
+        );
+        this.allGames = allGames;
+      }
+      console.log(this.allGames);
       this.loadingGames = false;
     },
 
