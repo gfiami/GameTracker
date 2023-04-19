@@ -1,5 +1,42 @@
 <template>
   <div id="reviewArticles">
+    <!-- profile review -->
+    <div v-if="profileReviewsChecker && profileReviews" id="profileReviews">
+      <div v-for="review in paginatedProfile" :key="review.id">
+        <div class="review-container">
+          <div class="container-left">
+            <h3 class="game-review-title">
+              <router-link
+                :to="{
+                  name: 'specificgame',
+                  params: { slug: review.game_api_id },
+                }"
+                >{{ review.game_name }}
+              </router-link>
+            </h3>
+            <div class="rating">
+              <p v-if="review.rating == 'positive'" class="positive">
+                <i class="thumbs fas fa-thumbs-up" ref="thumbsUp"></i>
+                Recommended
+              </p>
+              <p v-else class="negative">
+                <i class="thumbs fas fa-thumbs-down" ref="thumbsDown"></i> Not
+                recommended
+              </p>
+            </div>
+          </div>
+          <div class="container-right">
+            <div class="info">
+              <p class="date">
+                Published: {{ formattedDate(review.created_at) }}
+              </p>
+              <p class="review-text">{{ review.review }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- user review -->
     <div v-if="changeUserReview">
       <h3 class="review-title">Your review</h3>
@@ -146,22 +183,40 @@ export default {
     PaginationReview,
   },
   props: {
-    game: "",
+    game: null,
     userId: "",
     logged: Boolean,
     fetchNewDataUser: null,
     fetchNewDataAll: null,
+    profileReviews: null,
   },
   data() {
     return {
       reviews: null,
       filteredReviews: [],
+      profileFilteredReviews: [],
       userReview: null,
       currentPage: 1,
       reviewsPerPage: 5,
     };
   },
   computed: {
+    profileReviewsChecker() {
+      if (this.profileReviews !== null && this.profileReviews !== undefined) {
+        return this.profileReviews;
+      }
+    },
+    paginatedProfile() {
+      const startIndex = (this.currentPage - 1) * this.reviewsPerPage;
+      let filteredReviews = this.profileReviews;
+
+      const endIndex = startIndex + this.reviewsPerPage;
+      this.profileFilteredReviews = filteredReviews.slice(startIndex, endIndex);
+      if (this.profileFilteredReviews.length == 0) {
+        return (this.profileFilteredReviews = null);
+      }
+      return this.profileFilteredReviews;
+    },
     paginatedReviews() {
       const startIndex = (this.currentPage - 1) * this.reviewsPerPage;
       let filteredReviews = this.reviews;
@@ -178,21 +233,25 @@ export default {
       return this.filteredReviews;
     },
     totalPages() {
-      if (this.changeAllReviews !== null) {
-        if (this.changeUserReview !== null) {
+      if (
+        this.changeAllReviews !== null &&
+        this.changeAllReviews !== undefined
+      ) {
+        if (
+          this.changeUserReview !== null &&
+          this.changeUserReview !== undefined
+        ) {
           return (
             Math.ceil(this.changeAllReviews.length / this.reviewsPerPage) - 1
           );
         }
         return Math.ceil(this.changeAllReviews.length / this.reviewsPerPage);
       }
+      if (this.profileReviews !== null && this.profileReviews !== undefined) {
+        return Math.ceil(this.profileReviews.length / this.reviewsPerPage);
+      }
     },
     changeUserReview() {
-      console.log("no change user:");
-      console.log("newdata user: ");
-      console.log(this.fetchNewDataUser);
-      console.log("user review:");
-      console.log(this.userReview);
       if (this.fetchNewDataUser !== null) {
         this.userReview = this.fetchNewDataUser;
         return this.userReview;
@@ -201,7 +260,6 @@ export default {
       }
     },
     changeAllReviews() {
-      console.log("teste");
       if (this.fetchNewDataAll !== null) {
         this.reviews = this.fetchNewDataAll;
         return this.reviews;
@@ -239,8 +297,16 @@ export default {
   methods: {
     goToPage(page) {
       this.currentPage = page;
-      var section = document.querySelector("#otherUsers");
-      section.scrollIntoView();
+      let section;
+      if (
+        this.changeAllReviews !== null &&
+        this.changeAllReviews !== undefined
+      ) {
+        section = document.querySelector("#otherUsers");
+        section.scrollIntoView();
+      } else {
+        window.scrollTo(0, 0);
+      }
     },
     async fetchReviews(game) {
       try {
@@ -277,7 +343,9 @@ export default {
     },
   },
   mounted() {
-    this.fetchReviews(this.game.id);
+    if (this.game !== null && this.game !== undefined) {
+      this.fetchReviews(this.game.id);
+    }
   },
 };
 </script>
@@ -385,6 +453,12 @@ hr {
   font-size: 2.5vh;
   text-shadow: 1px 1px #000;
 }
+.game-review-title a {
+  text-decoration: none;
+  font-size: 2.7vh;
+  text-align: center;
+  color: white;
+}
 @media screen and (min-width: 768px) {
   .container-left {
     flex-direction: row;
@@ -392,6 +466,10 @@ hr {
     justify-content: space-between;
     align-items: center;
     margin: 0;
+  }
+  .game-title {
+    font-size: 2.4vh;
+    text-align: left;
   }
   .review-container {
     padding: 2vh 2vw;

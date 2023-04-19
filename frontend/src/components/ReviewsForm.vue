@@ -173,6 +173,7 @@ export default {
           {
             user_id: this.userId,
             game_api_id: this.game.id,
+            game_name: this.game.name,
             review: this.review,
             rating: this.rating,
           },

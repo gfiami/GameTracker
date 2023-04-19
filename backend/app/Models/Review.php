@@ -12,7 +12,8 @@ class Review extends Model
         'user_id',
         'game_api_id',
         'review',
-        'rating'
+        'rating',
+        'game_name',
     ];
     public function user(){
         return $this->belongsTo(User::class);

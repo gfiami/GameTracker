@@ -14,6 +14,14 @@
             >Edit profile</a
           >
         </div>
+        <div class="user-reviews">
+          <router-link
+            v-if="logged"
+            :to="{ name: 'reviews', params: { id: user.id } }"
+            :key="$route.fullPath"
+            >Reviews</router-link
+          >
+        </div>
       </div>
       <Profile :user="user.id" />
     </div>

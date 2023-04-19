@@ -78,6 +78,7 @@ export default {
 
 <style scoped>
 #nav {
+  width: 100%;
   background-color: #6842ff;
   display: flex;
   justify-content: flex-end;
@@ -103,5 +104,10 @@ export default {
 }
 #nav a.router-link-exact-active {
   color: #161b3a;
+}
+@media screen and (max-width: 768px) {
+  /*#nav {
+    display: none;
+  }*/
 }
 </style>

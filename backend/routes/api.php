@@ -21,6 +21,7 @@ Route::get('/game/{id}', [GamesController::class, 'specificGameInfo']);
 Route::post('/add-review', [ReviewController::class, 'addReview']); // AUTH
 Route::put('/edit-review',[ReviewController::class, 'editReview']); //AUTH
 Route::get('/fetch-game-reviews', [ReviewController::class, 'fetchReviews']);
+Route::get('/fetch-user-reviews', [ReviewController::class, 'fetchUserReviews' ]);
 Route::delete('/delete-review', [ReviewController::class, 'deleteReview']); // AUTH
 
 //owned relations

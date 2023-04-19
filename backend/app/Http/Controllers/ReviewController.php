@@ -11,7 +11,31 @@ use App\Models\PersonalAccessToken;
 
 
 class ReviewController extends Controller
-{
+{   public function fetchUserReviews(Request $request){
+    try {
+        $user_id = $request->input('user_id');
+        $reviews = Review::where('user_id', $user_id)
+        ->where('approved', 1)
+        ->get();
+        $reviewsData = $reviews->map(function($review) {
+            return [
+                'username' => $review->user->name,
+                'review' => $review->review,
+                'game_name' => $review->game_name,
+                'game_api_id'=> $review->game_api_id,
+                //depois lembrar de por coisa para imagem que o user terá! para mostrar na review uma imagemzinha
+                'rating' => $review->rating,
+                'created_at' => $review->created_at,
+                'updated_at' => $review->updated_at
+            ];
+        });
+
+        return response()->json($reviewsData);
+
+    } catch (\Exception $e) {
+        return response()->json(['Erro na requisição' => $e->getMessage()], 500);
+    }
+    }
     public function fetchReviews(Request $request){
         try {
             $game_api_id = $request->input('game_api_id');
@@ -51,7 +75,7 @@ class ReviewController extends Controller
             $game_api_id = $request->input('game_api_id');
             $review_text = $request->input('review');
             $rating = $request->input('rating');
-
+            $game_name = $request->input('game_name');
             //requisição nao enviou token junto
             if (!$token) {
                 return response()->json(['error' => 'Unauthorized'], 401);
@@ -68,6 +92,7 @@ class ReviewController extends Controller
                             'game_api_id' => $game_api_id,
                             'review' => $review_text,
                             'rating' => $rating,
+                            'game_name' => $game_name,
                         ]);
                         //mandar de volta as reviews atualizadas
                         $reviews = Review::where('game_api_id', $game_api_id)
@@ -79,6 +104,7 @@ class ReviewController extends Controller
                                 'user_id' => $review->user_id,
                                 'username' => $review->user->name,
                                 'review' => $review->review,
+                                'game_name' => $review->game_name,
                                 //depois lembrar de por coisa para imagem que o user terá! para mostrar na review uma imagemzinha
                                 'rating' => $review->rating,
                                 'created_at' => $review->created_at,
