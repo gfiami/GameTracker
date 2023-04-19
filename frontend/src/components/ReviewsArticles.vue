@@ -24,6 +24,22 @@
                 recommended
               </p>
             </div>
+            <div class="button-container" v-if="logged">
+              <button class="edit-button" type="button">
+                <i class="fas fa-comments editReview"></i>
+                <p class="button-legend">Edit your review</p>
+              </button>
+              <button
+                class="delete-button"
+                type="button"
+                @click="
+                  $emit('deleteClicked', review.user_id, review.game_api_id)
+                "
+              >
+                <i class="fas fa-comments deleteReview"></i>
+                <p class="button-legend">Delete your review</p>
+              </button>
+            </div>
           </div>
           <div class="container-right">
             <div class="info">
@@ -351,6 +367,39 @@ export default {
 </script>
 
 <style scoped>
+.button-container {
+  display: flex;
+  justify-content: space-around;
+}
+.delete-button,
+.edit-button {
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+  font-size: 2.9vh;
+  margin: 0.5vh;
+  text-shadow: 2px 2px 4px #000000;
+}
+.delete-button {
+  color: rgba(250, 45, 45, 0.849);
+}
+.edit-button {
+  color: rgba(250, 250, 45, 0.849);
+}
+.button-legend {
+  color: white;
+  text-align: center;
+  font-size: 1.6vh;
+  font-weight: 700;
+  margin: 0 auto;
+  padding: 0;
+  text-align: center;
+  text-shadow: 2px 2px 4px #000000;
+}
 hr {
   width: 95%;
   margin: 0 auto;

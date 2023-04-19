@@ -8,7 +8,11 @@
       </h3>
       <h3 class="review-title" v-else>No reviews found</h3>
       <hr />
-      <ReviewsArticles :profileReviews="userReviews" />
+      <ReviewsArticles
+        :profileReviews="userReviews"
+        :logged="checkOwnProfile"
+        @deleteClicked="deleteProfileReview"
+      />
     </div>
   </div>
 </template>
@@ -62,6 +66,36 @@ export default {
         console.log(this.userReviews);
       } catch (error) {
         console.log(error);
+      }
+    },
+    async deleteProfileReview(userId, gameId) {
+      try {
+        const personal_token = this.$store.state.personal_token;
+        const response = await axios.delete(
+          `${process.env.VUE_APP_APIURL}delete-review`,
+          {
+            params: {
+              user_id: userId,
+              game_api_id: gameId,
+            },
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
+            },
+          }
+        );
+        //aqui recebo o que o laravel me retornou
+        console.log("no delete");
+        console.log(response.data.profileReviews);
+        if (response.data.profileReviews.length == 0) {
+          this.userReviews = null;
+          return false;
+        }
+        this.userReviews = response.data.profileReviews;
+      } catch (error) {
+        console.log(error.response.data.message);
+        console.log(error.response.data.validation);
+        //aqui vai mostrar os erros pra cada uma das validações!
+        console.log(error.response.data.errors);
       }
     },
   },
