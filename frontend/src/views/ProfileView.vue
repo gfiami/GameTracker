@@ -86,57 +86,6 @@ export default {
     },
   },
   methods: {
-    async getOwnedGames() {
-      const user_id = this.$route.params.id;
-      try {
-        const response = await axios.get(
-          `${process.env.VUE_APP_APIURL}fetch-owned`,
-          {
-            params: {
-              user_id: user_id,
-            },
-          }
-        );
-        //pega os jogos "owned" e bota no array
-        this.ownedGames = response.data;
-      } catch (error) {
-        console.log(error.response.data.error);
-      }
-    },
-    async getFavoriteGames() {
-      const user_id = this.$route.params.id;
-      try {
-        const response = await axios.get(
-          `${process.env.VUE_APP_APIURL}fetch-favorite`,
-          {
-            params: {
-              user_id: user_id,
-            },
-          }
-        );
-        //pega os jogos "favorited" e bota no array
-        this.favoriteGames = response.data;
-      } catch (error) {
-        console.log(error.response.data.error);
-      }
-    },
-    async getWishedGames() {
-      const user_id = this.$route.params.id;
-      try {
-        const response = await axios.get(
-          `${process.env.VUE_APP_APIURL}fetch-wished`,
-          {
-            params: {
-              user_id: user_id,
-            },
-          }
-        );
-        //pega os jogos "wishlisted" e bota no array
-        this.wishListedGames = response.data;
-      } catch (error) {
-        console.log(error.response.data.error);
-      }
-    },
     async getUserInfo() {
       this.loadingUser = true;
       this.user = null;

@@ -139,11 +139,11 @@ export default {
     //requisição a api de acordo com número de páginas (lá no controller tá pegando 24 jogos por página)
 
     async fetchGames(page, search) {
-      console.log(search);
+      console.log("Fetching Games");
       const response = await axios.get(
         `${process.env.VUE_APP_APIURL}games/${page}/${search}`
       );
-
+      console.log(response.data.games);
       //pega os jogos da resposta
 
       /*AJUSTES A FAZER */

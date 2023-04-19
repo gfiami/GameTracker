@@ -2,7 +2,12 @@
   <div>
     <div class="game-info-container">
       <div class="owned-games">
-        <div class="category-title"><h3>Owned Games</h3></div>
+        <div class="category-title">
+          <h3>Owned Games</h3>
+          <div class="games-counter" v-if="ownedIds.length !== 0">
+            <i>xx of {{ ownedIds.length }} </i>
+          </div>
+        </div>
         <div class="loading-games" v-if="loadingGames">
           <div class="lds-facebook">
             <div></div>
@@ -128,14 +133,13 @@ export default {
         this.getOwnedGames(),
       ]).then((values) => {
         const owned_fetcher = this.ownedIds;
+        const favorite_fetcher = this.favoriteIds;
         const wished_fetcher = this.wishedIds;
-        const favorte_fetcher = this.favoriteIds;
-        const fetcher = [].concat(
+        this.allGamesUserTracked(
           owned_fetcher,
-          wished_fetcher,
-          favorte_fetcher
+          favorite_fetcher,
+          wished_fetcher
         );
-        this.allGamesUserTracked(fetcher);
       });
     },
   },
@@ -149,6 +153,9 @@ export default {
       favoriteIds: "",
       wishedIds: "",
       allGames: "",
+      fetchedOwned: "",
+      fetchedFavorite: "",
+      fetchedWished: "",
       loadingGames: true,
       emptyOwned: false,
       emptyFavorite: false,
@@ -156,17 +163,31 @@ export default {
     };
   },
   methods: {
-    async allGamesUserTracked(ids) {
+    async allGamesUserTracked(owned, favorite, wished) {
       if (this.emptyOwned && this.emptyFavorite && this.emptyWished) {
         this.loadingGames = false;
 
         return false;
       }
       const response = await axios.get(
-        `${process.env.VUE_APP_APIURL}all-tracked-games/${ids}`
+        `${process.env.VUE_APP_APIURL}all-tracked-games`,
+        {
+          params: {
+            owned_games: owned,
+            favorite_games: favorite,
+            wished_games: wished,
+          },
+        }
       );
-      console.log(response.data.games.results);
-      this.allGames = response.data.games.results;
+      const allGames = response.data.ownedGames.results.concat(
+        response.data.favoriteGames.results,
+        response.data.wishedGames.results
+      );
+      console.log(allGames);
+      this.fetchedOwned = response.data.ownedGames.results;
+      this.fetchedFavorite = response.data.favoriteGames.results;
+      this.fetchedWished = response.data.wishedGames.results;
+      this.allGames = allGames;
       this.loadingGames = false;
     },
 
@@ -197,7 +218,7 @@ export default {
         case "addFavorite":
           await this.getOwnedGames();
           await this.getFavoriteGames();
-          this.allGames = this.allGames;
+          // this.allGames = this.allGames;  (testando se precisa disso ou nao)
 
           break;
         default:
@@ -219,6 +240,7 @@ export default {
         );
         //pega os jogos "owned" e bota no array
         this.ownedIds = response.data;
+
         if (this.ownedIds.length == 0) {
           this.emptyOwned = true;
         } else {
@@ -274,7 +296,6 @@ export default {
             },
           }
         );
-        //pega os jogos "favorite" e bota no array
         this.wishedIds = response.data;
         if (this.wishedIds.length == 0) {
           this.emptyWished = true;
@@ -297,10 +318,9 @@ export default {
       this.getOwnedGames(),
     ]).then((values) => {
       const owned_fetcher = this.ownedIds;
+      const favorite_fetcher = this.favoriteIds;
       const wished_fetcher = this.wishedIds;
-      const favorte_fetcher = this.favoriteIds;
-      const fetcher = [].concat(owned_fetcher, wished_fetcher, favorte_fetcher);
-      this.allGamesUserTracked(fetcher);
+      this.allGamesUserTracked(owned_fetcher, favorite_fetcher, wished_fetcher);
     });
   },
 };
@@ -318,6 +338,9 @@ export default {
 }
 
 .category-title {
+  display: flex;
+  align-items: center;
+  gap: 4vw;
   width: 70%;
   margin: 0 auto;
   margin-bottom: 0;

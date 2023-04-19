@@ -14,8 +14,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 class GamesController extends Controller
 {
-    public function allGamesUserTracked($ids){
-       /* jeito antigo, mudei para cache e tirei cert checker
+    /* jeito antigo, mudei para cache e tirei cert checker
         //$certPath = storage_path('rawg_io.pem');
         //$curl = curl_init();
         //curl_setopt($curl, CURLOPT_CAINFO, $certPath);
@@ -29,30 +28,84 @@ class GamesController extends Controller
         ])->get("https://api.rawg.io/api/games?key=".env('RAWG_API_KEY') ."&ids={$ids}");
         $games = $response->json();
         return compact('games'); */
+    public function allGamesUserTracked(Request $request){
+        $ownedArray = $request->input('owned_games');
+        $favoriteArray = $request->input('favorite_games');
+        $wishedArray = $request->input('wished_games');
 
-        $idsArray = explode(',', $ids);
-        sort($idsArray);
-        $cacheKey = 'user_games_' . implode('_', $idsArray);
-        $games = Cache::get($cacheKey);
+         //vamos mandar de volta apenas 10 de cada jogo;
+         $ownedArray = array_slice($ownedArray, 0, 10);
+         $favoriteArray = array_slice($favoriteArray, 0, 10);
+         $wishedArray = array_slice($wishedArray, 0, 10);
 
-        if (!$games) {
+        sort($ownedArray);
+        sort($favoriteArray);
+        sort($wishedArray);
+
+
+        $owned = implode(",", $ownedArray);
+        $favorite = implode(",", $favoriteArray);
+        $wished = implode(",", $wishedArray);
+
+        $cacheKeyOwned = 'user_games_owned' . implode('_', $ownedArray);
+        $cacheKeyFavorite = 'user_games_favorite' . implode('_', $favoriteArray);
+        $cacheKeyWished = 'user_games_wished' . implode('_', $wishedArray);
+
+        $ownedGames = Cache::get($cacheKeyOwned);
+        $favoriteGames = Cache::get($cacheKeyFavorite);
+        $wishedGames = Cache::get($cacheKeyWished);
+
+        if (!$ownedGames) {
             Log::info("Requisição do usuário feita a API Rawg");
             $response = Http::withOptions([
                 'verify' => false
-            ])->get("https://api.rawg.io/api/games?key=".env('RAWG_API_KEY') ."&ids={$ids}");
+            ])->get("https://api.rawg.io/api/games?key=".env('RAWG_API_KEY') ."&ids={$owned}");
             if ($response->failed()) {
                 $exception = $response->toException();
                 Log::error("Request to RAWG API failed: " . $exception->getMessage() . "\n" . $exception->getTraceAsString());
             }
-            $games = $response->json();
+            $ownedGames = $response->json();
             //salvando no cache por 2 meses
-            Cache::put($cacheKey, $games, 86400);
+            Cache::put($cacheKeyOwned, $ownedGames, 86400);
         }else{
             Log::info("Dados do usuário resgatados do cache");
-
         }
-        return compact('games');
+        if (!$favoriteGames) {
+            Log::info("Requisição do usuário feita a API Rawg");
+            $response = Http::withOptions([
+                'verify' => false
+            ])->get("https://api.rawg.io/api/games?key=".env('RAWG_API_KEY') ."&ids={$favorite}");
+            if ($response->failed()) {
+                $exception = $response->toException();
+                Log::error("Request to RAWG API failed: " . $exception->getMessage() . "\n" . $exception->getTraceAsString());
+            }
+            $favoriteGames = $response->json();
+            //salvando no cache por 2 meses
+            Cache::put($cacheKeyFavorite, $favoriteGames, 86400);
+        }else{
+            Log::info("Dados do usuário resgatados do cache");
+        }
+        if (!$wishedGames) {
+            Log::info("Requisição do usuário feita a API Rawg");
+            $response = Http::withOptions([
+                'verify' => false
+            ])->get("https://api.rawg.io/api/games?key=".env('RAWG_API_KEY') ."&ids={$wished}");
+            if ($response->failed()) {
+                $exception = $response->toException();
+                Log::error("Request to RAWG API failed: " . $exception->getMessage() . "\n" . $exception->getTraceAsString());
+            }
+            $wishedGames = $response->json();
+            //salvando no cache por 2 meses
+            Cache::put($cacheKeyWished, $wishedGames, 86400);
+        }else{
+            Log::info("Dados do usuário resgatados do cache");
+        }
+        Log::info($ownedGames);
+        Log::info($favoriteGames);
+
+        return compact('ownedGames', 'favoriteGames', 'wishedGames');
     }
+
     public function games($page = 1, $search = null){
         $search = $search !== null ? $search : '';
         //implementando cache para reduzir requisições a api (e também não ter ataque cardíaco dependendo dela)
