@@ -280,6 +280,7 @@ export default {
     logged() {
       return this.$store.state.logged;
     },
+
     loggedId() {
       return this.$store.state.user_id;
     },

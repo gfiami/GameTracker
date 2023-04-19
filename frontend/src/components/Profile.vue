@@ -3,9 +3,9 @@
     <div class="game-info-container">
       <div class="owned-games">
         <div class="category-title">
-          <h3>Owned Games</h3>
+          <h3>Owned</h3>
           <div class="games-counter" v-if="ownedIds.length !== 0">
-            <i>xx of {{ ownedIds.length }} </i>
+            <i>Showing {{ ownedCounter }} of {{ ownedIds.length }} games </i>
           </div>
         </div>
         <div class="loading-games" v-if="loadingGames">
@@ -57,7 +57,14 @@
         </div>
       </div>
       <div class="favorite-games">
-        <div class="category-title"><h3>Favorite Games</h3></div>
+        <div class="category-title">
+          <h3>Favorite</h3>
+          <div class="games-counter" v-if="favoriteIds.length !== 0">
+            <i
+              >Showing {{ favoriteCounter }} of {{ favoriteIds.length }} games
+            </i>
+          </div>
+        </div>
         <div class="loading-games" v-if="loadingGames">
           <div class="lds-facebook">
             <div></div>
@@ -85,7 +92,12 @@
         </div>
       </div>
       <div class="wishlist-games">
-        <div class="category-title"><h3>Wishlist Games</h3></div>
+        <div class="category-title">
+          <h3>Wishlist</h3>
+          <div class="games-counter" v-if="wishedIds.length !== 0">
+            <i>Showing {{ wishedCounter }} of {{ wishedIds.length }} games </i>
+          </div>
+        </div>
         <div class="loading-games" v-if="loadingGames">
           <div class="lds-facebook">
             <div></div>
@@ -125,30 +137,14 @@ export default {
   props: {
     user: null,
   },
-  watch: {
-    user(newVal, oldVal) {
-      Promise.all([
-        this.getWishedGames(),
-        this.getFavoriteGames(),
-        this.getOwnedGames(),
-      ]).then((values) => {
-        const owned_fetcher = this.ownedIds;
-        const favorite_fetcher = this.favoriteIds;
-        const wished_fetcher = this.wishedIds;
-        this.allGamesUserTracked(
-          owned_fetcher,
-          favorite_fetcher,
-          wished_fetcher
-        );
-      });
-    },
-  },
-
   components: {
     GameLayout,
   },
   data() {
     return {
+      owned_counter: "",
+      favorite_counter: "",
+      wished_counter: "",
       ownedIds: "",
       favoriteIds: "",
       wishedIds: "",
@@ -161,6 +157,101 @@ export default {
       emptyFavorite: false,
       emptyWished: false,
     };
+  },
+  watch: {
+    allGames: {
+      immediate: true,
+      handler(newGames, oldGames) {
+        if (
+          newGames !== "" &&
+          this.ownedIds !== "" &&
+          this.favoriteIds !== "" &&
+          this.wishedIds !== ""
+        ) {
+          const gameIds = newGames.map((game) => game.id);
+          let countOwned = 0;
+          let countFavorite = 0;
+          let countWished = 0;
+          gameIds.forEach((item) => {
+            if (this.ownedIds.includes(item)) {
+              countOwned++;
+            }
+          });
+          gameIds.forEach((item) => {
+            if (this.favoriteIds.includes(item)) {
+              countFavorite++;
+            }
+          });
+          gameIds.forEach((item) => {
+            if (this.wishedIds.includes(item)) {
+              countWished++;
+            }
+          });
+          this.owned_counter = countOwned;
+          this.favorite_counter = countFavorite;
+          this.wished_counter = countWished;
+        }
+      },
+    },
+    ownedIds: {
+      immediate: true,
+      handler(newOwned) {
+        if (newOwned !== "" && this.allGames !== "") {
+          const gameIds = this.allGames.map((game) => game.id);
+          let count = 0;
+
+          gameIds.forEach((item) => {
+            if (newOwned.includes(item)) {
+              count++;
+            }
+          });
+          this.owned_counter = count;
+        }
+      },
+    },
+    favoriteIds: {
+      immediate: true,
+      handler(newFavorite) {
+        if (newFavorite !== "" && this.allGames !== "") {
+          const gameIds = this.allGames.map((game) => game.id);
+          let count = 0;
+
+          gameIds.forEach((item) => {
+            if (newFavorite.includes(item)) {
+              count++;
+            }
+          });
+          this.favorite_counter = count;
+        }
+      },
+    },
+    wishedIds: {
+      immediate: true,
+      handler(newWished) {
+        if (newWished !== "" && this.allGames !== "") {
+          const gameIds = this.allGames.map((game) => game.id);
+          let count = 0;
+
+          gameIds.forEach((item) => {
+            if (newWished.includes(item)) {
+              count++;
+            }
+          });
+          this.wished_counter = count;
+        }
+      },
+    },
+  },
+  computed: {
+    ownedCounter() {
+      return this.owned_counter;
+    },
+    favoriteCounter() {
+      return this.favorite_counter;
+    },
+    wishedCounter() {
+      return this.wished_counter;
+    },
   },
   methods: {
     async allGamesUserTracked(owned, favorite, wished) {
@@ -179,50 +270,32 @@ export default {
           },
         }
       );
-      this.fetchedOwned = response.data.ownedGames.results;
-      this.fetchedFavorite = response.data.favoriteGames.results;
-      this.fetchedWished = response.data.wishedGames.results;
-      if (this.fetchOwned === undefined && this.fetchedFavorite === undefined) {
-        const allGames = this.fetchWished;
-        this.allGames = allGames;
-      } else if (
-        this.fetchedOwned === undefined &&
-        this.fetchedWished === undefined
-      ) {
-        const allGames = this.fetchedFavorite;
-        this.allGames = allGames;
-      } else if (
-        this.fetchedFavorite === undefined &&
-        this.fetchedWished === undefined
-      ) {
-        const allGames = this.fetchedOwned;
-        this.allGames = allGames;
-      } else if (this.fetchedOwned === undefined) {
-        const allGames = response.data.favoriteGames.results.concat(
-          response.data.wishedGames.results
-        );
-        this.allGames = allGames;
-      } else if (this.fetchedFavorite === undefined) {
-        const allGames = response.data.ownedGames.results.concat(
-          response.data.wishedGames.results
-        );
-        this.allGames = allGames;
-      } else if (this.fetchedWished === undefined) {
-        const allGames = response.data.ownedGames.results.concat(
-          response.data.favoriteGames.results
-        );
-        this.allGames = allGames;
-      } else {
-        const allGames = response.data.ownedGames.results.concat(
-          response.data.favoriteGames.results,
-          response.data.wishedGames.results
-        );
-        this.allGames = allGames;
-      }
-      console.log(this.allGames);
+
+      this.fetchedOwned = response.data.ownedGames?.results || [];
+      this.fetchedFavorite = response.data.favoriteGames?.results || [];
+      this.fetchedWished = response.data.wishedGames?.results || [];
+      const uniqueGames = [];
+
+      this.fetchedOwned.forEach((game) => {
+        if (!uniqueGames.some((uniqueGame) => uniqueGame.id === game.id)) {
+          uniqueGames.push(game);
+        }
+      });
+
+      this.fetchedFavorite.forEach((game) => {
+        if (!uniqueGames.some((uniqueGame) => uniqueGame.id === game.id)) {
+          uniqueGames.push(game);
+        }
+      });
+      this.fetchedWished.forEach((game) => {
+        if (!uniqueGames.some((uniqueGame) => uniqueGame.id === game.id)) {
+          uniqueGames.push(game);
+        }
+      });
+
+      this.allGames = uniqueGames;
       this.loadingGames = false;
     },
-
     async onButtonClicked(buttonType) {
       //removeOwned | addOwned | removeWishlist | addWishList | removeFavorite | addFavorite
       switch (buttonType) {
@@ -272,7 +345,6 @@ export default {
         );
         //pega os jogos "owned" e bota no array
         this.ownedIds = response.data;
-
         if (this.ownedIds.length == 0) {
           this.emptyOwned = true;
         } else {
