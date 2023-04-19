@@ -14,13 +14,15 @@
             >Edit profile</a
           >
         </div>
-        <div class="user-reviews">
-          <router-link
-            v-if="logged"
-            :to="{ name: 'reviews', params: { id: user.id } }"
-            :key="$route.fullPath"
-            >Reviews</router-link
-          >
+        <div class="nav-profile">
+          <div class="user-reviews">
+            <router-link
+              v-if="logged"
+              :to="{ name: 'reviews', params: { id: user.id } }"
+              :key="$route.fullPath"
+              >Reviews</router-link
+            >
+          </div>
         </div>
       </div>
       <Profile :user="user.id" />
@@ -209,7 +211,24 @@ export default {
   margin: 0 auto;
   margin-top: 30px;
 }
+.nav-profile {
+  display: flex;
+  width: fit-content;
+  padding: 1vh 2vw;
+  height: 10%;
+  font-size: 2vh;
+  text-shadow: 2px 2px #000;
 
+  font-style: italic;
+  border-radius: 6px;
+  justify-content: center;
+  align-items: center;
+  background-color: #330066;
+}
+.user-reviews a {
+  text-decoration: none;
+  color: white;
+}
 .username {
   font-size: 36px;
   font-weight: 700;
