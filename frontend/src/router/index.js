@@ -9,12 +9,6 @@ const routes = [
       import(/* webpackChunkName: "HomeView" */ "../views/HomeView.vue"),
   },
   {
-    path: "/test-api",
-    name: "testApi",
-    component: () =>
-      import(/* webpackChunkName: "TestApiView" */ "../views/TestApiView.vue"),
-  },
-  {
     path: "/games/game/:slug",
     name: "specificgame",
     component: () =>

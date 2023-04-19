@@ -62,7 +62,7 @@
             :to="{ path: '/register', query: { redirect: $route.path } }"
             >Register</router-link
           >
-          to track your games
+          to track
         </p>
         <p
           v-if="logged && !ownProfile && !gameRoute"
@@ -70,7 +70,7 @@
         >
           Go to
           <router-link :to="'/profile/' + loggedId">Profile</router-link> or
-          <router-link to="/games">Game Page</router-link> to track your games
+          <router-link to="/games">Game Page</router-link> to track
         </p>
 
         <p
@@ -626,7 +626,7 @@ export default {
 }
 
 .game-hover {
-  display: none;
+  display: none; /* revert to none */
   width: 100%;
   height: 35vh;
   position: absolute;
@@ -715,6 +715,10 @@ export default {
 .removeWishlist {
   color: rgba(250, 45, 45, 0.849);
 }
+.login-container-another-profile,
+.login-register-offline {
+  white-space: pre-wrap;
+}
 
 /* AJUSTES Desktop (nem sei se tão bom mas no chrome ficou ok*/
 @media screen and (min-width: 768px) {
@@ -727,6 +731,7 @@ export default {
   .game-title-mobile {
     display: none;
   }
+
   .game:hover .game-title,
   .game:active .game-title {
     background-image: none;
@@ -752,6 +757,11 @@ export default {
 
 @media (hover: none) {
   /* mobile styles */
+  .game-hover .login-register-offline,
+  .game-hover .login-container-another-profile {
+    display: none;
+  }
+
   .game-title {
     display: none;
   }
