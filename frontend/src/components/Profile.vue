@@ -9,14 +9,14 @@
           <div class="games-counter" v-if="ownedIds.length !== 0">
             <i>Showing {{ ownedCounter }} of {{ ownedIds.length }} games </i>
           </div>
-          <diav class="tracked-games" v-if="ownedIds.length !== 0">
+          <div class="tracked-games" v-if="ownedIds.length !== 0">
             <router-link
               v-if="ownedIds.length > ownedCounter"
               :to="{ name: 'owned', params: { id: $route.params.id } }"
               :key="$route.fullPath"
               >Check all</router-link
             >
-          </diav>
+          </div>
         </div>
         <div class="loading-games" v-if="loadingGames">
           <div class="lds-facebook">
