@@ -16,14 +16,16 @@
       <div class="title" v-else>
         <i>{{ user.name }}'s </i>&nbsp; Owned Games
       </div>
-      <TrackedGames
-        @ownedGamesUpdate="updateOwned"
-        :gameIds="ownedIds"
-        :owned="ownedIds"
-        :favorite="favoriteIds"
-        :wished="[]"
-        @trackerClicked="onButtonClicked"
-      />
+      <div class="owned-profile-container">
+        <TrackedGames
+          @ownedGamesUpdate="updateOwned"
+          :gameIds="ownedIds"
+          :owned="ownedIds"
+          :favorite="favoriteIds"
+          :wished="[]"
+          @trackerClicked="onButtonClicked"
+        />
+      </div>
     </div>
     <div v-else-if="!user">
       <Profile404 />
@@ -182,5 +184,10 @@ export default {
 }
 .back-profile a {
   color: white;
+}
+</style>
+<style>
+.owned-profile-container #own-icon {
+  display: none;
 }
 </style>

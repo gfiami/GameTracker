@@ -18,14 +18,15 @@
       <div
         v-else-if="logged && (checkOwned || checkFavorite || checkWished)"
         class="indicators"
+        id="indicators"
       >
-        <span v-if="checkOwned.includes(game.id)" class="fa"
+        <span id="own-icon" v-if="checkOwned.includes(game.id)" class="fa"
           ><i class="fas fa-gamepad own"></i
         ></span>
-        <span v-if="checkWished.includes(game.id)" class="fa"
+        <span id="wish-icon" v-if="checkWished.includes(game.id)" class="fa"
           ><i class="fas fa-heart wish"></i
         ></span>
-        <span v-if="checkFavorite.includes(game.id)" class="fa"
+        <span id="fav-icon" v-if="checkFavorite.includes(game.id)" class="fa"
           ><i class="fas fa-star fav"></i
         ></span>
       </div>
