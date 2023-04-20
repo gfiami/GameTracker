@@ -22,6 +22,27 @@
               >Reviews</router-link
             >
           </div>
+          <div class="user-owned-games">
+            <router-link
+              :to="{ name: 'owned', params: { id: $route.params.id } }"
+              :key="$route.fullPath"
+              >Own</router-link
+            >
+          </div>
+          <div class="user-owned-games">
+            <router-link
+              :to="{ name: 'owned', params: { id: $route.params.id } }"
+              :key="$route.fullPath"
+              >Favorite</router-link
+            >
+          </div>
+          <div class="user-owned-games">
+            <router-link
+              :to="{ name: 'owned', params: { id: $route.params.id } }"
+              :key="$route.fullPath"
+              >Wishlist</router-link
+            >
+          </div>
         </div>
       </div>
       <Profile :user="user.id" />
@@ -151,29 +172,57 @@ export default {
 }
 .personnal-info {
   display: flex;
-  gap: 20px;
+  flex-direction: column;
   width: 90%;
   margin: 0 auto;
   margin-top: 30px;
 }
 .nav-profile {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+
+  margin-top: 1vh;
   display: flex;
-  width: fit-content;
+  align-self: center;
+  width: 100%;
+  gap: 5vw;
   padding: 1vh 2vw;
   height: 10%;
   font-size: 2vh;
   text-shadow: 2px 2px #000;
-
-  font-style: italic;
   border-radius: 6px;
-  justify-content: center;
+  justify-content: space-between;
+  gap: 2vw;
   align-items: center;
   background-color: #330066;
 }
-.user-reviews a {
+.nav-profile a {
   text-decoration: none;
   color: white;
 }
+@media screen and (min-width: 768px) {
+  .personnal-info {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    width: 90%;
+    margin: 0 auto;
+    margin-top: 30px;
+  }
+  .nav-profile {
+    margin-left: 10vw;
+    display: flex;
+    align-self: flex-end;
+    width: fit-content;
+    padding: 1vh 2vw;
+    height: 10%;
+    font-size: 2vh;
+    border-radius: 6px;
+    justify-content: space-between;
+    gap: 2vw;
+    align-items: center;
+  }
+}
+
 .username {
   font-size: 36px;
   font-weight: 700;

@@ -23,6 +23,7 @@
         @goToPage="goToPage"
       />
     </div>
+    <div class="error" v-else-if="!fetched">No games found</div>
   </div>
 </template>
 
@@ -90,6 +91,11 @@ export default {
       this.$emit("trackerClicked", buttonType);
     },
     async fetchTrackedCategory() {
+      if (this.gameIds.length == 0) {
+        this.fetched = null;
+        this.loadingGames = false;
+        return false;
+      }
       this.loadingGames = true;
       console.log(this.currentPage);
       if (this.gameIds == null) {
@@ -114,4 +120,10 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.error {
+  width: 70%;
+  margin: 0 auto;
+  margin-top: 3vh;
+}
+</style>

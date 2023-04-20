@@ -133,7 +133,6 @@ export default {
       }
     },
     async getFavoriteGames() {
-      console.log("entrou");
       try {
         const response = await axios.get(
           `${process.env.VUE_APP_APIURL}fetch-favorite`,
