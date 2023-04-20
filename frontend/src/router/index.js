@@ -80,6 +80,14 @@ const routes = [
         /* webpackChunkName: "ProfileView" */ "../views/TrackedGames/FavoriteView.vue"
       ),
   },
+  {
+    path: "/profile/wishlist-games/:id",
+    name: "wishlist",
+    component: () =>
+      import(
+        /* webpackChunkName: "ProfileView" */ "../views/TrackedGames/WishlistView.vue"
+      ),
+  },
 ];
 
 const router = createRouter({

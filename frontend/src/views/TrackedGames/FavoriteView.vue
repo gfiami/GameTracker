@@ -21,7 +21,7 @@
         :gameIds="favoriteIds"
         :owned="ownedIds"
         :favorite="favoriteIds"
-        wished="[]"
+        :wished="[]"
         @trackerClicked="onButtonClicked"
       />
     </div>

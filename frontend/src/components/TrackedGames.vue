@@ -1,10 +1,7 @@
 <template>
   <div class="tracked-games">
     <div v-if="loadingGames"><Loading /></div>
-    <div
-      class="owned-container"
-      v-else-if="fetched && gameIds && owned && favorite && wished"
-    >
+    <div class="owned-container" v-else-if="fetched && gameIds">
       <GameLayout
         :user="$route.params.id"
         :games="fetched"
@@ -112,6 +109,8 @@ export default {
         }
       );
       this.fetched = response.data.games.results;
+      console.log("pegano jogo na categoria");
+      console.log(this.fetched);
       console.log(response.data.games.results);
       this.loadingGames = false;
     },

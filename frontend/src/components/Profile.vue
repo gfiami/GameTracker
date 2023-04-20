@@ -119,6 +119,14 @@
           <div class="games-counter" v-if="wishedIds.length !== 0">
             <i>Showing {{ wishedCounter }} of {{ wishedIds.length }} games </i>
           </div>
+          <div class="tracked-games" v-if="wishedIds.length !== 0">
+            <router-link
+              v-if="wishedIds.length > wishedCounter"
+              :to="{ name: 'wishlist', params: { id: $route.params.id } }"
+              :key="$route.fullPath"
+              >Check all</router-link
+            >
+          </div>
         </div>
         <div class="loading-games" v-if="loadingGames">
           <div class="lds-facebook">

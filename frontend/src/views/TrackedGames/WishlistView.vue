@@ -12,16 +12,16 @@
           <i class="fas fa-caret-left"></i> Back to Profile
         </router-link>
       </div>
-      <div class="title" v-if="checkOwnProfile">Your Owned Games</div>
+      <div class="title" v-if="checkOwnProfile">Your Wishlisted Games</div>
       <div class="title" v-else>
-        <i>{{ user.name }}'s </i>&nbsp; Owned Games
+        <i>{{ user.name }}'s </i>&nbsp; Wishlisted Games
       </div>
       <TrackedGames
-        @ownedGamesUpdate="updateOwned"
-        :gameIds="ownedIds"
+        @wishListedGamesUpdate="updateWishlist"
+        :gameIds="wishedIds"
         :owned="ownedIds"
-        :favorite="favoriteIds"
-        :wished="[]"
+        :favorite="[]"
+        :wished="wishedIds"
         @trackerClicked="onButtonClicked"
       />
     </div>
@@ -52,8 +52,8 @@ export default {
   data() {
     return {
       user: null,
+      wishedIds: "",
       ownedIds: "",
-      favoriteIds: "",
       loadingUser: true,
     };
   },
@@ -67,25 +67,20 @@ export default {
     },
   },
   methods: {
-    updateOwned(newValue) {
-      this.ownedIds = newValue;
+    updateWishlist(newValue) {
+      this.wishedIds = newValue;
     },
     async onButtonClicked(buttonType) {
       //removeOwned | addOwned | removeWishlist | addWishList | removeFavorite | addFavorite
       switch (buttonType) {
-        case "removeOwned":
+        case "addOwned":
+          await this.getWishedGames();
           await this.getOwnedGames();
-          await this.getFavoriteGames();
+
           break;
 
-        case "removeFavorite":
-          await this.getFavoriteGames();
-          await this.getOwnedGames();
-          break;
-
-        case "addFavorite":
-          await this.getOwnedGames();
-          await this.getFavoriteGames();
+        case "removeWishlist":
+          await this.getWishedGames();
           break;
 
         default:
@@ -110,6 +105,28 @@ export default {
       }
       this.loadingUser = false;
     },
+    async getWishedGames() {
+      try {
+        const response = await axios.get(
+          `${process.env.VUE_APP_APIURL}fetch-wished`,
+          {
+            params: {
+              user_id: this.$route.params.id,
+            },
+          }
+        );
+        this.wishedIds = response.data;
+        console.log(this.wishedIds);
+        if (this.wishedIds.length == 0) {
+          this.emptyWished = true;
+        } else {
+          this.emptyWished = false;
+        }
+        return response.data;
+      } catch (error) {
+        console.log(error.response.data.error);
+      }
+    },
     async getOwnedGames() {
       try {
         const response = await axios.get(
@@ -132,36 +149,11 @@ export default {
         console.log(error.response.data.error);
       }
     },
-    async getFavoriteGames() {
-      try {
-        const response = await axios.get(
-          `${process.env.VUE_APP_APIURL}fetch-favorite`,
-          {
-            params: {
-              user_id: this.$route.params.id,
-            },
-          }
-        );
-
-        //pega os jogos "favorite" e bota no array
-        this.favoriteIds = response.data;
-        if (this.favoriteIds.length == 0) {
-          this.emptyFavorite = true;
-        } else {
-          this.emptyFavorite = false;
-        }
-
-        return response.data;
-      } catch (error) {
-        console.log(error.response.data.error);
-      }
-    },
   },
   mounted() {
     Promise.all([this.getUserInfo()]).then((values) => {
       if (values[0] !== false) {
-        this.getOwnedGames();
-        this.getFavoriteGames();
+        this.getWishedGames();
       }
     });
   },

@@ -38,7 +38,7 @@
           </div>
           <div class="user-owned-games">
             <router-link
-              :to="{ name: 'owned', params: { id: $route.params.id } }"
+              :to="{ name: 'wishlist', params: { id: $route.params.id } }"
               :key="$route.fullPath"
               >Wishlist</router-link
             >
