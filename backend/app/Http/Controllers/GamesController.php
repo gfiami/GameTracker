@@ -31,12 +31,13 @@ class GamesController extends Controller
     public function trackedGameCategory(Request $request){
         $game_ids = $request->input('game_ids');
         $page = $request->input('page');
+        Log::info($page);
         if($game_ids == null){
             $games = [];
         } else{
             sort($game_ids);
             $ids = implode(",", $game_ids);
-            $cacheKey = 'all_user_games_owned' . implode('_', $game_ids);
+            $cacheKey = 'all_user_games_owned' . implode('_', $game_ids) . '_page_' . $page;
             $games = Cache::get($cacheKey);
             if(!$games){
                 Log::info("Requisição do usuário feita a API Rawg");

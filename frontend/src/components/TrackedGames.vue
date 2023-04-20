@@ -1,21 +1,48 @@
 <template>
-  <div>
-    <GameLayout />
+  <div class="tracked-games">
+    <div v-if="loadingGames"><Loading /></div>
+    <div
+      class="owned-container"
+      v-else-if="fetched && gameIds && owned && favorite && wished"
+    >
+      <GameLayout
+        :user="$route.params.id"
+        :games="fetched"
+        :checkIds="gameIds"
+        :checkOwned="owned"
+        :checkFavorite="favorite"
+        :checkWished="wished"
+        @button-clicked="clickedButton"
+        @ownedGamesUpdate="updateOwned"
+        @favoriteGamesUpdate="updateFavorite"
+        @wishListedGamesUpdate="updateWished"
+      />
+      <PaginationReview
+        :totalPages="totalPages"
+        :currentPage="currentPage"
+        @goToPage="goToPage"
+      />
+    </div>
   </div>
 </template>
 
 <script>
 import GameLayout from "./GameLayout.vue";
+import PaginationReview from "./PaginationReview.vue";
+import Loading from "./Loading.vue";
+
 import axios from "axios";
 
 export default {
   name: "TrackedGames",
   components: {
     GameLayout,
+    PaginationReview,
+    Loading,
   },
   data() {
     return {
-      fetched: "",
+      fetched: null,
       loadingGames: true,
       currentPage: 1,
     };
@@ -31,9 +58,40 @@ export default {
   },
   props: {
     gameIds: null,
+    owned: null,
+    wished: null,
+    favorite: null,
+  },
+  computed: {
+    totalPages() {
+      if (this.gameIds !== null && this.gameIds !== undefined)
+        return Math.ceil(this.gameIds.length / 18);
+    },
   },
   methods: {
+    goToPage(page) {
+      this.currentPage = page;
+      console.log(page);
+      this.fetchTrackedCategory();
+      if (this.gameIds !== null && this.gameIds !== undefined) {
+        window.scrollTo(0, 0);
+      }
+    },
+    updateOwned(newValue) {
+      this.$emit("ownedGamesUpdate", newValue);
+    },
+    updateFavorite(newValue) {
+      this.$emit("favoriteGamesUpdate", newValue);
+    },
+    updateWished(newValue) {
+      this.$emit("wishListedGamesUpdate", newValue);
+    },
+    clickedButton(buttonType) {
+      this.$emit("trackerClicked", buttonType);
+    },
     async fetchTrackedCategory() {
+      this.loadingGames = true;
+      console.log(this.currentPage);
       if (this.gameIds == null) {
         console.log("ue");
         this.loadingGames = false;
@@ -48,13 +106,12 @@ export default {
           },
         }
       );
-
-      this.fetched = response.data;
-      console.log(this.fetched);
+      this.fetched = response.data.games.results;
+      console.log(response.data.games.results);
       this.loadingGames = false;
     },
   },
 };
 </script>
 
-<style></style>
+<style scoped></style>

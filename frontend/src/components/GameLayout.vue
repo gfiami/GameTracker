@@ -290,7 +290,9 @@ export default {
       const ownProfile =
         this.$route.name == "profile" &&
         this.$route.params.id == this.$store.state.user_id;
-      return gamesRouteLogged || ownProfile;
+      const trackedPage =
+        this.$route.name == ("owned" || "favorite" || "wished");
+      return gamesRouteLogged || ownProfile || trackedPage;
     },
     profileRoute() {
       const profileRoute = this.$route.name == "profile";
@@ -301,9 +303,7 @@ export default {
       return gamesRoute;
     },
     ownProfile() {
-      const ownProfile =
-        this.$route.name == "profile" &&
-        this.$route.params.id == this.$store.state.user_id;
+      const ownProfile = this.$route.params.id == this.$store.state.user_id;
       return ownProfile;
     },
   },
@@ -360,7 +360,7 @@ export default {
       const gameIds = this.games.map((game) => game.id);
       const user_id = this.user;
       const personal_token = this.$store.state.personal_token;
-
+      console.log(personal_token);
       try {
         console.log("Entrou no try do remove Owned");
         const response = await axios.delete(
@@ -377,6 +377,8 @@ export default {
           }
         );
         this.ownedGames = response.data.owned_games;
+        console.log(this.ownedGames);
+
         this.favoriteGames = response.data.favorite_games;
         this.$emit("favoriteGamesUpdate", this.favoriteGames);
         this.$emit("ownedGamesUpdate", this.ownedGames);
@@ -391,7 +393,6 @@ export default {
       const user_id = this.user;
       const gameIds = this.games.map((game) => game.id);
       const personal_token = this.$store.state.personal_token;
-
       try {
         const response = await axios.post(
           `${process.env.VUE_APP_APIURL}favorite`,

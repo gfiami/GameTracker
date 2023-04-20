@@ -9,14 +9,14 @@
           <div class="games-counter" v-if="ownedIds.length !== 0">
             <i>Showing {{ ownedCounter }} of {{ ownedIds.length }} games </i>
           </div>
-          <div class="tracked-games" v-if="ownedIds.length !== 0">
+          <diav class="tracked-games" v-if="ownedIds.length !== 0">
             <router-link
               v-if="ownedIds.length > ownedCounter"
               :to="{ name: 'owned', params: { id: $route.params.id } }"
               :key="$route.fullPath"
               >Check all</router-link
             >
-          </div>
+          </diav>
         </div>
         <div class="loading-games" v-if="loadingGames">
           <div class="lds-facebook">
@@ -210,6 +210,7 @@ export default {
     ownedIds: {
       immediate: true,
       handler(newOwned) {
+        console.log(newOwned);
         if (newOwned !== "" && this.allGames !== "") {
           const gameIds = this.allGames.map((game) => game.id);
           let count = 0;
@@ -359,6 +360,9 @@ export default {
         );
         //pega os jogos "owned" e bota no array
         this.ownedIds = response.data;
+        console.log("profile");
+        console.log(response.data);
+        console.log(this.ownedIds);
         if (this.ownedIds.length == 0) {
           this.emptyOwned = true;
         } else {
@@ -458,7 +462,7 @@ export default {
 .category-title {
   display: flex;
   align-items: center;
-  gap: 4vw;
+  justify-content: space-between;
   width: 70%;
   margin: 0 auto;
   margin-bottom: 0;
@@ -481,11 +485,15 @@ export default {
   white-space: nowrap;
   margin: 0;
 }
+.tracked-games a {
+  color: white;
+}
 .layout-container .game-list .game-hover .logged-container {
   text-align: center;
   white-space: pre-wrap;
   width: 30%;
 }
+
 .layout-container .game-list .game-title,
 .layout-container .game-list .game-title-mobile {
   white-space: pre-wrap;
