@@ -14,33 +14,23 @@ use App\Models\PersonalAccessToken;
 
 class OwnedGameController extends Controller
 {
-    //OWN
-    //Pega a lista de todos os owned mas aqui vamos interagir mais com a api rawg despois(praticamente igual a de baixo, rever...)
-    public function fetchAllOwned(Request $request){
-        try{
-        $user_id = $request->input('user_id');
-        $owned_games = OwnedGame::where('user_id', $user_id)
-        ->pluck('game_api_id')
-        ->toArray();
-        return response()->json($owned_games);
-         } catch (\Exception $e) {
-            return response()->json(['Erro na requisição' => $e->getMessage()], 500);
-        }
-    }
-    //essa é utilizada para checar os OwnedGames
+
+    //essa é utilizada para checar os jogos na lista de owned
     public function checkOwnedGames($user_id, $game_api_ids){
         return OwnedGame::where('user_id', $user_id)
                 ->whereIn('game_api_id', $game_api_ids)
                 ->pluck('game_api_id')
                 ->toArray();
     }
-    //essa é utilizada para checar os wishlist
+
+    //essa é utilizada para checar quais jogos estão na wishlist
     public function checkWishlist($user_id, $game_api_ids){
         return WishlistGame::where('user_id', $user_id)
                 ->whereIn('game_api_id', $game_api_ids)
                 ->pluck('game_api_id')
                 ->toArray();
     }
+    //essa é utilizada para checar quais jogos estão na favorite list
     public function checkFavoriteGames($user_id, $game_api_ids){
         return FavoritedGame::where('user_id', $user_id)
                 ->whereIn('game_api_id', $game_api_ids)
@@ -48,7 +38,7 @@ class OwnedGameController extends Controller
                 ->toArray();
     }
 
-    //aqui é usada mais nos gamelayouts para no inicio carregar os dados necessários
+    //usado para checar na página atual quais jogos o usuário possui
     public function checkOwnedGamesStarter(Request $request){
         $user_id = $request->input('user_id');
         $game_api_ids = $request->input('game_api_ids');
@@ -58,7 +48,7 @@ class OwnedGameController extends Controller
                 ->toArray();
     }
 
-    //adiciona o jogo a lista de owned e retorna o novo conjunto do owned games
+    //adiciona o jogo a lista de owned e retorna o novo conjunto do owned games (também remove da wishlist se precisar)
     public function addOwned(Request $request){
         try {
             $token = $request->bearerToken();
@@ -109,7 +99,7 @@ class OwnedGameController extends Controller
         }
     }
 
-    //deleta o jodo da lista de owned e retorna o novo conjunto do owned games
+    //deleta o jogo da lista de owned e retorna o novo conjunto do owned games (também remove dos favoritos se precisar)
     public function removeOwned (Request $request){
         try{
 
@@ -161,8 +151,7 @@ class OwnedGameController extends Controller
         }
     }
 
-    //specific game page
-    //specific owned
+    //adiciona jogo a lista de owned na página específica do jogo
     public function addSpecificOwned(Request $request){
         try {
             $token = $request->bearerToken();
@@ -211,7 +200,7 @@ class OwnedGameController extends Controller
         }
     }
 
-    //deleta o jodo da lista de owned e retorna o novo conjunto do owned games
+    //remove jogo da lista de owned na página específica do jogo
     public function removeSpecificOwned (Request $request){
         try{
         $token = $request->bearerToken();

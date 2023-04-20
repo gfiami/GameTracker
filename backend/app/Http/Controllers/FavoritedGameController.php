@@ -9,19 +9,6 @@ use App\Models\PersonalAccessToken;
 
 class FavoritedGameController extends Controller
 {
-    //FAVORITES
-    //serve para pegar todos os favoritos e depois interagir com a api rawg
-    public function fetchAllFavorite(Request $request){
-        try{
-        $user_id = $request->input('user_id');
-        $favorite_games = FavoritedGame::where('user_id', $user_id)
-        ->pluck('game_api_id')
-        ->toArray();
-        return response()->json($favorite_games);
-         } catch (\Exception $e) {
-            return response()->json(['Erro na requisição' => $e->getMessage()], 500);
-        }
-    }
 
     //serve para recursivamente checarmos todos os jogos favoritos
     public function checkFavoriteGames($user_id, $game_api_ids){
@@ -76,6 +63,7 @@ class FavoritedGameController extends Controller
         }
     }
 
+    //remove jogo da lista de favoritos
     public function removeFavorite (Request $request){
         try{
             $token = $request->bearerToken();
@@ -111,7 +99,7 @@ class FavoritedGameController extends Controller
         }
     }
 
-//specific game page
+    //adiciona jogo a lista de favoritos na página específica do jogo
     public function addSpecificFavorite(Request $request){
         try {
             $token = $request->bearerToken();
@@ -144,6 +132,7 @@ class FavoritedGameController extends Controller
         }
     }
 
+    //remove jogo da lista de favoritos na página específica do jogo
     public function removeSpecificFavorite (Request $request){
         try{
         $token = $request->bearerToken();

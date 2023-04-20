@@ -74,22 +74,7 @@ export default {
       this.favoriteIds = newValue;
     },
     async onButtonClicked(buttonType) {
-      //removeOwned | addOwned | removeWishlist | addWishList | removeFavorite | addFavorite
-      switch (buttonType) {
-        case "removeOwned":
-          await this.getOwnedGames();
-          await this.getFavoriteGames();
-          break;
-
-        case "removeFavorite":
-          await this.getFavoriteGames();
-          await this.getOwnedGames();
-          break;
-
-        default:
-          console.log("erro reconhecendo button type");
-          break;
-      }
+      await this.getIdsGamesTracked();
     },
     async getUserInfo() {
       const id = this.$route.params.id;
@@ -108,48 +93,29 @@ export default {
       }
       this.loadingUser = false;
     },
-    async getOwnedGames() {
+    async getIdsGamesTracked() {
+      const user_id = this.user;
       try {
         const response = await axios.get(
-          `${process.env.VUE_APP_APIURL}fetch-owned`,
+          `${process.env.VUE_APP_APIURL}game-ids-user-tracked`,
           {
             params: {
-              user_id: this.$route.params.id,
+              user_id: user_id,
             },
           }
         );
-        //pega os jogos "owned" e bota no array
-        this.ownedIds = response.data;
+        this.ownedIds = response.data.owned;
+        this.favoriteIds = response.data.favorite;
         if (this.ownedIds.length == 0) {
           this.emptyOwned = true;
         } else {
           this.emptyOwned = false;
         }
-        return response.data;
-      } catch (error) {
-        console.log(error.response.data.error);
-      }
-    },
-    async getFavoriteGames() {
-      try {
-        const response = await axios.get(
-          `${process.env.VUE_APP_APIURL}fetch-favorite`,
-          {
-            params: {
-              user_id: this.$route.params.id,
-            },
-          }
-        );
-
-        //pega os jogos "favorite" e bota no array
-        this.favoriteIds = response.data;
         if (this.favoriteIds.length == 0) {
           this.emptyFavorite = true;
         } else {
           this.emptyFavorite = false;
         }
-
-        return response.data;
       } catch (error) {
         console.log(error.response.data.error);
       }
@@ -158,8 +124,7 @@ export default {
   mounted() {
     Promise.all([this.getUserInfo()]).then((values) => {
       if (values[0] !== false) {
-        this.getOwnedGames();
-        this.getFavoriteGames();
+        this.getIdsGamesTracked();
       }
     });
   },

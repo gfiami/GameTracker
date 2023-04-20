@@ -11,7 +11,9 @@ use App\Models\PersonalAccessToken;
 
 
 class ReviewController extends Controller
-{   public function fetchUserReviews(Request $request){
+{
+    //pega as reviews de determinado usuario
+    public function fetchUserReviews(Request $request){
     try {
         $user_id = $request->input('user_id');
         $reviews = Review::where('user_id', $user_id)
@@ -37,6 +39,8 @@ class ReviewController extends Controller
         return response()->json(['Erro na requisição' => $e->getMessage()], 500);
     }
     }
+
+    //pega as reviews de determinado jogo
     public function fetchReviews(Request $request){
         try {
             $game_api_id = $request->input('game_api_id');
@@ -63,6 +67,8 @@ class ReviewController extends Controller
             return response()->json(['Erro na requisição' => $e->getMessage()], 500);
         }
     }
+
+    //adicionar uma review
     public function addReview(Request $request){
         try{
             $validateReviewInfo = $request->validate([
@@ -130,7 +136,8 @@ class ReviewController extends Controller
             ], 422);
         }
     }
-    //edit review
+
+    //edit a review
     public function editReview(Request $request){
         try{
             $validateReviewInfo = $request->validate([
@@ -216,6 +223,7 @@ class ReviewController extends Controller
         }
     }
 
+    //deleta a review
     public function deleteReview(Request $request){
         try{
 

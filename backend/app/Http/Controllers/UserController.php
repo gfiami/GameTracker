@@ -88,6 +88,7 @@ class UserController extends Controller
             //basicamente o user fez besteirinhas na digitação que não passou na minha função validate
         }
     }
+
     //logout
     public function logout(Request $request){
         try{

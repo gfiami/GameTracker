@@ -334,9 +334,7 @@ export default {
         this.wishListedGames = response.data.wishlisted_games;
         this.$emit("favoriteGamesUpdate", this.favoriteGames);
         this.$emit("ownedGamesUpdate", this.ownedGames);
-
         this.$emit("wishListedGamesUpdate", this.wishListedGames);
-
         this.$emit("button-clicked", "addOwned");
       } catch (error) {
         console.log(error.response.data.error);

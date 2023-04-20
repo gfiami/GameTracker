@@ -14,20 +14,31 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 class GamesController extends Controller
 {
-    /* jeito antigo, mudei para cache e tirei cert checker
-        //$certPath = storage_path('rawg_io.pem');
-        //$curl = curl_init();
-        //curl_setopt($curl, CURLOPT_CAINFO, $certPath);
-         $response = Http::withOptions([
-            'curl' => [
-                CURLOPT_CAINFO => $certPath,
-            ],
-            'verify' => false
+    //pega o id de todos os jogos que o usuario tem para cada categoria
+    public function getIdsGamesTracked(Request $request){
+        try{
+        $user_id = $request->input('user_id');
+        $owned_games = OwnedGame::where('user_id', $user_id)
+        ->pluck('game_api_id')
+        ->toArray();
+        $favorite_games = FavoritedGame::where('user_id', $user_id)
+        ->pluck('game_api_id')
+        ->toArray();
+        $wishlist_games = WishlistGame::where('user_id', $user_id)
+        ->pluck('game_api_id')
+        ->toArray();
+        return response()->json([
+            'owned' => $owned_games,
+            'favorite' => $favorite_games,
+            'wished' => $wishlist_games,
+        ]);
 
-            //limitações da api de no máximo 40 jogos por página
-        ])->get("https://api.rawg.io/api/games?key=".env('RAWG_API_KEY') ."&ids={$ids}");
-        $games = $response->json();
-        return compact('games'); */
+        } catch (\Exception $e) {
+                return response()->json(['Erro na requisição' => $e->getMessage()], 500);
+        }
+    }
+
+    //Para cada página de own|favorite|wishlist, apenas de determinada categoria
     public function trackedGameCategory(Request $request){
         $game_ids = $request->input('game_ids');
         $page = $request->input('page');
@@ -56,8 +67,9 @@ class GamesController extends Controller
             }
         }
         return compact('games');
-
     }
+
+    //Usado no perfil para mostrar até 10 jogos de cada categoria, pegando na api de acordo com os jogos que o user rastreou
     public function allGamesUserTracked(Request $request){
         $ownedArray = $request->input('owned_games');
         $favoriteArray = $request->input('favorite_games');
@@ -112,7 +124,6 @@ class GamesController extends Controller
          } else{
             $favoriteGames = [];
          }
-
          if($wishedArray !== null){
             $wishedArray = array_slice($wishedArray, 0, 10);
             sort($wishedArray);
@@ -138,14 +149,12 @@ class GamesController extends Controller
          } else{
             $wishedGames = [];
          }
-
         return compact('ownedGames', 'favoriteGames', 'wishedGames');
     }
 
+    //pega diversos jogos da api para a página de jogos
     public function games($page = 1, $search = null){
         $search = $search !== null ? $search : '';
-        //implementando cache para reduzir requisições a api (e também não ter ataque cardíaco dependendo dela)
-
         $cacheKey = 'games_page_' . $page . '_search_' . $search;
         $games = Cache::get($cacheKey);
 
@@ -163,27 +172,12 @@ class GamesController extends Controller
             Cache::put($cacheKey, $games, 86400);
         }else{
             Log::info("Dados resgatados do cache");
-
         }
         return compact('games');
     }
+
+    //pega informações de determinado jogo na api para a página dele
     public function specificGameInfo($gameId){
-       /*
-        jeito sem cache e que antes usava tbm certpath, agora vou usar cache e tirar esse certpath q tava dando ruim
-       //$certPath = storage_path('rawg_io.pem');
-       // $curl = curl_init();
-        //curl_setopt($curl, CURLOPT_CAINFO, $certPath);
-        $response = Http::withOptions([
-            'curl' => [
-                CURLOPT_CAINFO => $certPath,
-            ],
-            'verify' => false
-
-        ])->get("https://api.rawg.io/api/games/".$gameId."?key=".env('RAWG_API_KEY'));
-        $game = $response->json();
-        return compact('game'); */
-        //implementando cache para reduzir requisições a api (e também não ter ataque cardíaco dependendo dela)
-
         $cacheKey = 'games_id_' . $gameId;
         $game = Cache::get($cacheKey);
 
@@ -201,11 +195,11 @@ class GamesController extends Controller
             Cache::put($cacheKey, $game, 86400);
         }else{
             Log::info("Dado do jogo específico pegos no cache");
-
         }
         return compact('game');
     }
-    //fetch asll specific tracker Interações com jogos específicos na specific game page
+
+    //pega dados específicos em relação ao usuario na página de determinado jogo
     public function fetchTrackedSpecific(Request $request){
         try {
             $user_id = $request->input('user_id');

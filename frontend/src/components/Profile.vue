@@ -226,7 +226,6 @@ export default {
     ownedIds: {
       immediate: true,
       handler(newOwned) {
-        console.log(newOwned);
         if (newOwned !== "" && this.allGames !== "") {
           const gameIds = this.allGames.map((game) => game.id);
           let count = 0;
@@ -327,64 +326,35 @@ export default {
       this.allGames = uniqueGames;
       this.loadingGames = false;
     },
-    async onButtonClicked(buttonType) {
-      //removeOwned | addOwned | removeWishlist | addWishList | removeFavorite | addFavorite
-      switch (buttonType) {
-        case "removeOwned":
-          await this.getOwnedGames();
-          await this.getFavoriteGames();
-          break;
-        case "addOwned":
-          await this.getWishedGames();
-          await this.getOwnedGames();
-
-          break;
-        case "removeWishlist":
-          await this.getWishedGames();
-          break;
-        case "addWishList":
-          console.log("nem deveria ser possível aqui rsrsrs");
-          break;
-
-        case "removeFavorite":
-          await this.getFavoriteGames();
-          await this.getOwnedGames();
-
-          break;
-        case "addFavorite":
-          await this.getOwnedGames();
-          await this.getFavoriteGames();
-          // this.allGames = this.allGames;  (testando se precisa disso ou nao)
-
-          break;
-        default:
-          console.log("erro reconhecendo button type");
-          break;
-      }
-    },
-    /* owned functions */
-    async getOwnedGames() {
+    async getIdsGamesTracked() {
       const user_id = this.user;
       try {
         const response = await axios.get(
-          `${process.env.VUE_APP_APIURL}fetch-owned`,
+          `${process.env.VUE_APP_APIURL}game-ids-user-tracked`,
           {
             params: {
               user_id: user_id,
             },
           }
         );
-        //pega os jogos "owned" e bota no array
-        this.ownedIds = response.data;
-        console.log("profile");
-        console.log(response.data);
-        console.log(this.ownedIds);
+        this.ownedIds = response.data.owned;
+        this.favoriteIds = response.data.favorite;
+        this.wishedIds = response.data.wished;
         if (this.ownedIds.length == 0) {
           this.emptyOwned = true;
         } else {
           this.emptyOwned = false;
         }
-        return response.data;
+        if (this.favoriteIds.length == 0) {
+          this.emptyFavorite = true;
+        } else {
+          this.emptyFavorite = false;
+        }
+        if (this.wishedIds.length == 0) {
+          this.emptyWished = true;
+        } else {
+          this.emptyWished = false;
+        }
       } catch (error) {
         console.log(error.response.data.error);
       }
@@ -392,69 +362,18 @@ export default {
     updateOwnedGames(newValue) {
       this.ownedIds = newValue;
     },
-
-    /* favorite functions */
-    async getFavoriteGames() {
-      const user_id = this.user;
-      try {
-        const response = await axios.get(
-          `${process.env.VUE_APP_APIURL}fetch-favorite`,
-          {
-            params: {
-              user_id: user_id,
-            },
-          }
-        );
-
-        //pega os jogos "favorite" e bota no array
-        this.favoriteIds = response.data;
-        if (this.favoriteIds.length == 0) {
-          this.emptyFavorite = true;
-        } else {
-          this.emptyFavorite = false;
-        }
-
-        return response.data;
-      } catch (error) {
-        console.log(error.response.data.error);
-      }
-    },
     updateFavoriteGames(newValue) {
       this.favoriteIds = newValue;
-    },
-    /*wished functions */
-    async getWishedGames() {
-      const user_id = this.user;
-      try {
-        const response = await axios.get(
-          `${process.env.VUE_APP_APIURL}fetch-wished`,
-          {
-            params: {
-              user_id: user_id,
-            },
-          }
-        );
-        this.wishedIds = response.data;
-        if (this.wishedIds.length == 0) {
-          this.emptyWished = true;
-        } else {
-          this.emptyWished = false;
-        }
-        return response.data;
-      } catch (error) {
-        console.log(error.response.data.error);
-      }
     },
     updateWishedGames(newValue) {
       this.wishedIds = newValue;
     },
+    async onButtonClicked(buttonType) {
+      await this.getIdsGamesTracked();
+    },
   },
   mounted() {
-    Promise.all([
-      this.getWishedGames(),
-      this.getFavoriteGames(),
-      this.getOwnedGames(),
-    ]).then((values) => {
+    Promise.all([this.getIdsGamesTracked()]).then((values) => {
       const owned_fetcher = this.ownedIds;
       const favorite_fetcher = this.favoriteIds;
       const wished_fetcher = this.wishedIds;

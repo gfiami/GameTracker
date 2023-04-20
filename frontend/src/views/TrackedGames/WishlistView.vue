@@ -74,22 +74,7 @@ export default {
       this.wishedIds = newValue;
     },
     async onButtonClicked(buttonType) {
-      //removeOwned | addOwned | removeWishlist | addWishList | removeFavorite | addFavorite
-      switch (buttonType) {
-        case "addOwned":
-          await this.getWishedGames();
-          await this.getOwnedGames();
-
-          break;
-
-        case "removeWishlist":
-          await this.getWishedGames();
-          break;
-
-        default:
-          console.log("erro reconhecendo button type");
-          break;
-      }
+      await this.getIdsGamesTracked();
     },
     async getUserInfo() {
       const id = this.$route.params.id;
@@ -108,46 +93,29 @@ export default {
       }
       this.loadingUser = false;
     },
-    async getWishedGames() {
+    async getIdsGamesTracked() {
+      const user_id = this.user;
       try {
         const response = await axios.get(
-          `${process.env.VUE_APP_APIURL}fetch-wished`,
+          `${process.env.VUE_APP_APIURL}game-ids-user-tracked`,
           {
             params: {
-              user_id: this.$route.params.id,
+              user_id: user_id,
             },
           }
         );
-        this.wishedIds = response.data;
-        console.log(this.wishedIds);
-        if (this.wishedIds.length == 0) {
-          this.emptyWished = true;
-        } else {
-          this.emptyWished = false;
-        }
-        return response.data;
-      } catch (error) {
-        console.log(error.response.data.error);
-      }
-    },
-    async getOwnedGames() {
-      try {
-        const response = await axios.get(
-          `${process.env.VUE_APP_APIURL}fetch-owned`,
-          {
-            params: {
-              user_id: this.$route.params.id,
-            },
-          }
-        );
-        //pega os jogos "owned" e bota no array
-        this.ownedIds = response.data;
+        this.ownedIds = response.data.owned;
+        this.wishedIds = response.data.wished;
         if (this.ownedIds.length == 0) {
           this.emptyOwned = true;
         } else {
           this.emptyOwned = false;
         }
-        return response.data;
+        if (this.wishedIds.length == 0) {
+          this.emptyWished = true;
+        } else {
+          this.emptyWished = false;
+        }
       } catch (error) {
         console.log(error.response.data.error);
       }
@@ -156,7 +124,7 @@ export default {
   mounted() {
     Promise.all([this.getUserInfo()]).then((values) => {
       if (values[0] !== false) {
-        this.getWishedGames();
+        this.getIdsGamesTracked();
       }
     });
   },
