@@ -291,7 +291,10 @@ export default {
         this.$route.name == "profile" &&
         this.$route.params.id == this.$store.state.user_id;
       const trackedPage =
-        this.$route.name == ("owned" || "favorite" || "wished");
+        this.$route.name == "owned" ||
+        this.$route.name == "favorite" ||
+        this.$route.name == "wishlist";
+
       return gamesRouteLogged || ownProfile || trackedPage;
     },
     profileRoute() {

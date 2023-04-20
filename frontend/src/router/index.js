@@ -72,6 +72,14 @@ const routes = [
         /* webpackChunkName: "ProfileView" */ "../views/TrackedGames/OwnedView.vue"
       ),
   },
+  {
+    path: "/profile/favorite-games/:id",
+    name: "favorite",
+    component: () =>
+      import(
+        /* webpackChunkName: "ProfileView" */ "../views/TrackedGames/FavoriteView.vue"
+      ),
+  },
 ];
 
 const router = createRouter({

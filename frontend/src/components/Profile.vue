@@ -76,6 +76,14 @@
               >Showing {{ favoriteCounter }} of {{ favoriteIds.length }} games
             </i>
           </div>
+          <div class="tracked-games" v-if="favoriteIds.length !== 0">
+            <router-link
+              v-if="favoriteIds.length > favoriteCounter"
+              :to="{ name: 'favorite', params: { id: $route.params.id } }"
+              :key="$route.fullPath"
+              >Check all</router-link
+            >
+          </div>
         </div>
         <div class="loading-games" v-if="loadingGames">
           <div class="lds-facebook">

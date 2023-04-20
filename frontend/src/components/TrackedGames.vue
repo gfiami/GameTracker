@@ -96,7 +96,6 @@ export default {
         this.loadingGames = false;
         return false;
       }
-      this.loadingGames = true;
       console.log(this.currentPage);
       if (this.gameIds == null) {
         console.log("ue");
