@@ -26,7 +26,7 @@ class ReviewController extends Controller
                 'review' => $review->review,
                 'game_name' => $review->game_name,
                 'game_api_id'=> $review->game_api_id,
-                //depois lembrar de por coisa para imagem que o user terá! para mostrar na review uma imagemzinha
+                'image' => $review->user->image,
                 'rating' => $review->rating,
                 'created_at' => $review->created_at,
                 'updated_at' => $review->updated_at
@@ -52,8 +52,8 @@ class ReviewController extends Controller
                 return [
                     'user_id' => $review->user_id,
                     'username' => $review->user->name,
+                    'image' => $review->user->image,
                     'review' => $review->review,
-                    //depois lembrar de por coisa para imagem que o user terá! para mostrar na review uma imagemzinha
                     'rating' => $review->rating,
                     'created_at' => $review->created_at,
                     'updated_at' => $review->updated_at
@@ -110,9 +110,9 @@ class ReviewController extends Controller
                             return [
                                 'user_id' => $review->user_id,
                                 'username' => $review->user->name,
+                                'image' => $review->user->image,
                                 'review' => $review->review,
                                 'game_name' => $review->game_name,
-                                //depois lembrar de por coisa para imagem que o user terá! para mostrar na review uma imagemzinha
                                 'rating' => $review->rating,
                                 'created_at' => $review->created_at,
                                 'updated_at' => $review->updated_at
@@ -150,7 +150,9 @@ class ReviewController extends Controller
             $game_api_id = $request->input('game_api_id');
             $review_text = $request->input('review');
             $rating = $request->input('rating');
-
+            if (!$token) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
              //se o token existir, entra
             if ($personalAccessTokens) {
@@ -175,7 +177,7 @@ class ReviewController extends Controller
                                     'user_id' => $review->user_id,
                                     'username' => $review->user->name,
                                     'review' => $review->review,
-                                    //depois lembrar de por coisa para imagem que o user terá! para mostrar na review uma imagemzinha
+                                    'image' => $review->user->image,
                                     'rating' => $review->rating,
                                     'created_at' => $review->created_at,
                                     'updated_at' => $review->updated_at
@@ -190,9 +192,10 @@ class ReviewController extends Controller
                                     'username' => $review->user->name,
                                     'user_id' => $review->user_id,
                                     'review' => $review->review,
+                                    'image' => $review->user->image,
+
                                     'game_name' => $review->game_name,
                                     'game_api_id'=> $review->game_api_id,
-                                    //depois lembrar de por coisa para imagem que o user terá! para mostrar na review uma imagemzinha
                                     'rating' => $review->rating,
                                     'created_at' => $review->created_at,
                                     'updated_at' => $review->updated_at
@@ -253,7 +256,7 @@ class ReviewController extends Controller
                                     'user_id' => $review->user_id,
                                     'username' => $review->user->name,
                                     'review' => $review->review,
-                                    //depois lembrar de por coisa para imagem que o user terá! para mostrar na review uma imagemzinha
+                                    'image' => $review->user->image,
                                     'rating' => $review->rating,
                                     'created_at' => $review->created_at,
                                     'updated_at' => $review->updated_at
@@ -269,7 +272,7 @@ class ReviewController extends Controller
                                     'review' => $review->review,
                                     'game_name' => $review->game_name,
                                     'game_api_id'=> $review->game_api_id,
-                                    //depois lembrar de por coisa para imagem que o user terá! para mostrar na review uma imagemzinha
+                                    'image' => $review->user->image,
                                     'rating' => $review->rating,
                                     'created_at' => $review->created_at,
                                     'updated_at' => $review->updated_at

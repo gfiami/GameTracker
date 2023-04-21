@@ -8,7 +8,8 @@ use App\Models\OwnedGame;
 use App\Models\FavoritedGame;
 use App\Models\WishlistGame;
 use App\Models\PersonalAccessToken;
-
+//pra deletar images
+use Illuminate\Support\Facades\Storage;
 
 //esse validation serve para pegar erros vindos da $request->validate
 use Illuminate\Validation\ValidationException;
@@ -133,6 +134,117 @@ class UserController extends Controller
             return response()->json([
                 'error' => 'Usuário não encontrado'
             ], 404);
+        }
+    }
+
+
+    //Editar username
+    public function editUsername(Request $request){
+        try{
+            $validateUserInfo = $request->validate([
+                'username' =>'required|min:4|max:12',
+            ]);
+
+            $name = $validateUserInfo['username'];
+            $token = $request->bearerToken();
+            $user_id = $request->input('user_id');
+            if (!$token) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+            $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
+             //se o token existir, entra
+            if ($personalAccessTokens) {
+                $token_value = explode('|', $token)[1];
+                foreach ($personalAccessTokens as $personalAccessToken) {
+                    if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
+                        $user = User::find($user_id);
+                        if($user){
+                            $user->name = $name;
+                            $user->save();
+
+                            //mandar de volta o user atualizado
+                            return response()->json([
+                                'user' => $user
+                            ]);
+                        }else {
+                            return response()->json([
+                                'error' => 'Usuário não encontrado'
+                            ], 404);
+                        }
+                    }
+                }
+                return response()->json(['error' => 'Unauthorized'], 401);
+            } else{
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+        }catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation error',
+                'validation' => $e->getMessage(),
+                'errors' => $e->errors(),
+            ], 422);
+        }
+    }
+
+    //Editar imagem do usuario
+    public function editImage(Request $request){
+        try{
+            Log::info($request);
+            if ($request->has('image')) {
+                $request->validate([
+                    'image' => 'required|image|max:2048',
+                    ]);
+                $image = $request->file('image');}
+            else {
+                return response()->json(['error' => 'No image file found']);
+            }
+
+            $image = $request->file('image');
+            $token = $request->bearerToken();
+            $user_id = $request->input('user_id');
+            if (!$token) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+            $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
+             //se o token existir, entra
+            if ($personalAccessTokens) {
+                $token_value = explode('|', $token)[1];
+                foreach ($personalAccessTokens as $personalAccessToken) {
+                    if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
+                        $user = User::find($user_id);
+                        if($user){
+                            $previousImage = $user->image;
+                            if($previousImage){
+                                $previousImagePath = public_path('images/' . $previousImage);
+                                if(file_exists($previousImagePath)){
+                                    unlink($previousImagePath);
+                                }
+                            }
+                            $imageName = $image->hashName();
+                            $user->image = $imageName;
+                            $user->save();
+                            $image->move(public_path('images'), $imageName);
+
+                            return response()->json([
+                                'user' => $user,
+                            ]);
+                        }else {
+                            return response()->json([
+                                'error' => 'Usuário não encontrado'
+                            ], 404);
+                        }
+                    }
+                }
+                return response()->json(['error' => 'Unauthorized'], 401);
+            } else{
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+        }catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation error',
+                'validation' => $e->getMessage(),
+                'errors' => $e->errors(),
+            ], 422);
         }
     }
 

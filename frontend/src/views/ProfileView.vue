@@ -1,17 +1,13 @@
 <template>
   <div class="main-wrapper">
-    <div class="initial checker" v-if="user">
+    <div v-if="user">
       <!-- checar se o user existe -->
       <div class="personnal-info">
-        <img
-          class="profile-image"
-          src="../assets/def-avatar-profile.jpg"
-          alt=""
-        />
+        <img class="profile-image" :src="userImage" alt="" />
         <div class="user-edit-container">
           <h1 class="username">{{ user.name }}</h1>
-          <a v-if="checkOwnProfile" class="edit-profile" href=""
-            >Edit profile</a
+          <router-link class="edit-profile" to="/profile/edit"
+            >Edit Profile</router-link
           >
         </div>
         <div class="nav-profile">
@@ -83,6 +79,15 @@ export default {
     };
   },
   computed: {
+    userImage() {
+      if (this.user) {
+        if (this.user.image) {
+          return `${process.env.VUE_APP_IMAGE_URL}${this.user.image}`;
+        } else {
+          return require("@/assets/def-avatar-profile.jpg");
+        }
+      }
+    },
     logged() {
       return this.$store.state.logged;
     },

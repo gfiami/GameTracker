@@ -59,17 +59,33 @@ const routes = [
       import(/* webpackChunkName: "ProfileView" */ "../views/ProfileView.vue"),
   },
   {
+    path: "/profile/edit",
+    name: "editprofile",
+    beforeEnter: (to, from, next) => {
+      const loggedIn = store.state.logged;
+      if (loggedIn) {
+        next(); // aqui evitamos que usuario deslogado entre na pagina de edição
+      } else {
+        next("/login"); // segue pro login se n tá logad
+      }
+    },
+    component: () =>
+      import(
+        /* webpackChunkName: "EditProfileView" */ "../views/EditProfileView.vue"
+      ),
+  },
+  {
     path: "/profile/reviews/:id",
     name: "reviews",
     component: () =>
-      import(/* webpackChunkName: "ProfileView" */ "../views/ReviewsView.vue"),
+      import(/* webpackChunkName: "ReviewView" */ "../views/ReviewsView.vue"),
   },
   {
     path: "/profile/owned-games/:id",
     name: "owned",
     component: () =>
       import(
-        /* webpackChunkName: "ProfileView" */ "../views/TrackedGames/OwnedView.vue"
+        /* webpackChunkName: "OwnedView" */ "../views/TrackedGames/OwnedView.vue"
       ),
   },
   {
@@ -77,7 +93,7 @@ const routes = [
     name: "favorite",
     component: () =>
       import(
-        /* webpackChunkName: "ProfileView" */ "../views/TrackedGames/FavoriteView.vue"
+        /* webpackChunkName: "FavoriteView" */ "../views/TrackedGames/FavoriteView.vue"
       ),
   },
   {
@@ -85,7 +101,7 @@ const routes = [
     name: "wishlist",
     component: () =>
       import(
-        /* webpackChunkName: "ProfileView" */ "../views/TrackedGames/WishlistView.vue"
+        /* webpackChunkName: "WishlistView" */ "../views/TrackedGames/WishlistView.vue"
       ),
   },
 ];

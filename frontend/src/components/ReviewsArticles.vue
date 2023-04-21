@@ -74,8 +74,12 @@
               :key="$route.fullPath"
             >
               <img
-                class="profile-image"
-                src="../assets/def-avatar-profile.jpg"
+                class="profile-image batata"
+                :src="
+                  userReview.image
+                    ? `${reviewImage}${userReview.image}`
+                    : require('@/assets/def-avatar-profile.jpg')
+                "
                 alt=""
               />
               <span class="username">{{ userReview.username }}</span>
@@ -169,7 +173,11 @@
               >
                 <img
                   class="profile-image"
-                  src="../assets/def-avatar-profile.jpg"
+                  :src="
+                    review.image
+                      ? `${reviewImage}${review.image}`
+                      : require('@/assets/def-avatar-profile.jpg')
+                  "
                   alt=""
                 />
                 <span class="username">{{ review.username }}</span>
@@ -236,6 +244,7 @@ export default {
       reviewsPerPage: 5,
       profileEditReview: null,
       editingReview: false,
+      reviewImage: `${process.env.VUE_APP_IMAGE_URL}`,
     };
   },
   computed: {
@@ -373,7 +382,7 @@ export default {
           return false;
         }
         this.reviews = response.data;
-
+        console.log(this.reviews);
         //Se o usuario estiver logado, irá pegar a review dele.
         if (this.logged) {
           for (const review of response.data) {
@@ -447,7 +456,7 @@ hr {
 }
 .profile-image {
   height: 10vh;
-  width: auto;
+  width: 10vh;
   border-radius: 50%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
@@ -567,7 +576,7 @@ hr {
   }
   .profile-image {
     width: 6vw;
-    height: auto;
+    height: 6vw;
   }
   .review-text,
   .rating {
