@@ -185,7 +185,7 @@
           :fetchNewDataUser="fetchNewDataUser"
           :fetchNewDataAll="fetchNewDataAll"
         />
-        <hr v-if="fetchNewDataAll" />
+        <hr v-if="fetchNewDataAll && fetchNewDataUser" />
       </div>
     </div>
   </div>
@@ -303,7 +303,6 @@ export default {
           }
         );
         //aqui recebo o que o laravel me retornou
-        console.log("no delete");
         console.log(response.data.reviews);
         this.fetchNewData_All(response.data.reviews);
         this.userReview(null);

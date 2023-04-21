@@ -113,7 +113,11 @@
       >
         No reviews found from other users.
       </h3>
-      <h3 id="otherUsers" class="review-title" v-else>
+      <h3
+        id="otherUsers"
+        class="review-title"
+        v-else-if="changeAllReviews.length - 1 == 0"
+      >
         Reviews from other users
       </h3>
       <p
@@ -129,7 +133,11 @@
       </p>
       <p
         class="review-title"
-        v-else-if="changeAllReviews.length <= 5 && changeUserReview == null"
+        v-else-if="
+          changeAllReviews.length <= 5 &&
+          changeUserReview == null &&
+          changeAllReviews.length !== 0
+        "
       >
         Showing 1 to {{ changeAllReviews.length }} of
         {{ changeAllReviews.length }}
@@ -282,11 +290,13 @@ export default {
       }
     },
     changeUserReview() {
+      console.log(this.fetchNewDataUser);
       if (this.fetchNewDataUser !== null) {
         this.userReview = this.fetchNewDataUser;
         return this.userReview;
       } else {
-        return (this.userReview = null);
+        this.userReview = null;
+        return null;
       }
     },
     changeAllReviews() {
@@ -395,6 +405,9 @@ export default {
 .button-container {
   display: flex;
   justify-content: space-around;
+}
+#otherUsers {
+  margin-bottom: 2vh;
 }
 .delete-button,
 .edit-button {

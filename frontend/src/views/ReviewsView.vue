@@ -31,7 +31,6 @@
       </h3>
       <h3 class="review-title" v-else>No reviews found</h3>
 
-      <hr />
       <ReviewsArticles
         @updatingReview="updateUserReviews"
         :profileReviews="userReviews"
