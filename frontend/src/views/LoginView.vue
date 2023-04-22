@@ -90,10 +90,6 @@ export default {
 
         this.$router.push({
           path: redirect,
-          query: {
-            loginSuccess: "true",
-            messageLogin: `${this.$store.state.token} `,
-          },
         });
       } catch (error) {
         console.log(error);

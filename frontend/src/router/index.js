@@ -3,10 +3,26 @@ import store from "../store";
 
 const routes = [
   {
+    path: "/welcome",
+    name: "welcome",
+    beforeEnter: (to, from, next) => {
+      const loggedIn = store.state.logged;
+      if (loggedIn) {
+        next();
+      } else {
+        next("/login");
+      }
+    },
+    component: () =>
+      import(
+        /* webpackChunkName: "WelcomeView" */ "../views/Home/WelcomeView.vue"
+      ),
+  },
+  {
     path: "/",
     name: "home",
     component: () =>
-      import(/* webpackChunkName: "HomeView" */ "../views/HomeView.vue"),
+      import(/* webpackChunkName: "HomeView" */ "../views/Home/HomeView.vue"),
   },
   {
     path: "/games/game/:slug",
