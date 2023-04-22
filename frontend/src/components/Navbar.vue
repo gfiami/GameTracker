@@ -81,6 +81,7 @@ export default {
           messageLogout:
             "Your logout was successful. Come back soon to track and review your games on GameTracker!",
         },
+        key: this.$route.fullPath,
       });
     },
     username(name) {

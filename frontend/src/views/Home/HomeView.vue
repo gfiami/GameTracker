@@ -11,10 +11,14 @@ export default {
   name: "HomeView",
   data() {
     return {
-      messageLogout: this.$route.query.messageLogout || null,
+      messageLogout: null || this.$route.query.messageLogout,
     };
   },
-
+  watch: {
+    "$route.query": {
+      handler: "setMessage",
+    },
+  },
   components: {
     Message,
   },
@@ -26,6 +30,12 @@ export default {
         this.loginSuccess = null;
       }, 4000);
     }
+  },
+  methods: {
+    setMessage() {
+      this.messageLogout = this.$route.query.messageLogout;
+      console.log(this.$route.query.messageLogout);
+    },
   },
 };
 </script>
