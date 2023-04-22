@@ -10,35 +10,35 @@
             >Edit Profile</router-link
           >
         </div>
-        <div class="nav-profile">
-          <div class="user-reviews">
-            <router-link
-              :to="{ name: 'reviews', params: { id: user.id } }"
-              :key="$route.fullPath"
-              >Reviews</router-link
-            >
-          </div>
-          <div class="user-owned-games">
-            <router-link
-              :to="{ name: 'owned', params: { id: $route.params.id } }"
-              :key="$route.fullPath"
-              >Own</router-link
-            >
-          </div>
-          <div class="user-owned-games">
-            <router-link
-              :to="{ name: 'favorite', params: { id: $route.params.id } }"
-              :key="$route.fullPath"
-              >Favorite</router-link
-            >
-          </div>
-          <div class="user-owned-games">
-            <router-link
-              :to="{ name: 'wishlist', params: { id: $route.params.id } }"
-              :key="$route.fullPath"
-              >Wishlist</router-link
-            >
-          </div>
+      </div>
+      <div class="nav-profile">
+        <div class="user-reviews">
+          <router-link
+            :to="{ name: 'reviews', params: { id: user.id } }"
+            :key="$route.fullPath"
+            >Reviews</router-link
+          >
+        </div>
+        <div class="user-owned-games">
+          <router-link
+            :to="{ name: 'owned', params: { id: $route.params.id } }"
+            :key="$route.fullPath"
+            >Owned</router-link
+          >
+        </div>
+        <div class="user-owned-games">
+          <router-link
+            :to="{ name: 'favorite', params: { id: $route.params.id } }"
+            :key="$route.fullPath"
+            >Favorite</router-link
+          >
+        </div>
+        <div class="user-owned-games">
+          <router-link
+            :to="{ name: 'wishlist', params: { id: $route.params.id } }"
+            :key="$route.fullPath"
+            >Wishlist</router-link
+          >
         </div>
       </div>
       <Profile :user="user.id" />
@@ -183,20 +183,17 @@ export default {
   margin-top: 30px;
 }
 .nav-profile {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-
+  margin: 0 auto;
   margin-top: 1vh;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
   display: flex;
-  align-self: center;
-  width: 100%;
-  gap: 5vw;
+  width: 90%;
   padding: 1vh 2vw;
   height: 10%;
-  font-size: 2vh;
+  font-size: 1.7vh;
   text-shadow: 2px 2px #000;
   border-radius: 6px;
-  justify-content: space-between;
-  gap: 2vw;
+  justify-content: space-around;
   align-items: center;
   background-color: #330066;
 }
@@ -214,15 +211,11 @@ export default {
     margin-top: 30px;
   }
   .nav-profile {
-    margin-left: 10vw;
     display: flex;
-    align-self: flex-end;
-    width: fit-content;
+    width: 50%;
     padding: 1vh 2vw;
     height: 10%;
-    font-size: 2vh;
     border-radius: 6px;
-    justify-content: space-between;
     gap: 2vw;
     align-items: center;
   }

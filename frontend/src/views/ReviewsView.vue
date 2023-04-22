@@ -15,6 +15,16 @@
       <p>Profile not found</p>
       <i class="fas fa-user-slash"></i>
     </div>
+    <div v-if="user">
+      <div class="back-profile">
+        <router-link
+          :to="{ name: 'profile', params: { id: userId } }"
+          :key="$route.fullPath"
+        >
+          <i class="fas fa-caret-left"></i> Back to Profile
+        </router-link>
+      </div>
+    </div>
     <div
       class="review-container"
       v-if="user && !loadingUser && !loadingReviews"
@@ -158,6 +168,13 @@ export default {
 </script>
 
 <style scoped>
+.back-profile {
+  margin-left: 2vw;
+  margin-top: 1vh;
+}
+.back-profile a {
+  color: white;
+}
 .loading-user {
   position: fixed;
   top: 0;
