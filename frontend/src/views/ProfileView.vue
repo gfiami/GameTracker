@@ -229,7 +229,7 @@ export default {
 }
 
 .username {
-  font-size: 36px;
+  font-size: 4vh;
   font-weight: 700;
 }
 .profile-image {
@@ -238,10 +238,8 @@ export default {
   border-radius: 50%;
 }
 .edit-profile {
-  text-decoration: none;
   color: #fff;
-  font-weight: 400;
-  font-size: 12px;
+  font-size: 1.7vh;
 }
 .lds-facebook div {
   display: inline-block;
