@@ -46,8 +46,9 @@
       </div>
       <div class="tutorial-container">
         <div class="tutorial-title">
-          <h3 class="info-category">Game Info and Reviews</h3>
+          <h2 class="subtitle">GameTracker tutorial</h2>
 
+          <h3 class="info-category">Game Info and Reviews</h3>
           <div class="tutorial-content">
             <div class="tutorial-message-container">
               <p class="tutorial-message">
@@ -91,6 +92,7 @@ export default {
   text-align: center;
   font-size: 2.3vh;
   font-weight: 400;
+  margin-bottom: 2vh;
 }
 .title-container {
   margin-top: 1vh;
@@ -104,9 +106,23 @@ export default {
   font-size: 4vh;
   font-weight: 700;
 }
-.tutorial-container {
-  padding: 3vh;
+.subtitle {
+  background-color: #280051;
+  width: 100%;
   margin: 0 auto;
+  padding: 2vh;
+  border-radius: 12px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.tutorial-container {
+  padding-bottom: 4vh;
+  margin: 0 auto;
+  background-color: #330066;
+  width: 90%;
+  border-radius: 12px;
+  margin-bottom: 4vh;
+  box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.5), 0 0 40px 10px rgba(0, 0, 0, 0.2);
 }
 
 .subtitle {
@@ -135,6 +151,7 @@ export default {
   width: 100%;
   border-radius: 12px;
   box-shadow: 1px;
+  margin-bottom: 1vh;
 }
 @media screen and (min-width: 768px) {
   .title {
@@ -147,7 +164,12 @@ export default {
   .tutorial-image {
     width: 100%;
   }
+  .tutorial-container {
+    width: 70%;
+  }
   .tutorial-content {
+    width: 80%;
+    margin: 0 auto;
     margin-top: 2vh;
     display: flex;
     justify-content: center;
