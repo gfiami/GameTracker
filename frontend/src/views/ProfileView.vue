@@ -6,7 +6,10 @@
         <img class="profile-image" :src="userImage" alt="" />
         <div class="user-edit-container">
           <h1 class="username">{{ user.name }}</h1>
-          <router-link class="edit-profile" to="/profile/edit"
+          <router-link
+            v-if="checkOwnProfile"
+            class="edit-profile"
+            to="/profile/edit"
             >Edit Profile</router-link
           >
         </div>
