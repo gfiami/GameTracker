@@ -172,7 +172,6 @@ export default {
   color: #fff;
 }
 label {
-  margin-left: 0.5vw;
   font-weight: 800;
   font-size: 1.8vh;
   display: inline;
@@ -198,8 +197,6 @@ label {
   margin-bottom: 10vh;
 }
 .input-group {
-  display: flex;
-  flex-direction: column;
   width: 90%;
   max-width: 100%;
 }
@@ -212,6 +209,8 @@ label {
   align-self: center;
 }
 .login-form {
+  margin: 0 auto;
+
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -191,7 +191,6 @@ export default {
   align-items: flex-start;
 }
 label {
-  margin-left: 1vw;
   font-weight: 800;
   font-size: 1.8vh;
   display: inline;
@@ -224,13 +223,11 @@ label {
   margin-bottom: 10vh;
 }
 .input-group {
-  display: flex;
-  flex-direction: column;
   width: 90%;
   max-width: 100%;
 }
 .input-group input {
-  width: 90%;
+  width: 100%;
   height: 6vh;
   margin-bottom: 3.3vh;
   padding: 2vh 1.2vw;
@@ -238,6 +235,7 @@ label {
   align-self: center;
 }
 .register-form {
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -270,9 +268,7 @@ label {
   .input-group input {
     width: 100%;
   }
-  .label {
-    margin-left: 0;
-  }
+
   .register-form button {
     width: 30vw;
     height: 100%;
