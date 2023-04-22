@@ -418,7 +418,6 @@ export default {
   overflow-x: scroll;
   overflow-y: hidden;
   white-space: nowrap;
-  margin: 0;
 }
 .tracked-games a {
   color: white;
