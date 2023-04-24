@@ -266,7 +266,7 @@ export default {
       immediate: true,
       handler(newGames, oldGames) {
         //aqui eu posso usar um "LOADING para aguardar o games chegar!"
-        if (newGames !== undefined) {
+        if (newGames !== undefined && this.logged) {
           const gameIds = newGames.map((game) => game.id);
           this.checkIfOwn(gameIds);
           this.checkIfFavorite(gameIds);
