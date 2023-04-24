@@ -14,7 +14,7 @@
         <input
           type="text"
           id="searchBar"
-          placeholder="Search game"
+          placeholder="Search games"
           v-model="searchQuery"
         />
         <button @click="showSearch" id="searchButton" type="button">
@@ -111,14 +111,16 @@ export default {
 <style scoped>
 .search-container {
   display: flex;
-  padding: 15px 50px;
+  padding: 4vh 10vh;
   align-items: center;
   justify-content: center;
+  width: 70vw;
+  margin: 0 auto;
 }
 .search-features {
   display: flex;
   align-items: center;
-  margin: 10px;
+  margin: 1.5vh;
 }
 .search-info {
   display: flex;
@@ -132,7 +134,7 @@ export default {
   margin: 10px;
 }
 .search-info #results {
-  margin-left: 150px;
+  margin-left: 5vw;
 }
 #counter {
   font-size: 16px;
@@ -145,10 +147,15 @@ export default {
 #results .search-bar-input {
   font-size: 3vh;
   font-weight: 900;
+  display: block;
+  width: 30vw;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 #searchBar {
-  height: 30px;
-  width: 200px;
+  height: 4vh;
+  width: 20vw;
 }
 #counter,
 #sort,
@@ -184,9 +191,9 @@ export default {
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
   font-size: 16px;
-  width: 250px;
-  height: 35px;
-  padding-right: 45px;
+  width: 20vw;
+  height: 4vh;
+  padding-right: 5.5vw;
 }
 
 #searchButton {
@@ -231,6 +238,10 @@ i.fas.fa-search {
   }
   .search-features {
     flex-direction: column;
+  }
+  #searchBar {
+    width: 40vw;
+    padding-right: 10vw;
   }
 }
 </style>
