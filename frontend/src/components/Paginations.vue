@@ -144,12 +144,15 @@ export default {
       );
       console.log(response.data.games);
 
-      //ajustar aqui para mostrar mensagem de erro
+      //nenhum jogo encontrado
       if (response.data.games.count == 0) {
         console.log("No games found");
         this.totalPages = null;
         this.$emit("updateLoading", false);
-
+        this.$emit("setOrder", order);
+        this.$emit("setSearch", search);
+        this.$emit("gamedata", response.data.games);
+        this.$emit("noGameFound", true);
         return false;
       }
 

@@ -12,13 +12,20 @@
     <div v-if="loadingGames">
       <Loading />
     </div>
-    <div v-else>
+    <div v-else-if="gameinfo.count !== 0">
       <GameLayout
         :key="routeReset"
         :user="userId"
         class="game-layout-gameview"
         :games="gameinfo.results"
       />
+    </div>
+    <div v-else>
+      <div class="game-doesnt-exist" v-if="game404">
+        <h1>404</h1>
+        <p>No games found</p>
+        <i class="fas fa-book-dead"></i>
+      </div>
     </div>
 
     <Paginations
@@ -29,6 +36,7 @@
       :searchText="searchQuery"
       :orderSet="orderSymbol"
       @updateLoading="updateLoading"
+      @noGameFound="noGameFound"
     />
   </div>
 </template>
@@ -54,6 +62,7 @@ export default {
       updateOrder: "",
       updateSearch: "",
       loadingGames: "",
+      game404: false,
     };
   },
   computed: {
@@ -90,8 +99,36 @@ export default {
     updateLoading(status) {
       this.loadingGames = status;
     },
+    noGameFound(update) {
+      this.game404 = update;
+    },
   },
 };
 </script>
 
-<style></style>
+<style scoped>
+/* game 404 */
+.game-doesnt-exist {
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-shadow: 2px 2px #000;
+  padding: 2px;
+}
+.game-doesnt-exist h1 {
+  font-weight: bolder;
+  font-size: 44px;
+  padding: 2px;
+}
+.game-doesnt-exist p {
+  font-weight: 400;
+  font-size: 22px;
+  padding: 4px;
+}
+.game-doesnt-exist i {
+  font-size: 30px;
+  padding: 2px;
+}
+</style>

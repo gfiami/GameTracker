@@ -2,6 +2,7 @@
   <div class="search-container">
     <div class="search-info">
       <div v-if="counter" id="counter">{{ counter }} games</div>
+      <div v-else id="counter">0 games</div>
       <div v-if="showSearchResults" id="results">
         Results for
         <span class="search-bar-input">{{ showSearchResults }}</span>
@@ -138,11 +139,11 @@ export default {
   font-weight: 400;
 }
 #results {
-  font-size: 24px;
+  font-size: 3vh;
   font-weight: 500;
 }
 #results .search-bar-input {
-  font-size: 24px;
+  font-size: 3vh;
   font-weight: 900;
 }
 #searchBar {
@@ -210,6 +211,23 @@ i.fas.fa-search {
 @media screen and (max-width: 768px) {
   .search-container {
     flex-direction: column;
+    align-content: center;
+  }
+  .search-info {
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 auto;
+  }
+  .search-info #results {
+    text-align: right;
+    margin-left: 3vw;
+  }
+  #results .search-bar-input {
+    display: block;
+    width: 40vw;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
   .search-features {
     flex-direction: column;
