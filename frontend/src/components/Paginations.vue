@@ -80,8 +80,8 @@ export default {
     searchText(newValue, oldValue) {
       const page = 1;
       const search = newValue ? newValue : null;
-      const ordering = this.orderset;
-      console.log("entrou no search");
+      const ordering = this.orderSet;
+
       this.$router.push({
         path: "/games",
         query: { page, search, ordering },
@@ -149,12 +149,18 @@ export default {
         `${process.env.VUE_APP_APIURL}games/${page}/${search}/${order}`
       );
       console.log(response.data.games);
+      //ajustar aqui para mostrar mensagem
       if (response.data.games.count == 0) {
         console.log("No games found");
         this.loadingGames = false;
         this.totalPages = null;
         return false;
       }
+
+      //update searchbar
+      this.$emit("setOrder", order);
+      this.$emit("setSearch", search);
+
       //passar variavel gamedata para ser usada(.games .results .count .next . next . previous)
       this.$emit("gamedata", response.data.games);
       //atualiza página atual
@@ -172,7 +178,6 @@ export default {
       this.loadingGames = true;
       const search = this.searchText ? this.searchText : "+";
       const ordering = this.orderSet;
-      console.log("Fetch no page");
       //ir para topo da página ao carregar novamente
       window.scrollTo(0, 0);
       //isso aqui serve para atualizar a url da página e permitir mais interação direto com a url
@@ -189,8 +194,6 @@ export default {
     const page = parseInt(urlParams.get("page")) || 1;
     const search = urlParams.get("search") || "+";
     const ordering = urlParams.get("ordering") || "-added";
-    console.log("Fetch no mounted");
-
     this.fetchGames(page, search, ordering);
   },
 };

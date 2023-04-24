@@ -6,6 +6,8 @@
       @search="search"
       @order="order"
       :counter="gameinfo.count"
+      :updateSearch="updateSearch"
+      :updateOrder="updateOrder"
     />
     <GameLayout
       :key="routeReset"
@@ -16,6 +18,8 @@
     <Paginations
       :key="routeReset"
       @gamedata="gamedata"
+      @setOrder="setOrder"
+      @setSearch="setSearch"
       :searchText="searchQuery"
       :orderSet="orderSymbol"
     />
@@ -38,6 +42,8 @@ export default {
       searchQuery: "", //isso pegamos via emit lá do searchbar
       orderSymbol: "-added", //isso pegamos via emit lá do search bar (padrão é -added(popularidade))
       gameinfo: "", //isso pegamos via emit lá do paginations
+      updateOrder: "",
+      updateSearch: "",
     };
   },
   computed: {
@@ -45,7 +51,8 @@ export default {
       return this.$store.state.user_id;
     },
     routeReset() {
-      console.log(this.$route.fullPath);
+      this.searchQuery = "";
+      this.orderSymbol = "-added";
       return this.$route.fullPath;
     },
     resetSearch() {
@@ -63,6 +70,12 @@ export default {
     },
     gamedata(response) {
       this.gameinfo = response;
+    },
+    setOrder(order) {
+      this.updateOrder = order;
+    },
+    setSearch(search) {
+      this.updateSearch = search;
     },
   },
 };

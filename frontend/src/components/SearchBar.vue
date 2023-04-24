@@ -38,33 +38,70 @@ export default {
   props: {
     counter: Number,
     resetSearch: "",
+    updateSearch: "",
+    updateOrder: "",
+  },
+  watch: {
+    updateSearch: {
+      handler(newValue) {
+        if (newValue !== "+") {
+          this.searchQuery = newValue;
+          this.showSearchResults = newValue;
+          this.$emit("search", this.searchQuery);
+          this.orderAndFilter = this.sortOrder + this.filter;
+          this.$emit("order", this.orderAndFilter);
+        }
+      },
+    },
+    updateOrder: {
+      handler(newValue) {
+        if (newValue !== "") {
+          if (newValue[0] !== "-") {
+            this.sortOrder = "";
+            this.filter = newValue;
+          } else {
+            this.sortOrder = "-";
+            this.filter = newValue.slice(1);
+          }
+          this.orderAndFilter = this.sortOrder + this.filter;
+          this.$emit("order", this.orderAndFilter);
+          this.$emit("search", this.searchQuery);
+        }
+      },
+    },
   },
   data() {
     return {
       sortOrder: "-",
       searchQuery: "",
+      orderAndFilter: null,
       showSearchResults: "",
       filter: "added",
     };
   },
   computed: {
     sortIconClass() {
-      return "fas fa-sort" + (this.sortOrder === "-" ? "-down" : "-up");
+      return "fas fa-sort" + (this.sortOrder === "" ? "-up" : "-down");
     },
   },
   methods: {
     changeFilter() {
-      this.$emit("order", this.sortOrder + this.filter);
+      this.orderAndFilter = this.sortOrder + this.filter;
+      this.$emit("order", this.orderAndFilter);
     },
     changeSortIcon() {
       this.sortOrder = this.sortOrder === "" ? "-" : "";
-      this.$emit("order", this.sortOrder + this.filter);
+
+      this.orderAndFilter = this.sortOrder + this.filter;
+      this.$emit("order", this.orderAndFilter);
     },
     showSearch() {
       //passar search query para a view, pelo search
-      this.$emit("search", this.searchQuery);
-      this.$emit("order", this.sortOrder + this.filter);
       this.showSearchResults = this.searchQuery;
+
+      this.$emit("search", this.searchQuery);
+      this.orderAndFilter = this.sortOrder + this.filter;
+      this.$emit("order", this.orderAndFilter);
     },
   },
 };
