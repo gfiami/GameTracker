@@ -1,12 +1,5 @@
 <template>
   <div>
-    <div class="loading-games" v-if="loadingGames">
-      <div class="lds-facebook">
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>
-    </div>
     <div id="paginationWrapper">
       <div class="pagination">
         <button
@@ -105,7 +98,6 @@ export default {
       previousButton: "",
       firstButton: false,
       lastButton: false,
-      loadingGames: true,
     };
   },
   //recalcula as páginas sempre que ocorre alguma alteração devido a mudar as informações
@@ -144,16 +136,20 @@ export default {
     //requisição a api de acordo com número de páginas (lá no controller tá pegando 24 jogos por página)
 
     async fetchGames(page, search, order) {
+      this.$emit("updateLoading", true);
+
       console.log("Fetching Games");
       const response = await axios.get(
         `${process.env.VUE_APP_APIURL}games/${page}/${search}/${order}`
       );
       console.log(response.data.games);
-      //ajustar aqui para mostrar mensagem
+
+      //ajustar aqui para mostrar mensagem de erro
       if (response.data.games.count == 0) {
         console.log("No games found");
-        this.loadingGames = false;
         this.totalPages = null;
+        this.$emit("updateLoading", false);
+
         return false;
       }
 
@@ -169,13 +165,12 @@ export default {
       this.totalPages = Math.ceil(response.data.games.count / 24);
       this.nextButton = response.data.games.next;
       this.previousButton = response.data.games.previous;
-      this.loadingGames = false;
+      this.$emit("updateLoading", false);
     },
     goToPage(page) {
       if (page < 1 || page > this.totalPages) {
         return;
       }
-      this.loadingGames = true;
       const search = this.searchText ? this.searchText : "+";
       const ordering = this.orderSet;
       //ir para topo da página ao carregar novamente
@@ -232,57 +227,5 @@ export default {
 }
 #currentPage {
   background-color: #546e7a;
-}
-/*loading */
-.loading-games {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-}
-
-.lds-facebook {
-  display: inline-block;
-  position: relative;
-  width: 80px;
-  height: 80px;
-}
-
-.lds-facebook div {
-  display: inline-block;
-  position: absolute;
-  left: 8px;
-  width: 16px;
-  background: #fff;
-  animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
-}
-
-.lds-facebook div:nth-child(1) {
-  left: 8px;
-  animation-delay: -0.24s;
-}
-
-.lds-facebook div:nth-child(2) {
-  left: 32px;
-  animation-delay: -0.12s;
-}
-
-.lds-facebook div:nth-child(3) {
-  left: 56px;
-  animation-delay: 0;
-}
-
-@keyframes lds-facebook {
-  0% {
-    top: 8px;
-    height: 64px;
-  }
-  50%,
-  100% {
-    top: 24px;
-    height: 32px;
-  }
 }
 </style>

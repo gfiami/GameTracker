@@ -9,12 +9,18 @@
       :updateSearch="updateSearch"
       :updateOrder="updateOrder"
     />
-    <GameLayout
-      :key="routeReset"
-      :user="userId"
-      class="game-layout-gameview"
-      :games="gameinfo.results"
-    />
+    <div v-if="loadingGames">
+      <Loading />
+    </div>
+    <div v-else>
+      <GameLayout
+        :key="routeReset"
+        :user="userId"
+        class="game-layout-gameview"
+        :games="gameinfo.results"
+      />
+    </div>
+
     <Paginations
       :key="routeReset"
       @gamedata="gamedata"
@@ -22,6 +28,7 @@
       @setSearch="setSearch"
       :searchText="searchQuery"
       :orderSet="orderSymbol"
+      @updateLoading="updateLoading"
     />
   </div>
 </template>
@@ -30,12 +37,14 @@
 import Paginations from "../components/Paginations.vue";
 import SearchBar from "../components/SearchBar.vue";
 import GameLayout from "../components/GameLayout.vue";
+import Loading from "../components/Loading.vue";
 export default {
   name: "GameView",
   components: {
     Paginations,
     SearchBar,
     GameLayout,
+    Loading,
   },
   data() {
     return {
@@ -44,6 +53,7 @@ export default {
       gameinfo: "", //isso pegamos via emit lá do paginations
       updateOrder: "",
       updateSearch: "",
+      loadingGames: "",
     };
   },
   computed: {
@@ -76,6 +86,9 @@ export default {
     },
     setSearch(search) {
       this.updateSearch = search;
+    },
+    updateLoading(status) {
+      this.loadingGames = status;
     },
   },
 };
