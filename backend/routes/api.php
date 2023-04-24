@@ -18,7 +18,7 @@ Route::post('/edit-image', [UserController::class, 'editImage']); // AUTH
 Route::get('/userinfo/{id}',[UserController::class, 'userInfo']);
 
 //games da api na página de games
-Route::get('/games/{page?}/{search?}', [GamesController::class, 'games']);
+Route::get('/games/{page?}/{search?}/{order?}', [GamesController::class, 'games']);
 
 //review relations add|edit|remove
 Route::post('/add-review', [ReviewController::class, 'addReview']); // AUTH

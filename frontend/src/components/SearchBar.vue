@@ -23,10 +23,11 @@
       <div id="sort">
         <span><i :class="sortIconClass" @click="changeSortIcon()"></i></span>
       </div>
-      <select id="category">
-        <option value="">Popular</option>
-        <option value="">Title</option>
-        <option value="">Release Date</option>
+      <select id="category" v-model="filter" @change="changeFilter">
+        <option value="added">Popularity</option>
+        <option value="name">Title</option>
+        <option value="released">Release Date</option>
+        <option value="rating">Rating</option>
       </select>
     </form>
   </div>
@@ -36,28 +37,33 @@ export default {
   name: "SearchBar",
   props: {
     counter: Number,
-    routeReset: "",
+    resetSearch: "",
   },
   data() {
     return {
-      sortOrder: "asc",
+      sortOrder: "-",
       searchQuery: "",
       showSearchResults: "",
+      filter: "added",
     };
   },
   computed: {
     sortIconClass() {
-      return "fas fa-sort" + (this.sortOrder === "desc" ? "-up" : "-down");
+      return "fas fa-sort" + (this.sortOrder === "-" ? "-down" : "-up");
     },
   },
   methods: {
+    changeFilter() {
+      this.$emit("order", this.sortOrder + this.filter);
+    },
     changeSortIcon() {
-      this.sortOrder = this.sortOrder === "asc" ? "desc" : "asc";
+      this.sortOrder = this.sortOrder === "" ? "-" : "";
+      this.$emit("order", this.sortOrder + this.filter);
     },
     showSearch() {
       //passar search query para a view, pelo search
       this.$emit("search", this.searchQuery);
-      this.searchMade = true;
+      this.$emit("order", this.sortOrder + this.filter);
       this.showSearchResults = this.searchQuery;
     },
   },

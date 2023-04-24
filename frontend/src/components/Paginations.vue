@@ -73,20 +73,28 @@ export default {
   name: "Paginations",
   props: {
     searchText: null,
+    orderSet: null,
     routeReset: "",
   },
   watch: {
     searchText(newValue, oldValue) {
-      const urlParams = new URLSearchParams(window.location.search);
-      const page = 1; //se usuario faz pesquisa reloca para pagina inicial
-      //define search caso o newValue exista, se não fica null
+      const page = 1;
       const search = newValue ? newValue : null;
-      this.fetchGames(page, search);
-      window.history.pushState(
-        { page },
-        null,
-        `?page=${page}&search=${this.searchText}`
-      );
+      const ordering = this.orderset;
+      console.log("entrou no search");
+      this.$router.push({
+        path: "/games",
+        query: { page, search, ordering },
+      });
+    },
+    orderSet(newValue, oldValue) {
+      const page = 1;
+      const search = this.searchText ? this.searchText : "+";
+      const ordering = newValue;
+      this.$router.push({
+        path: "/games",
+        query: { page, search, ordering },
+      });
     },
   },
   data() {
@@ -107,7 +115,6 @@ export default {
       const pageArray = [];
       let showFirst = true;
       let showLast = true;
-
       for (
         let i = Math.max(1, this.currentPage - buttonsOnSide);
         i <= Math.min(this.totalPages, this.currentPage + buttonsOnSide);
@@ -128,31 +135,28 @@ export default {
           showLast = false;
         }
       }
-
       this.firstButton = showFirst;
       this.lastButton = showLast;
-
       return pageArray;
     },
   },
   methods: {
     //requisição a api de acordo com número de páginas (lá no controller tá pegando 24 jogos por página)
 
-    async fetchGames(page, search) {
+    async fetchGames(page, search, order) {
       console.log("Fetching Games");
       const response = await axios.get(
-        `${process.env.VUE_APP_APIURL}games/${page}/${search}`
+        `${process.env.VUE_APP_APIURL}games/${page}/${search}/${order}`
       );
       console.log(response.data.games);
-      //pega os jogos da resposta
-
-      /*AJUSTES A FAZER */
-      //Preciso remover coisas que não irei utilizar aqui, já que usarei emit
-      /*AJUSTES A FAZER */
-
+      if (response.data.games.count == 0) {
+        console.log("No games found");
+        this.loadingGames = false;
+        this.totalPages = null;
+        return false;
+      }
       //passar variavel gamedata para ser usada(.games .results .count .next . next . previous)
       this.$emit("gamedata", response.data.games);
-      // Se isso aqui em cima .count for = 0, mostrar erro!
       //atualiza página atual
       this.currentPage = page;
       //checa total de páginas para criar botões de páginas
@@ -166,43 +170,28 @@ export default {
         return;
       }
       this.loadingGames = true;
-      const search = this.searchText;
-      this.fetchGames(page, search);
+      const search = this.searchText ? this.searchText : "+";
+      const ordering = this.orderSet;
+      console.log("Fetch no page");
       //ir para topo da página ao carregar novamente
       window.scrollTo(0, 0);
-
       //isso aqui serve para atualizar a url da página e permitir mais interação direto com a url
-      if (search) {
-        window.history.pushState(
-          { page },
-          null,
-          `?page=${page}&search=${search}`
-        );
-      } else {
-        window.history.pushState({ page }, null, `?page=${page}`);
-      }
+      //também serve para permitir voltar para a página inicial de games ao clicar na navbar, pois atualize fullpath
+      this.$router.push({
+        path: "/games",
+        query: { page, search, ordering },
+      });
     },
   },
   mounted() {
     // pega o valor da página da URL
     const urlParams = new URLSearchParams(window.location.search);
     const page = parseInt(urlParams.get("page")) || 1;
-    const search = urlParams.get("search") || "";
+    const search = urlParams.get("search") || "+";
+    const ordering = urlParams.get("ordering") || "-added";
+    console.log("Fetch no mounted");
 
-    // fetchGames com o valor da página ou pagina inicial
-
-    this.fetchGames(page, search);
-
-    //aqui é uma tentativa do voltar página
-    window.addEventListener("popstate", (event) => {
-      if (event.state) {
-        const page = event.state.page || 1;
-        const search = urlParams.get("search") || "";
-        this.loadingGames = true;
-
-        this.fetchGames(page, search);
-      }
-    });
+    this.fetchGames(page, search, ordering);
   },
 };
 </script>
