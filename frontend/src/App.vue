@@ -42,4 +42,17 @@ body {
   position: relative;
   padding-bottom: 65px;
 }
+::-webkit-scrollbar {
+  height: 2px;
+  width: 7px;
+  background: gray;
+}
+::-webkit-scrollbar-thumb:vertical {
+  background: rgba(54, 30, 148, 0.9);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:horizontal {
+  background: rgba(54, 30, 148, 0.9);
+  border-radius: 2px;
+}
 </style>

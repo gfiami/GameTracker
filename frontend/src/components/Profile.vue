@@ -434,13 +434,8 @@ export default {
 }
 ::-webkit-scrollbar {
   height: 7px;
-  width: 0px;
-  background: gray;
 }
-::-webkit-scrollbar-thumb:horizontal {
-  background: rgba(54, 30, 148, 0.9);
-  border-radius: 2px;
-}
+
 .layout-container .game-list .game {
   display: inline-block;
   margin: 5px;
