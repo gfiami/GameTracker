@@ -7,25 +7,33 @@
         <div></div>
       </div>
     </div>
+    <div class="game-doesnt-exist" v-if="game404">
+      <h1>404</h1>
+      <p>Game not found</p>
+      <i class="fas fa-book-dead"></i>
+    </div>
     <div class="main-container" v-else-if="game">
       <div class="title-container">
-        <h1 class="title">{{ game.name }}</h1>
+        <h1 class="title" v-if="game.name">{{ game.name }}</h1>
       </div>
 
       <div class="top-container">
-        <div class="secondary-container">
+        <div
+          v-if="game.background_image_additional"
+          class="secondary-container"
+        >
           <img
             class="secondary-image"
             :src="game.background_image_additional"
-            :alt="game.name"
+            :alt="game.name || 'img'"
           />
         </div>
         <div class="right-panel-container">
-          <div class="main-image-container">
+          <div v-if="game.background_image" class="main-image-container">
             <img
               class="main-image"
               :src="game.background_image"
-              :alt="game.name"
+              :alt="game.name || 'img'"
             />
           </div>
           <div class="info-container">
@@ -35,15 +43,17 @@
             </p>
             <p class="developer">
               DEVELOPER:
-              <span class="developer-legend">{{
-                game.developers[0].name
-              }}</span>
+              <span
+                class="developer-legend"
+                v-if="game.developers.length !== 0"
+                >{{ game.developers[0].name }}</span
+              >
             </p>
-            <p class="rating">
+            <p class="rating" v-if="game.esrb_rating">
               ESRB:
               <span class="rating-legend">{{ game.esrb_rating.name }}</span>
             </p>
-            <p class="genres">
+            <p class="genres" v-if="game.genres">
               GENRES:
               <span class="genres-legend"
                 ><span v-for="(genre, index) in game.genres" :key="genre.id"
@@ -52,7 +62,7 @@
                 </span></span
               >
             </p>
-            <p class="platforms">
+            <p class="platforms" v-if="game.platforms">
               PLATFORMS:
               <span class="platforms-legend"
                 ><span
@@ -66,7 +76,7 @@
           </div>
         </div>
       </div>
-      <div class="description-container">
+      <div v-if="game.description_raw" class="description-container">
         <h3 @click="changeAbout()" class="description-title hideShowAbout">
           About this game
           <span><i :class="hideShowClass"></i></span>
@@ -205,6 +215,7 @@ export default {
   data() {
     return {
       game: null,
+      game404: false,
       releaseDate: null,
       loading: true,
       ownedGame: [],
@@ -282,10 +293,15 @@ export default {
       const response = await axios.get(
         `${process.env.VUE_APP_APIURL}game/${this.$route.params.slug}`
       );
+      if (response.data.game.detail == "Not found.") {
+        this.game = null;
+        this.loading = false;
+        this.game404 = true;
+        return false;
+      }
       this.game = response.data.game;
       this.releaseDate = this.formatReleaseDate();
       this.loading = false;
-      console.log(this.game);
     },
     async deleteReview() {
       try {
@@ -837,5 +853,30 @@ img {
     display: flex;
     flex-direction: column;
   }
+}
+
+/* game 404 */
+.game-doesnt-exist {
+  text-align: center;
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-shadow: 2px 2px #000;
+  padding: 2px;
+}
+.game-doesnt-exist h1 {
+  font-weight: bolder;
+  font-size: 44px;
+  padding: 2px;
+}
+.game-doesnt-exist p {
+  font-weight: 400;
+  font-size: 22px;
+  padding: 4px;
+}
+.game-doesnt-exist i {
+  font-size: 30px;
+  padding: 2px;
 }
 </style>
