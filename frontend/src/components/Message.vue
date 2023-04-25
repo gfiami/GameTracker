@@ -28,7 +28,7 @@ export default {
     if (this.message || this.messageLogin || this.messageLogout) {
       setTimeout(() => {
         this.showMessage = false;
-      }, 4000);
+      }, 10000);
     }
   },
   computed: {
