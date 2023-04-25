@@ -102,11 +102,13 @@ export default {
         );
         //aqui recebo o que o laravel me retornou
         console.log(response);
-        const redirect = this.$route.query.redirect || "/welcome";
+        const redirect = this.$route.query.redirect;
+        console.log(redirect);
         this.$router.push({
           path: "/login",
           query: {
             redirect: redirect,
+            register: true,
             loginSuccess: "true",
             message: "Your GameTracker account has been successfully created! ",
           },

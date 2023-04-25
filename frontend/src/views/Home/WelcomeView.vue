@@ -1,5 +1,10 @@
 <template>
   <div class="main-wrapper">
+    <div class="back-route" v-if="redirect">
+      <router-link :to="redirect">
+        <i class="fas fa-caret-left"></i> Go back to where you were</router-link
+      >
+    </div>
     <div id="welcome">
       <div class="title-container">
         <h1 class="title">Thank you for joining GameTracker!</h1>
@@ -80,12 +85,24 @@
 <script>
 export default {
   name: "WelcomeView",
+  data() {
+    return {
+      redirect: this.$route.query.redirect,
+    };
+  },
 };
 </script>
 
 <style scoped>
 * {
   text-shadow: 1px 1px 2px #6842ff;
+}
+.back-route {
+  margin-left: 2vw;
+  margin-top: 1vh;
+}
+.back-route a {
+  color: white;
 }
 .welcome-end {
   width: 100%;

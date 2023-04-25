@@ -172,12 +172,12 @@
       <div class="tracker offline" v-if="!logged">
         <p class="offline-text">
           <router-link
-            :to="{ path: '/login', query: { redirect: $route.path } }"
+            :to="{ path: '/login', query: { redirect: $route.fullPath } }"
             >Login</router-link
           >
           or
           <router-link
-            :to="{ path: '/register', query: { redirect: $route.path } }"
+            :to="{ path: '/register', query: { redirect: $route.fullPath } }"
             >Register</router-link
           >
           to track your games and write reviews.

@@ -55,12 +55,12 @@
       <div class="game-hover">
         <p v-if="!logged" class="login-register-offline">
           <router-link
-            :to="{ path: '/login', query: { redirect: $route.path } }"
+            :to="{ path: '/login', query: { redirect: $route.fullPath } }"
             >Login</router-link
           >
           or
           <router-link
-            :to="{ path: '/register', query: { redirect: $route.path } }"
+            :to="{ path: '/register', query: { redirect: $route.fullPath } }"
             >Register</router-link
           >
           to track

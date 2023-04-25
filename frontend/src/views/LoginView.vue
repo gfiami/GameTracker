@@ -85,12 +85,22 @@ export default {
         this.$store.commit("login", true);
         console.log(this.$store.state.personal_token);
         //redirecionar para algum lugar pois deu certo o login!
-
-        const redirect = this.$route.query.redirect || "/";
-
-        this.$router.push({
-          path: redirect,
-        });
+        let redirect;
+        if (this.$route.query.register == "true") {
+          console.log("teste 2");
+          redirect = this.$route.query.redirect;
+          this.$router.push({
+            path: "/welcome",
+            query: {
+              redirect: redirect,
+            },
+          });
+        } else {
+          redirect = this.$route.query.redirect || "/";
+          this.$router.push({
+            path: redirect,
+          });
+        }
       } catch (error) {
         console.log(error);
         console.log(error.response.data.message); //aqui mostra minha mensagem definida no backend
