@@ -1,7 +1,7 @@
 <template>
   <div>
     <div id="paginationWrapper">
-      <div class="pagination">
+      <div class="pagination" id="desktop">
         <button
           class="page-button"
           v-if="previousButton"
@@ -55,6 +55,28 @@
           Next
         </button>
       </div>
+
+      <div class="pagination" id="mobile">
+        <button
+          class="page-button"
+          v-if="previousButton"
+          @click="goToPage(currentPage - 1)"
+        >
+          Previous
+        </button>
+        <select v-model="selectedPage" @change="changePage(selectedPage)">
+          <option v-for="i in totalPages" :key="i" :value="i">
+            {{ i }}
+          </option>
+        </select>
+        <button
+          class="page-button"
+          v-if="nextButton"
+          @click="goToPage(currentPage + 1)"
+        >
+          Next
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -93,6 +115,7 @@ export default {
   data() {
     return {
       currentPage: 1,
+      selectedPage: 1,
       totalPages: 1,
       nextButton: "",
       previousButton: "",
@@ -164,11 +187,16 @@ export default {
       this.$emit("gamedata", response.data.games);
       //atualiza página atual
       this.currentPage = page;
+      this.selectedPage = page;
+
       //checa total de páginas para criar botões de páginas
       this.totalPages = Math.ceil(response.data.games.count / 24);
       this.nextButton = response.data.games.next;
       this.previousButton = response.data.games.previous;
       this.$emit("updateLoading", false);
+    },
+    changePage(page) {
+      this.goToPage(page);
     },
     goToPage(page) {
       if (page < 1 || page > this.totalPages) {
@@ -198,31 +226,45 @@ export default {
 </script>
 
 <style scoped>
+#desktop {
+  display: none;
+}
+select {
+  width: 15vw;
+  text-align: center;
+  background-color: #23272a;
+  color: #fff;
+  font-weight: 1.3vh;
+  border-radius: 10px;
+}
 .pagination {
   bottom: 0;
   display: flex;
   justify-content: center;
-  margin-top: 40px;
-  margin-bottom: 20px;
+  margin-top: 5vh;
+  margin-bottom: 5vh;
 }
-.pagination {
-  width: 100%;
-  height: 90px;
-  position: absolute;
-  bottom: 0;
+span {
+  display: flex;
+  align-items: flex-end;
 }
-
+.pagination button {
+  display: flex;
+  align-items: center;
+  padding: 1vh 2vw;
+  margin: 0 1vw;
+}
 .page-button {
-  font-weight: 700;
+  text-align: center;
+  font-weight: 800;
   background-color: #23272a;
   color: #fff;
-  font-size: 16px;
-  margin: 0 5px;
-  padding: 5px 10px;
+  font-size: 1.3vh;
+  margin: 0 0.6vw;
   border: 1px solid #fff;
   border-radius: 10px;
   cursor: pointer;
-  height: 35px;
+  height: 4vh;
 }
 .dots {
   color: #fff;
@@ -230,5 +272,16 @@ export default {
 }
 #currentPage {
   background-color: #546e7a;
+}
+@media screen and (min-width: 768px) {
+  .page-button {
+    padding: 2vh 1.6vw;
+  }
+  #desktop {
+    display: flex;
+  }
+  #mobile {
+    display: none;
+  }
 }
 </style>
