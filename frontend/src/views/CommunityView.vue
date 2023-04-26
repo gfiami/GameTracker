@@ -8,7 +8,12 @@
       @changeOrder="changeOrder"
     />
     <div class="users-container" v-if="users">
-      <div v-for="user in users" :key="user.id" class="user-container">
+      <div
+        v-for="user in users"
+        :key="user.id"
+        class="user-container"
+        v-show="!($store.state.user_id == user.id)"
+      >
         <router-link
           :to="{ name: 'profile', params: { id: user.id } }"
           :key="$route.fullPath"
@@ -88,6 +93,9 @@ export default {
       if (this.$route.fullPath == "/community") {
         return this.$route.fullPath;
       }
+    },
+    logged() {
+      return this.$store.state.logged;
     },
   },
   methods: {

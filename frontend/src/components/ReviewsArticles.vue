@@ -107,7 +107,6 @@
     </div>
 
     <!-- all reviews, except user if exists -->
-
     <div v-if="changeAllReviews">
       <hr v-if="changeUserReview" />
       <h3
@@ -120,7 +119,7 @@
       <h3
         id="otherUsers"
         class="review-title"
-        v-else-if="changeAllReviews.length - 1 == 0"
+        v-else-if="changeAllReviews.length - 1 > 0"
       >
         Reviews from other users
       </h3>
@@ -204,6 +203,9 @@
           </div>
         </div>
       </div>
+    </div>
+    <div v-else>
+      <h3 id="otherUsers" class="review-title">No reviews found.</h3>
     </div>
     <div class="pages" v-if="!editingReview">
       <PaginationReview
