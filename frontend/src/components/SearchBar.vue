@@ -22,7 +22,13 @@
         </button>
       </div>
       <div id="sort">
-        <span><i :class="sortIconClass" @click="changeSortIcon()"></i></span>
+        <span
+          ><i
+            :class="sortIconClass"
+            @click="changeSortIcon()"
+            id="sortButton"
+          ></i
+        ></span>
       </div>
       <select id="category" v-model="filter" @change="changeFilter">
         <option value="added">Popularity</option>
@@ -157,9 +163,11 @@ export default {
   height: 4vh;
   width: 20vw;
 }
-#sort {
+#sortButton {
   cursor: pointer;
+  padding: 1.3vh 2.3vh;
 }
+
 #counter,
 #sort,
 #searchBar,
@@ -171,6 +179,9 @@ export default {
   border: none;
   border-radius: 10px;
   color: #fff;
+  background-color: #23272a;
+}
+#sort {
   background-color: #23272a;
 }
 

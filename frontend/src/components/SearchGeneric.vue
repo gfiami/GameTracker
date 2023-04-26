@@ -13,7 +13,13 @@
         </button>
       </div>
       <div id="sort">
-        <span><i :class="sortIconClass" @click="changeSortIcon()"></i></span>
+        <span
+          ><i
+            :class="sortIconClass"
+            @click="changeSortIcon()"
+            id="sortButton"
+          ></i
+        ></span>
       </div>
     </form>
     <div class="search-info">
@@ -90,7 +96,6 @@ export default {
   font-weight: 500;
 }
 #sort {
-  cursor: pointer;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 #results .search-bar-input {
@@ -113,9 +118,13 @@ export default {
 #searchBar {
   opacity: 0.75;
 }
+#sortButton {
+  cursor: pointer;
+  padding: 1.3vh 2.3vh;
+}
+
 #sort {
   background-color: #23272a;
-  padding: 1vh 2vh;
   border-radius: 10px;
 }
 
