@@ -8,7 +8,7 @@
         :to="{ name: 'profile', params: { id: $store.state.user_id } }"
         :key="$route.fullPath"
         ><span class="username"
-          ><u>{{ $store.state.token }} </u></span
+          ><u>{{ userName }} </u></span
         ></router-link
       >
     </div>
@@ -107,6 +107,9 @@ export default {
   computed: {
     logged() {
       return this.$store.state.logged;
+    },
+    userName() {
+      return this.$store.state.token;
     },
   },
   components: {

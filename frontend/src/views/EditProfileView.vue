@@ -78,6 +78,7 @@
 <script>
 import axios from "axios";
 import Loading from "../components/Loading.vue";
+import { mapMutations } from "vuex";
 
 export default {
   name: "EditProfileView.vue",
@@ -116,6 +117,7 @@ export default {
     Loading,
   },
   methods: {
+    ...mapMutations(["login"]),
     async getUserInfo() {
       this.loadingUser = true;
       const id = this.$store.state.user_id;
@@ -152,7 +154,10 @@ export default {
           }
         );
         //aqui recebo o que o laravel me retornou
-        console.log(response.data);
+        localStorage.removeItem("gameTrackerUserToken");
+        localStorage.setItem("gameTrackerUserToken", response.data.user.name);
+        this.$store.commit("login", true);
+
         this.user = response.data.user;
         this.username = null;
         this.newUserName = true;

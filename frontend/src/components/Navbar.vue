@@ -1,6 +1,6 @@
 <template>
   <div id="nav">
-    <router-link id="website-name" to="/"
+    <router-link id="website-name" to="/" :key="$route.fullPath"
       ><div class="logo">
         <svg viewBox="0 0 370.1851851851852 65.09601468555904">
           <defs></defs>
