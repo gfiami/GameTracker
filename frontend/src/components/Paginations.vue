@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div id="paginationWrapper">
+    <div id="paginationWrapper" v-if="totalPages">
       <div class="pagination" id="desktop">
         <button
           class="page-button"

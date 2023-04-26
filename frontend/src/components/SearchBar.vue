@@ -114,7 +114,6 @@ export default {
   padding: 4vh 10vh;
   align-items: center;
   justify-content: center;
-  width: 70vw;
   margin: 0 auto;
 }
 .search-features {
