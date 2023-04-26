@@ -116,7 +116,7 @@ export default {
     return {
       currentPage: 1,
       selectedPage: 1,
-      totalPages: 1,
+      totalPages: null,
       nextButton: "",
       previousButton: "",
       firstButton: false,
