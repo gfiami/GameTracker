@@ -89,6 +89,11 @@ export default {
   },
   methods: {
     async register() {
+      this.usernameError = null;
+      this.emailError = null;
+      this.passwordError = null;
+      this.confirmationError = null;
+
       //Lembrar de ajustar para tratar erros e coisas invalidas, mas por hora fazer com se tudo fosse perfeito e nenhum user mal intencionado
       try {
         const response = await axios.post(
@@ -121,21 +126,14 @@ export default {
         //email error
         if (error.response.data.errors.email !== undefined) {
           this.emailErrors(error.response.data.errors.email);
-        } else {
-          this.emailError = null;
         }
         //username eror
         if (error.response.data.errors.username !== undefined) {
           this.usernameErrors(error.response.data.errors.username);
-        } else {
-          this.usernameError = null;
         }
         //password error
         if (error.response.data.errors.password !== undefined) {
           this.passwordErrors(error.response.data.errors.password);
-        } else {
-          this.passwordError = null;
-          this.confirmationError = null;
         }
       }
     },
