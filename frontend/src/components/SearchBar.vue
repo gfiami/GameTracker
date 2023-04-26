@@ -157,6 +157,9 @@ export default {
   height: 4vh;
   width: 20vw;
 }
+#sort {
+  cursor: pointer;
+}
 #counter,
 #sort,
 #searchBar,
@@ -173,7 +176,7 @@ export default {
 
 #category {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-
+  cursor: pointer;
   padding: 10px;
   width: 150px;
 }

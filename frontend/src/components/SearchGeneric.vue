@@ -5,7 +5,7 @@
         <input
           type="text"
           id="searchBar"
-          placeholder="Search games"
+          :placeholder="searchPlaceholder"
           v-model="searchQuery"
         />
         <button @click="showSearch" id="searchButton" type="button">
@@ -28,6 +28,9 @@
 <script>
 export default {
   name: "SearchGeneric",
+  props: {
+    searchPlaceholder: String,
+  },
   data() {
     return {
       sortOrder: "-",
@@ -79,7 +82,9 @@ export default {
   font-size: 2vh;
   font-weight: 500;
 }
-
+#sort {
+  cursor: pointer;
+}
 #results .search-bar-input {
   font-size: 2vh;
   font-weight: 900;
