@@ -81,7 +81,7 @@ import Loading from "../components/Loading.vue";
 import { mapMutations } from "vuex";
 
 export default {
-  name: "EditProfileView.vue",
+  name: "EditProfileView",
   data() {
     return {
       user: null,

@@ -114,6 +114,7 @@ export default {
   padding: 4vh 10vh;
   align-items: center;
   justify-content: center;
+  width: 70vw;
   margin: 0 auto;
 }
 .search-features {
@@ -216,21 +217,27 @@ i.fas.fa-search {
 }
 @media screen and (max-width: 768px) {
   .search-container {
+    width: 80vw;
+    padding: 2vh 2vh;
     flex-direction: column;
     align-content: center;
   }
   .search-info {
+    width: 100%;
+    flex-direction: column;
+
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     margin: 0 auto;
   }
   .search-info #results {
-    text-align: right;
-    margin-left: 3vw;
+    text-align: center;
+    margin: 0 auto;
   }
   #results .search-bar-input {
     display: block;
-    width: 40vw;
+    width: 60vw;
+    margin: 0 auto;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;

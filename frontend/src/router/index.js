@@ -69,6 +69,14 @@ const routes = [
       import(/* webpackChunkName: "GameView" */ "../views/GameView.vue"),
   },
   {
+    path: "/community",
+    name: "community",
+    component: () =>
+      import(
+        /* webpackChunkName: "CommunityView" */ "../views/CommunityView.vue"
+      ),
+  },
+  {
     path: "/profile/:id",
     name: "profile",
     component: () =>

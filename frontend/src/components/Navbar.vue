@@ -38,6 +38,10 @@
         :key="$route.fullPath"
         >Profile</router-link
       >
+      <router-link to="/community" :key="$route.fullPath"
+        >Community</router-link
+      >
+
       <router-link to="/games" :key="$route.fullPath">Games</router-link>
       <!--:key="$route.fullPath" FORÇA A rota a renderizar de novo-->
       <router-link v-if="!logged" to="/login">Login</router-link>
@@ -59,6 +63,9 @@
           :to="{ name: 'profile', params: { id: $store.state.user_id } }"
           :key="$route.fullPath"
           >Profile</router-link
+        >
+        <router-link @click="toggleMenu" to="/community" :key="$route.fullPath"
+          >Community</router-link
         >
         <router-link @click="toggleMenu" to="/games" :key="$route.fullPath"
           >Games</router-link
@@ -208,7 +215,7 @@ export default {
     opacity: 95%;
   }
   #display-burger a.router-link-exact-active {
-    color: white;
+    color: #6842ff;
   }
   .links-container {
     position: fixed;
