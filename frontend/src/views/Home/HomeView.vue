@@ -160,14 +160,15 @@ export default {
   text-align: center;
   margin: 0 auto;
   margin-top: 2vh;
-  width: 65vw;
-  border-radius: 12px;
-  background-color: #1abc9c;
-  padding: 1vh;
   font-size: 1.9vh;
   font-weight: 700;
 }
 .register a {
+  background-color: #1abc9c;
+  padding: 1.5vh 1.5vh;
+  width: 65vw;
+  border-radius: 12px;
+
   text-decoration: none;
   color: black;
 }
