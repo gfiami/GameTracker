@@ -16,6 +16,8 @@ Route::put('/edit-username', [UserController::class, 'editUsername']); // AUTH
 Route::post('/edit-image', [UserController::class, 'editImage']); // AUTH
 //pega informações do usuário que podem ser usadas em diversas páginas
 Route::get('/userinfo/{id}',[UserController::class, 'userInfo']);
+//pega todos os usuarios para a community view
+Route::get('/users', [UserController::class, 'getUsers']);
 
 //games da api na página de games
 Route::get('/games/{page?}/{search?}/{order?}', [GamesController::class, 'games']);

@@ -136,6 +136,12 @@ class UserController extends Controller
             ], 404);
         }
     }
+    //get all users for community tab
+    public function getUsers(){
+        $users = User::select('id', 'name', 'image')->inRandomOrder()->get();
+        return response()->json($users);
+
+    }
 
 
     //Editar username

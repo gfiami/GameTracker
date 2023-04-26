@@ -74,7 +74,7 @@
               :key="$route.fullPath"
             >
               <img
-                class="profile-image batata"
+                class="profile-image"
                 :src="
                   userReview.image
                     ? `${reviewImage}${userReview.image}`
