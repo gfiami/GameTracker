@@ -42,6 +42,7 @@ export default {
       sortOrder: "",
       searchQuery: "",
       showSearchResults: "",
+      resetSearch: "",
     };
   },
   computed: {
@@ -64,6 +65,18 @@ export default {
         this.$emit("changeOrder", "desc");
       }
     },
+  },
+  mounted() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const orderChecker = urlParams.get("order") || "asc";
+    if (orderChecker == "asc") {
+      this.sortOrder == "";
+    } else {
+      this.sortOrder == "-";
+    }
+    const searchChecker = urlParams.get("search") || "";
+    this.showSearchResults = searchChecker;
+    this.searchQuery = searchChecker;
   },
 };
 </script>

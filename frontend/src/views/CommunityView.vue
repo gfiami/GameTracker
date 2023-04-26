@@ -2,6 +2,7 @@
   <div class="main-wrapper">
     <h1 class="title">Explore community</h1>
     <SearchGeneric
+      :key="resetSearch"
       :searchPlaceholder="placeholder"
       @searching="searching"
       @changeOrder="changeOrder"
@@ -82,6 +83,13 @@ export default {
       }
     },
   },
+  computed: {
+    resetSearch() {
+      if (this.$route.fullPath == "/community") {
+        return this.$route.fullPath;
+      }
+    },
+  },
   methods: {
     async getUsers(search) {
       this.loadingUsers = true;
@@ -135,13 +143,6 @@ export default {
         path: "/community",
         query: { page, search, order },
       });
-    },
-  },
-  computed: {
-    routeReset() {
-      this.search = "";
-      this.order = "asc";
-      return this.$route.fullPath;
     },
   },
   mounted() {
