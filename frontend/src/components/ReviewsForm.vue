@@ -336,6 +336,8 @@ export default {
     hideAndReset() {
       this.review = null;
       this.rating = null;
+      this.reviewError = false;
+      this.ratingError = false;
       this.$emit("hideProfileEdit");
     },
   },
