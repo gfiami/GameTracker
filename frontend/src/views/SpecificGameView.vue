@@ -1,201 +1,201 @@
 <template>
   <div class="main-wrapper">
-    <div v class="loading" v-if="loading">
-      <div class="lds-facebook">
-        <div></div>
-        <div></div>
-        <div></div>
+    <Loading v-if="loading || loadingTracker" />
+    <div v-else>
+      <div class="game-doesnt-exist" v-if="game404">
+        <h1>404</h1>
+        <p>Game not found</p>
+        <i class="fas fa-book-dead"></i>
       </div>
-    </div>
-    <div class="game-doesnt-exist" v-if="game404">
-      <h1>404</h1>
-      <p>Game not found</p>
-      <i class="fas fa-book-dead"></i>
-    </div>
-    <div class="main-container" v-else-if="game">
-      <div class="title-container">
-        <h1 class="title" v-if="game.name">{{ game.name }}</h1>
-      </div>
-
-      <div class="top-container">
-        <div
-          v-if="game.background_image_additional"
-          class="secondary-container"
-        >
-          <img
-            class="secondary-image"
-            :src="game.background_image_additional"
-            :alt="game.name || 'img'"
-          />
+      <div class="main-container" v-else-if="game">
+        <div class="title-container">
+          <h1 class="title" v-if="game.name">{{ game.name }}</h1>
         </div>
-        <div class="right-panel-container">
-          <div v-if="game.background_image" class="main-image-container">
+
+        <div class="top-container">
+          <div
+            v-if="game.background_image_additional"
+            class="secondary-container"
+          >
             <img
-              class="main-image"
-              :src="game.background_image"
+              class="secondary-image"
+              :src="game.background_image_additional"
               :alt="game.name || 'img'"
             />
           </div>
-          <div class="info-container">
-            <p class="released" v-if="releaseDate">
-              RELEASE DATE:
-              <span class="released-legend">{{ releaseDate }}</span>
-            </p>
-            <p class="developer">
-              DEVELOPER:
-              <span
-                class="developer-legend"
-                v-if="game.developers.length !== 0"
-                >{{ game.developers[0].name }}</span
-              >
-            </p>
-            <p class="rating" v-if="game.esrb_rating">
-              ESRB:
-              <span class="rating-legend">{{ game.esrb_rating.name }}</span>
-            </p>
-            <p class="genres" v-if="game.genres">
-              GENRES:
-              <span class="genres-legend"
-                ><span v-for="(genre, index) in game.genres" :key="genre.id"
-                  >{{ genre.name
-                  }}<span v-if="index !== game.genres.length - 1">, </span>
-                </span></span
-              >
-            </p>
-            <p class="platforms" v-if="game.platforms">
-              PLATFORMS:
-              <span class="platforms-legend"
-                ><span
-                  v-for="(platform, index) in game.platforms"
-                  :key="platform.id"
-                  >{{ platform.platform.name
-                  }}<span v-if="index !== game.platforms.length - 1">, </span>
-                </span></span
-              >
-            </p>
+          <div class="right-panel-container">
+            <div v-if="game.background_image" class="main-image-container">
+              <img
+                class="main-image"
+                :src="game.background_image"
+                :alt="game.name || 'img'"
+              />
+            </div>
+            <div class="info-container">
+              <p class="released" v-if="releaseDate">
+                RELEASE DATE:
+                <span class="released-legend">{{ releaseDate }}</span>
+              </p>
+              <p class="developer">
+                DEVELOPER:
+                <span
+                  class="developer-legend"
+                  v-if="game.developers.length !== 0"
+                  >{{ game.developers[0].name }}</span
+                >
+              </p>
+              <p class="rating" v-if="game.esrb_rating">
+                ESRB:
+                <span class="rating-legend">{{ game.esrb_rating.name }}</span>
+              </p>
+              <p class="genres" v-if="game.genres">
+                GENRES:
+                <span class="genres-legend"
+                  ><span v-for="(genre, index) in game.genres" :key="genre.id"
+                    >{{ genre.name
+                    }}<span v-if="index !== game.genres.length - 1">, </span>
+                  </span></span
+                >
+              </p>
+              <p class="platforms" v-if="game.platforms">
+                PLATFORMS:
+                <span class="platforms-legend"
+                  ><span
+                    v-for="(platform, index) in game.platforms"
+                    :key="platform.id"
+                    >{{ platform.platform.name
+                    }}<span v-if="index !== game.platforms.length - 1">, </span>
+                  </span></span
+                >
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-      <div v-if="game.description_raw" class="description-container">
-        <h3 @click="changeAbout()" class="description-title hideShowAbout">
-          About this game
-          <span><i :class="hideShowClass"></i></span>
-        </h3>
-        <hr />
-        <p v-show="about == 'show'" class="description">
-          {{ game.description_raw }}
-        </p>
-        <hr v-show="about == 'show'" />
-      </div>
-      <!-- logged details -->
-      <div class="tracker online" v-if="logged">
-        <button v-if="!emptyOwned" @click="removeOwned(game.id)" type="button">
-          <i class="fas fa-gamepad removeOwned"></i>
-          <p class="button-legend">Remove from owned</p>
-        </button>
-        <button v-if="emptyOwned" @click="addOwned(game.id)" type="button">
-          <i class="fas fa-gamepad"></i>
-          <p class="button-legend">Add as owned</p>
-        </button>
-
-        <button
-          v-if="!emptyWished"
-          @click="removeWishList(game.id)"
-          type="button"
-        >
-          <i class="fas fa-heart removeWishlist"></i>
-          <p class="button-legend">Remove from Wishlist</p>
-        </button>
-        <button
-          v-if="emptyWished && emptyOwned"
-          @click="addWishList(game.id)"
-          type="button"
-        >
-          <i class="far fa-heart"></i>
-          <p class="button-legend">Add to Wishlist</p>
-        </button>
-
-        <button
-          v-if="!emptyFavorite"
-          @click="removeFavorite(game.id)"
-          type="button"
-        >
-          <i class="fas fa-star removeFavorite"></i>
-          <p class="button-legend">Remove favorite</p>
-        </button>
-
-        <button
-          v-if="emptyFavorite && !emptyOwned"
-          @click="addFavorite(game.id)"
-          type="button"
-        >
-          <i class="far fa-star addFavorite"></i>
-          <p class="button-legend">Add favorite</p>
-        </button>
-        <button v-if="!showForm" @click="showAddReview()" type="button">
-          <i class="fas fa-comments showReview"></i>
-          <p class="button-legend">Write a review</p>
-        </button>
-        <button v-if="showForm" @click="showEditReview()" type="button">
-          <i class="fas fa-comments editReview"></i>
-          <p class="button-legend">Edit your review</p>
-        </button>
-        <button v-if="showForm" @click="deleteReview()" type="button">
-          <i class="fas fa-comments editReview"></i>
-          <p class="button-legend">Delete your review</p>
-        </button>
-      </div>
-
-      <!--Create-->
-      <ReviewsForm
-        @fetchNewData_All="fetchNewData_All"
-        @userReview="userReview"
-        @hideReviewForm="hideReviewForm"
-        @reviewChecker="reviewChecker"
-        v-if="showHideAdd"
-        :game="game"
-        :logged="logged"
-        :userId="userId"
-      />
-
-      <!--Edit-->
-      <ReviewsForm
-        @fetchNewData_All="fetchNewData_All"
-        @userReview="userReview"
-        @hideReviewForm="hideReviewForm"
-        v-if="showHideEdit"
-        :loggedUserReview="editReview"
-        :game="game"
-        :userId="userId"
-        :reviewChecker="userHasReview"
-      />
-      <div class="tracker offline" v-if="!logged">
-        <p class="offline-text">
-          <router-link
-            :to="{ path: '/login', query: { redirect: $route.fullPath } }"
-            >Login</router-link
+        <div v-if="game.description_raw" class="description-container">
+          <h3 @click="changeAbout()" class="description-title hideShowAbout">
+            About this game
+            <span><i :class="hideShowClass"></i></span>
+          </h3>
+          <hr />
+          <p v-show="about == 'show'" class="description">
+            {{ game.description_raw }}
+          </p>
+          <hr v-show="about == 'show'" />
+        </div>
+        <!-- logged details -->
+        <div class="tracker online" v-if="logged">
+          <button
+            v-if="!emptyOwned"
+            @click="removeOwned(game.id)"
+            type="button"
           >
-          or
-          <router-link
-            :to="{ path: '/register', query: { redirect: $route.fullPath } }"
-            >Register</router-link
+            <i class="fas fa-gamepad removeOwned"></i>
+            <p class="button-legend">Remove from owned</p>
+          </button>
+          <button v-if="emptyOwned" @click="addOwned(game.id)" type="button">
+            <i class="fas fa-gamepad"></i>
+            <p class="button-legend">Add as owned</p>
+          </button>
+
+          <button
+            v-if="!emptyWished"
+            @click="removeWishList(game.id)"
+            type="button"
           >
-          to track your games and write reviews.
-        </p>
-      </div>
-      <div class="review-container">
-        <h3 class="review-title">Reviews</h3>
-        <hr />
-        <ReviewsArticles
-          @reviewChecker="reviewChecker"
+            <i class="fas fa-heart removeWishlist"></i>
+            <p class="button-legend">Remove from Wishlist</p>
+          </button>
+          <button
+            v-if="emptyWished && emptyOwned"
+            @click="addWishList(game.id)"
+            type="button"
+          >
+            <i class="far fa-heart"></i>
+            <p class="button-legend">Add to Wishlist</p>
+          </button>
+
+          <button
+            v-if="!emptyFavorite"
+            @click="removeFavorite(game.id)"
+            type="button"
+          >
+            <i class="fas fa-star removeFavorite"></i>
+            <p class="button-legend">Remove favorite</p>
+          </button>
+
+          <button
+            v-if="emptyFavorite && !emptyOwned"
+            @click="addFavorite(game.id)"
+            type="button"
+          >
+            <i class="far fa-star addFavorite"></i>
+            <p class="button-legend">Add favorite</p>
+          </button>
+          <button v-if="!showForm" @click="showAddReview()" type="button">
+            <i class="fas fa-comments showReview"></i>
+            <p class="button-legend">Write a review</p>
+          </button>
+          <button v-if="showForm" @click="showEditReview()" type="button">
+            <i class="fas fa-comments editReview"></i>
+            <p class="button-legend">Edit your review</p>
+          </button>
+          <button v-if="showForm" @click="deleteReview()" type="button">
+            <i class="fas fa-comments editReview"></i>
+            <p class="button-legend">Delete your review</p>
+          </button>
+        </div>
+
+        <!--Create-->
+        <ReviewsForm
+          @fetchNewData_All="fetchNewData_All"
           @userReview="userReview"
+          @hideReviewForm="hideReviewForm"
+          @reviewChecker="reviewChecker"
+          v-if="showHideAdd"
+          :game="game"
+          :logged="logged"
+          :userId="userId"
+        />
+
+        <!--Edit-->
+        <ReviewsForm
+          @fetchNewData_All="fetchNewData_All"
+          @userReview="userReview"
+          @hideReviewForm="hideReviewForm"
+          v-if="showHideEdit"
+          :loggedUserReview="editReview"
           :game="game"
           :userId="userId"
-          :logged="logged"
-          :fetchNewDataUser="fetchNewDataUser"
-          :fetchNewDataAll="fetchNewDataAll"
+          :reviewChecker="userHasReview"
         />
-        <hr v-if="fetchNewDataAll && fetchNewDataUser" />
+        <div class="tracker offline" v-if="!logged">
+          <p class="offline-text">
+            <router-link
+              :to="{ path: '/login', query: { redirect: $route.fullPath } }"
+              >Login</router-link
+            >
+            or
+            <router-link
+              :to="{ path: '/register', query: { redirect: $route.fullPath } }"
+              >Register</router-link
+            >
+            to track your games and write reviews.
+          </p>
+        </div>
+        <div class="review-container">
+          <h3 class="review-title">Reviews</h3>
+          <hr />
+          <ReviewsArticles
+            @reviewChecker="reviewChecker"
+            @userReview="userReview"
+            :game="game"
+            :userId="userId"
+            :logged="logged"
+            :fetchNewDataUser="fetchNewDataUser"
+            :fetchNewDataAll="fetchNewDataAll"
+          />
+          <hr v-if="fetchNewDataAll && fetchNewDataUser" />
+        </div>
       </div>
     </div>
   </div>
@@ -205,12 +205,14 @@
 import axios from "axios";
 import ReviewsForm from "../components/ReviewsForm.vue";
 import ReviewsArticles from "../components/ReviewsArticles.vue";
+import Loading from "../components/Loading.vue";
 
 export default {
   name: "SpecificGameView",
   components: {
     ReviewsForm,
     ReviewsArticles,
+    Loading,
   },
   data() {
     return {
@@ -218,6 +220,7 @@ export default {
       game404: false,
       releaseDate: null,
       loading: true,
+      loadingReview: true,
       ownedGame: [],
       favoriteGame: [],
       wishListedGame: [],
@@ -359,6 +362,7 @@ export default {
       return `${year}/${formattedMonth}/${day}`;
     },
     async fetchTrackedSpecific(game, user_id) {
+      this.loadingTracker = true;
       try {
         const response = await axios.get(
           `${process.env.VUE_APP_APIURL}specific-tracked-game`,
@@ -391,6 +395,7 @@ export default {
       } catch (error) {
         console.log(error);
       }
+      this.loadingTracker = false;
     },
     async addOwned(game) {
       const user_id = this.userId;
@@ -722,64 +727,6 @@ img {
 .secondary-image {
   width: 100%;
   height: auto;
-}
-
-/* loading */
-.loading {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
-
-.lds-facebook {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 80px;
-  height: 80px;
-}
-.lds-facebook div {
-  display: inline-block;
-  position: absolute;
-  left: 8px;
-  width: 16px;
-  background: #fff;
-  animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
-}
-.lds-facebook div:nth-child(1) {
-  left: 8px;
-  animation-delay: -0.24s;
-}
-.lds-facebook div:nth-child(2) {
-  left: 32px;
-  animation-delay: -0.12s;
-}
-.lds-facebook div:nth-child(3) {
-  left: 56px;
-  animation-delay: 0;
-}
-@keyframes lds-facebook {
-  0% {
-    top: 8px;
-    height: 64px;
-  }
-  50%,
-  100% {
-    top: 24px;
-    height: 32px;
-  }
-}
-
-@keyframes lds-dual-ring {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
 }
 
 /* TELAS MENORES */
