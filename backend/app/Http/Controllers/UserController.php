@@ -63,7 +63,7 @@ class UserController extends Controller
         //usando try catch para encontrar possiveis erros!
         try {
             $validateUserInfo = $request->validate([
-                'username' =>'required|min:4|max:12',
+                'username' =>'required|min:4|max:12|unique:users,name,',
                 'email' => 'required|email|unique:users',
                 'password' => 'required|min:6|max:10|confirmed'
             ]);
@@ -165,13 +165,13 @@ class UserController extends Controller
     //Editar username
     public function editUsername(Request $request){
         try{
+            $user_id = $request->input('user_id');
             $validateUserInfo = $request->validate([
-                'username' =>'required|min:4|max:12',
+                'username' =>'required|min:4|max:12|unique:users,name,' . $user_id,
             ]);
 
             $name = $validateUserInfo['username'];
             $token = $request->bearerToken();
-            $user_id = $request->input('user_id');
             if (!$token) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }

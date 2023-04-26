@@ -120,7 +120,7 @@ export default {
         });
       } catch (error) {
         //caso haja erro
-
+        console.log(error);
         //aqui vai mostrar os erros pra cada uma das validações!
         console.log(error.response.data.errors);
         //email error
