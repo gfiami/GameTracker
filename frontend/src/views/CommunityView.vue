@@ -106,6 +106,7 @@ export default {
       window.scroll(0, 0);
       this.currentPage = page;
       this.getUsers(this.search);
+
       const order = this.order;
       const search = this.search;
       this.$router.push({
@@ -115,6 +116,7 @@ export default {
     },
     searching(search) {
       this.search = search;
+      this.currentPage = 1;
       this.getUsers(search);
 
       const order = this.order;
