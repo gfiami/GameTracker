@@ -119,7 +119,10 @@
       <h3
         id="otherUsers"
         class="review-title"
-        v-else-if="changeAllReviews.length - 1 > 0"
+        v-else-if="
+          changeAllReviews.length - 1 > 0 ||
+          (!changeUserReview && changeAllReviews.length - 1 == 0)
+        "
       >
         Reviews from other users
       </h3>
