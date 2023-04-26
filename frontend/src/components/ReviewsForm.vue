@@ -16,14 +16,20 @@
             Write what you like or dislike about the game. Be polite and follow
             the <u class="link">Review Rules</u>.
           </p>
+          <div class="reviewError error" v-if="reviewError">
+            *{{ reviewError }}
+          </div>
           <textarea
             :placeholder="editProfileReview.review"
             cols="30"
             rows="10"
-            maxlength="1000"
+            maxlength="1001"
             v-model="review"
             id="editReview"
           ></textarea>
+          <div class="ratingError error" v-if="ratingError">
+            *{{ ratingError }}
+          </div>
           <div class="thumbs-container">
             <i class="thumbs fas fa-thumbs-up" ref="thumbsUp" @click="like"></i>
             <i
@@ -64,14 +70,21 @@
             Write what you like or dislike about the game. Be polite and follow
             the <u class="link">Review Rules</u>.
           </p>
+          <div class="reviewError error" v-if="reviewError">
+            *{{ reviewError }}
+          </div>
           <textarea
             :placeholder="loggedUserReview.review"
             cols="30"
             rows="10"
-            maxlength="1000"
+            maxlength="1001"
             v-model="review"
             id="editReview"
           ></textarea>
+          <div class="ratingError error" v-if="ratingError">
+            *{{ ratingError }}
+          </div>
+
           <div class="thumbs-container">
             <i class="thumbs fas fa-thumbs-up" ref="thumbsUp" @click="like"></i>
             <i
@@ -108,14 +121,20 @@
             Write what you like or dislike about the game. Be polite and follow
             the <u class="link">Review Rules</u>.
           </p>
+          <div class="reviewError error" v-if="reviewError">
+            *{{ reviewError }}
+          </div>
           <textarea
             placeholder="Maximum 1000 characters"
             cols="30"
             rows="10"
-            maxlength="1000"
+            maxlength="1001"
             v-model="review"
             id="review"
           ></textarea>
+          <div class="ratingError error" v-if="ratingError">
+            *{{ ratingError }}
+          </div>
           <div class="thumbs-container">
             <i class="thumbs fas fa-thumbs-up" ref="thumbsUp" @click="like"></i>
             <i
@@ -151,6 +170,8 @@ export default {
     return {
       review: null,
       rating: null,
+      reviewError: false,
+      ratingError: false,
     };
   },
   methods: {
@@ -167,6 +188,9 @@ export default {
       this.rating = "negative";
     },
     async editReview() {
+      this.reviewError = false;
+      this.ratingError = false;
+
       try {
         const personal_token = this.$store.state.personal_token;
 
@@ -201,14 +225,31 @@ export default {
         this.rating = null;
       } catch (error) {
         //caso haja erro
-        this.$emit("hideReviewForm");
-        console.log(error.response.data.message);
-        console.log(error.response.data.validation);
+        //this.$emit("hideReviewForm");
+        this.setErrorMessage(error.response.data.errors);
+        /*if (error.response.data.errors.review[0]) {
+          this.reviewError = error.response.data.errors.review[0];
+        }*/
+        /*if (error.response.data.errors.rating[0]) {
+          this.ratingError = error.response.data.errors.rating[0];
+        }*/
+        //console.log(error.response.data.message);
+        //console.log(error.response.data.validation);
         //aqui vai mostrar os erros pra cada uma das validações!
-        console.log(error.response.data.errors);
+        //console.log(error.response.data.errors);
+      }
+    },
+    setErrorMessage(error) {
+      if (error.review !== undefined) {
+        this.reviewError = error.review[0];
+      }
+      if (error.rating !== undefined) {
+        this.ratingError = error.rating[0];
       }
     },
     async profileEditReview(gameId) {
+      this.reviewError = false;
+      this.ratingError = false;
       try {
         const userId = this.$route.params.id;
         const personal_token = this.$store.state.personal_token;
@@ -236,15 +277,19 @@ export default {
         this.rating = null;
       } catch (error) {
         //caso haja erro
-        this.$emit("hideProfileEdit");
-        console.log(error.response.data.message);
-        console.log(error.response.data.validation);
+        this.setErrorMessage(error.response.data.errors);
+
+        //this.$emit("hideProfileEdit");
+        //console.log(error.response.data.message);
+        //console.log(error.response.data.validation);
         //aqui vai mostrar os erros pra cada uma das validações!
-        console.log(error.response.data.errors);
+        //console.log(error.response.data.errors);
       }
     },
 
     async submitReview() {
+      this.reviewError = false;
+      this.ratingError = false;
       try {
         const personal_token = this.$store.state.personal_token;
         const response = await axios.post(
@@ -279,15 +324,18 @@ export default {
         this.rating = null;
       } catch (error) {
         //caso haja erro
-        this.$emit("hideReviewForm");
-        console.log(error.response.data.message);
-        console.log(error.response.data.validation);
+        this.setErrorMessage(error.response.data.errors);
+
+        //this.$emit("hideReviewForm");
+        //console.log(error.response.data.message);
+        //console.log(error.response.data.validation);
         //aqui vai mostrar os erros pra cada uma das validações!
-        console.log(error.response.data.errors);
+        //console.log(error.response.data.errors);
       }
     },
     hideAndReset() {
       this.review = null;
+      this.rating = null;
       this.$emit("hideProfileEdit");
     },
   },
@@ -295,6 +343,19 @@ export default {
 </script>
 
 <style scoped>
+.error {
+  color: #d9ff42;
+  font-size: 1.4vh;
+  font-weight: 500;
+  text-shadow: 1px 1px 1px #000000;
+}
+.reviewError {
+  margin-bottom: -1vh;
+  margin-top: 1vh;
+}
+.ratingError {
+  margin: 0 auto;
+}
 #review,
 #editReview {
   margin: 2.5vh;
