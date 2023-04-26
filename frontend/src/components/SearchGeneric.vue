@@ -33,7 +33,7 @@ export default {
   },
   data() {
     return {
-      sortOrder: "-",
+      sortOrder: "",
       searchQuery: "",
       showSearchResults: "",
     };
@@ -47,9 +47,16 @@ export default {
     showSearch() {
       //passar search query para a view, pelo search
       this.showSearchResults = this.searchQuery;
+      this.$emit("searching", this.searchQuery);
     },
     changeSortIcon() {
       this.sortOrder = this.sortOrder === "" ? "-" : "";
+      console.log(this.sortOrder);
+      if (this.sortOrder == "") {
+        this.$emit("changeOrder", "asc");
+      } else {
+        this.$emit("changeOrder", "desc");
+      }
     },
   },
 };

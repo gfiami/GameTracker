@@ -1,7 +1,11 @@
 <template>
   <div class="main-wrapper">
     <h1 class="title">Explore community</h1>
-    <SearchGeneric :searchPlaceholder="placeholder" />
+    <SearchGeneric
+      :searchPlaceholder="placeholder"
+      @searching="searching"
+      @changeOrder="changeOrder"
+    />
     <div class="users-container" v-if="users">
       <div v-for="user in users" :key="user.id" class="user-container">
         <router-link
@@ -34,6 +38,12 @@
         <i class="fas fa-users-slash"></i>
       </div>
     </div>
+    <PaginationReview
+      v-if="users"
+      :totalPages="totalPages"
+      :currentPage="currentPage"
+      @goToPage="goToPage"
+    />
   </div>
 </template>
 
@@ -41,43 +51,77 @@
 import axios from "axios";
 import SearchGeneric from "../components/SearchGeneric.vue";
 import Loading from "../components/Loading.vue";
+import PaginationReview from "../components/PaginationReview.vue";
 
 export default {
   name: "CommunityView",
   components: {
     SearchGeneric,
     Loading,
+    PaginationReview,
   },
   data() {
     return {
       users: null,
+      totalPages: null,
       loadingUsers: true,
-      placeholder: "Search users",
+      placeholder: "Search users by name",
       imgUrl: `${process.env.VUE_APP_IMAGE_URL}`,
+      currentPage: 1,
+      search: "",
+      order: "asc",
     };
   },
+
   methods: {
-    async getUsers() {
+    async getUsers(search) {
+      console.log(search);
       this.loadingUsers = true;
-      const response = await axios.get(`${process.env.VUE_APP_APIURL}users`);
-      if (response.data.length == 0) {
-        this.loadingUsers == false;
+      this.users = null;
+      const response = await axios.get(`${process.env.VUE_APP_APIURL}users`, {
+        params: {
+          search: search,
+          page: this.currentPage,
+          order: this.order,
+        },
+      });
+      console.log(response.data.data.length);
+      if (response.data.data.length == 0) {
+        this.loadingUsers = false;
         this.users = null;
         return false;
       }
-      this.users = response.data;
+      this.totalPages = response.data.last_page;
+      this.users = response.data.data;
       this.loadingUsers = false;
+    },
+    goToPage(page) {
+      window.scrollTo(0, 0);
+      this.currentPage = page;
+      this.getUsers(this.search);
+    },
+    searching(search) {
+      console.log(search);
+      this.search = search;
+      this.getUsers(search);
+    },
+    changeOrder(order) {
+      this.order = order;
+      this.getUsers(this.search);
     },
   },
   mounted() {
-    this.getUsers();
+    this.getUsers(this.search);
   },
 };
 </script>
 
 <style scoped>
 /* user 404 */
+
 .user-doesnt-exist {
+  margin-top: 4vh;
+
   text-align: center;
   position: absolute;
   top: 30%;

@@ -16,6 +16,7 @@ use Illuminate\Validation\ValidationException;
 //esse Auth serve para auxiliar no login e realizar a autenticação do usuario
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 //esse personalacess serve para acessar a tabela de tokens do banco de dados, em conjunto com a auth do sanctum
 
@@ -137,8 +138,25 @@ class UserController extends Controller
         }
     }
     //get all users for community tab
-    public function getUsers(){
-        $users = User::select('id', 'name', 'image')->inRandomOrder()->get();
+    public function getUsers(Request $request){
+        $validatedData = $request->validate([
+            'search' => ['nullable', 'string', 'max:255'],
+            'page' => ['nullable', 'integer', 'min:1'],
+            'order' => ['nullable', 'string', Rule::in(['asc', 'desc'])],
+        ]);
+
+
+        $searchTerm = $validatedData['search'] ?? '';
+        $page = $validatedData['page'] ?? 1;
+        $order = $validatedData['order'];
+        $pageSize = 10;
+
+        $allUsers = User::select('id', 'name', 'image');
+
+        $searchingUsers = $allUsers->where('name', 'like', '%' . $searchTerm . '%');
+        $searchingUsers = $searchingUsers->orderBy('name', $order);
+        $users = $searchingUsers->paginate($pageSize, ['*'], 'page', $page);
+
         return response()->json($users);
 
     }
