@@ -72,10 +72,18 @@ export default {
       order: "asc",
     };
   },
-
+  watch: {
+    "$route.fullPath"(newValue) {
+      if (newValue == "/community") {
+        this.currentPage = 1;
+        this.order = "asc";
+        this.search = "";
+        this.getUsers(this.search);
+      }
+    },
+  },
   methods: {
     async getUsers(search) {
-      console.log(search);
       this.loadingUsers = true;
       this.users = null;
       const response = await axios.get(`${process.env.VUE_APP_APIURL}users`, {
@@ -85,7 +93,6 @@ export default {
           order: this.order,
         },
       });
-      console.log(response.data.data.length);
       if (response.data.data.length == 0) {
         this.loadingUsers = false;
         this.users = null;
@@ -96,21 +103,50 @@ export default {
       this.loadingUsers = false;
     },
     goToPage(page) {
-      window.scrollTo(0, 0);
+      window.scroll(0, 0);
       this.currentPage = page;
       this.getUsers(this.search);
+      const order = this.order;
+      const search = this.search;
+      this.$router.push({
+        path: "/community",
+        query: { page, search, order },
+      });
     },
     searching(search) {
-      console.log(search);
       this.search = search;
       this.getUsers(search);
+
+      const order = this.order;
+      const page = this.currentPage;
+      this.$router.push({
+        path: "/community",
+        query: { page, search, order },
+      });
     },
     changeOrder(order) {
       this.order = order;
       this.getUsers(this.search);
+      const search = this.search;
+      const page = this.currentPage;
+      this.$router.push({
+        path: "/community",
+        query: { page, search, order },
+      });
+    },
+  },
+  computed: {
+    routeReset() {
+      this.search = "";
+      this.order = "asc";
+      return this.$route.fullPath;
     },
   },
   mounted() {
+    const urlParams = new URLSearchParams(window.location.search);
+    this.currentPage = parseInt(urlParams.get("page")) || 1;
+    this.search = urlParams.get("search") || "";
+    this.order = urlParams.get("order") || "asc";
     this.getUsers(this.search);
   },
 };
