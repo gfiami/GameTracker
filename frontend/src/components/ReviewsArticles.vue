@@ -136,46 +136,10 @@
         </label>
       </div>
       <!--END OF SEARCH BY RATING -->
-
-      <p
-        class="review-title"
-        v-if="
-          changeAllReviews.length <= 5 &&
-          changeUserReview &&
-          changeAllReviews.length - 1 !== 0
-        "
-      >
-        Showing 1 to {{ changeAllReviews.length - 1 }} of
-        {{ changeAllReviews.length - 1 }}
-      </p>
-      <p
-        class="review-title"
-        v-else-if="
-          changeAllReviews.length <= 5 &&
-          changeUserReview == null &&
-          changeAllReviews.length !== 0
-        "
-      >
-        Showing 1 to {{ changeAllReviews.length }} of
-        {{ changeAllReviews.length }}
+      <p class="review-title" id="otherUsers">
+        {{ showingCounter }}
       </p>
 
-      <p
-        class="review-title"
-        v-else-if="changeUserReview && changeAllReviews.length - 1 != 0"
-      >
-        Showing {{ (currentPage - 1) * 5 + 1 }} to {{ currentPage * 5 }} of
-        {{ changeAllReviews.length - 1 }}
-      </p>
-      <p
-        class="review-title"
-        v-else-if="
-          changeUserReview == null && !changeAllReviews.length - 1 != 0
-        "
-      >
-        Showing {{ (currentPage - 1) * 5 + 1 }} to {{ currentPage * 5 }} of
-        {{ changeAllReviews.length }}
-      </p>
       <div v-for="review in paginatedReviews" :key="review.id">
         <div class="review-container">
           <div class="container-left">
@@ -263,6 +227,7 @@ export default {
       editingReview: false,
       reviewImage: `${process.env.VUE_APP_IMAGE_URL}`,
       checkedFilter: "",
+      showingCounter: "",
     };
   },
   watch: {
@@ -271,10 +236,21 @@ export default {
         this.fetchReviews(this.game.id);
       },
     },
+    changeAllReviews: {
+      handler(newValue) {
+        this.showingCounter = this.updateShowingCounter();
+      },
+    },
     userReview: {
       handler(newValue, oldValue) {
-        if (oldValue !== null && oldValue.updated_at !== newValue.updated_at) {
-          //resetando filtro para "all"
+        if (oldValue !== null && newValue !== null) {
+          if (oldValue.updated_at !== newValue.updated_at) {
+            //resetando filtro para "all"
+            this.checkedFilter = "";
+          }
+        } else if (newValue == null) {
+          this.checkedFilter = "";
+        } else if (newValue !== null && oldValue == null) {
           this.checkedFilter = "";
         }
       },
@@ -321,8 +297,16 @@ export default {
           this.changeUserReview !== null &&
           this.changeUserReview !== undefined
         ) {
-          return (
-            Math.ceil(this.changeAllReviews.length / this.reviewsPerPage) - 1
+          if (
+            this.checkedFilter !== "" &&
+            this.checkedFilter !== this.changeUserReview.rating
+          ) {
+            return Math.ceil(
+              this.changeAllReviews.length / this.reviewsPerPage
+            );
+          }
+          return Math.ceil(
+            (this.changeAllReviews.length - 1) / this.reviewsPerPage
           );
         }
         return Math.ceil(this.changeAllReviews.length / this.reviewsPerPage);
@@ -438,6 +422,93 @@ export default {
     },
     formattedDate(created_at) {
       return this.formattedDates(created_at);
+    },
+    updateShowingCounter() {
+      //caso usuario não tenha reviews
+      if (this.changeAllReviews && !this.changeUserReview) {
+        //não está na ultima página
+        if (this.currentPage < this.totalPages) {
+          return (
+            "Showing " +
+            (this.currentPage * this.reviewsPerPage -
+              (this.reviewsPerPage - 1)) +
+            " to " +
+            this.reviewsPerPage * this.currentPage +
+            " of " +
+            this.changeAllReviews.length
+          );
+        }
+        //está na ultima página
+        if (this.currentPage == this.totalPages) {
+          return (
+            "Showing " +
+            (this.currentPage * this.reviewsPerPage -
+              (this.reviewsPerPage - 1)) +
+            " to " +
+            this.changeAllReviews.length +
+            " of " +
+            this.changeAllReviews.length
+          );
+        }
+      }
+      //caso user tenha reviews
+      if (
+        this.changeUserReview &&
+        this.changeAllReviews &&
+        (this.changeUserReview.rating == this.checkedFilter ||
+          this.checkedFilter == "")
+      ) {
+        if (this.currentPage < this.totalPages) {
+          return (
+            "Showing " +
+            (this.currentPage * this.reviewsPerPage -
+              (this.reviewsPerPage - 1)) +
+            " to " +
+            this.reviewsPerPage * this.currentPage +
+            " of " +
+            (this.changeAllReviews.length - 1)
+          );
+        }
+        if (this.currentPage == this.totalPages) {
+          return (
+            "Showing " +
+            (this.currentPage * this.reviewsPerPage -
+              (this.reviewsPerPage - 1)) +
+            " to " +
+            (this.changeAllReviews.length - 1) +
+            " of " +
+            (this.changeAllReviews.length - 1)
+          );
+        }
+      }
+      if (
+        this.changeUserReview &&
+        this.changeAllReviews &&
+        this.changeUserReview.rating != this.checkedFilter
+      ) {
+        if (this.currentPage < this.totalPages) {
+          return (
+            "Showing " +
+            (this.currentPage * this.reviewsPerPage -
+              (this.reviewsPerPage - 1)) +
+            " to " +
+            this.reviewsPerPage * this.currentPage +
+            " of " +
+            (this.changeAllReviews.length - 1)
+          );
+        }
+        if (this.currentPage == this.totalPages) {
+          return (
+            "Showing " +
+            (this.currentPage * this.reviewsPerPage -
+              (this.reviewsPerPage - 1)) +
+            " to " +
+            this.changeAllReviews.length +
+            " of " +
+            this.changeAllReviews.length
+          );
+        }
+      }
     },
   },
   mounted() {
