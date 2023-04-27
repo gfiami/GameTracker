@@ -80,7 +80,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .search-container {
   display: flex;
   flex-direction: column;

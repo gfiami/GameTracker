@@ -214,6 +214,8 @@ export default {
     fetchNewDataUser: null,
     fetchNewDataAll: null,
     profileReviews: null,
+    updateFilter: null,
+    updatePage: null,
   },
   data() {
     return {
@@ -221,19 +223,27 @@ export default {
       filteredReviews: [],
       profileFilteredReviews: [],
       userReview: null,
-      currentPage: 1,
+      currentPage: this.updatePage,
       reviewsPerPage: 5,
       profileEditReview: null,
       editingReview: false,
       reviewImage: `${process.env.VUE_APP_IMAGE_URL}`,
-      checkedFilter: "",
+      checkedFilter: this.updateFilter,
       showingCounter: "",
     };
   },
   watch: {
     checkedFilter: {
-      handler(newValue) {
+      handler(newValue, oldValue) {
         this.fetchReviews(this.game.id);
+        this.currentPage = 1;
+        const page = this.currentPage;
+        const path = this.$route.path;
+        const order = this.checkedFilter;
+        this.$router.push({
+          path: path,
+          query: { page, order },
+        });
       },
     },
     changeAllReviews: {
@@ -251,7 +261,7 @@ export default {
         } else if (newValue == null) {
           this.checkedFilter = "";
         } else if (newValue !== null && oldValue == null) {
-          this.checkedFilter = "";
+          this.checkedFilter = this.updateFilter;
         }
       },
     },
@@ -387,6 +397,12 @@ export default {
       } else {
         window.scrollTo(0, 0);
       }
+      const path = this.$route.path;
+      const order = this.checkedFilter;
+      this.$router.push({
+        path: path,
+        query: { page, order },
+      });
     },
     async fetchReviews(game) {
       try {
@@ -404,7 +420,7 @@ export default {
         }
         this.reviews = response.data;
         this.$emit("fetchNewData_All", response.data);
-
+        console.log("teste fetch");
         //Se o usuario estiver logado, irá pegar a review dele.
         if (this.logged) {
           for (const review of response.data) {
