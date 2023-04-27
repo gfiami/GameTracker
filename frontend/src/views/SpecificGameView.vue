@@ -1,6 +1,7 @@
 <template>
   <div class="main-wrapper">
-    <Loading v-if="loading || loadingTracker" />
+    <Loading v-if="loading" />
+    <!-- ajustar pro loading tracker -->
     <div v-else>
       <div class="game-doesnt-exist" v-if="game404">
         <h1>404</h1>
@@ -185,7 +186,18 @@
         <div class="review-container">
           <h3 class="review-title">Reviews</h3>
           <hr />
+          <!-- 
+             this.$emit("fetchNewData_All", response.data.reviews);
+        for (const review of response.data) {
+          if (this.userId == review.user_id) {
+            this.$emit("userReview", review);
+            this.$emit("reviewChecker", true);
+            break;
+          }
+        }
+          -->
           <ReviewsArticles
+            @fetchNewData_All="fetchNewData_All"
             @reviewChecker="reviewChecker"
             @userReview="userReview"
             :game="game"
@@ -276,7 +288,6 @@ export default {
     changeAbout() {
       this.about = this.about === "hide" ? "show" : "hide";
     },
-
     showAddReview() {
       this.showHideAdd = true;
     },
@@ -322,7 +333,6 @@ export default {
           }
         );
         //aqui recebo o que o laravel me retornou
-        console.log(response.data.reviews);
         this.fetchNewData_All(response.data.reviews);
         this.userReview(null);
         this.userHasReview = false;
@@ -428,7 +438,6 @@ export default {
       const personal_token = this.$store.state.personal_token;
 
       try {
-        console.log("Entrou no try do remove Owned");
         const response = await axios.delete(
           `${process.env.VUE_APP_APIURL}remove-specific-owned`,
           {
@@ -448,7 +457,6 @@ export default {
         //        this.$emit("button-clicked", "removeOwned");
       } catch (error) {
         console.log(error);
-        console.log("Entrou no erro do Remove owned");
       }
     },
     async addFavorite(game) {
@@ -481,7 +489,6 @@ export default {
       const personal_token = this.$store.state.personal_token;
 
       try {
-        console.log("entrou no try do remove favorite");
         const response = await axios.delete(
           `${process.env.VUE_APP_APIURL}remove-specific-favorite`,
           {

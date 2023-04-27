@@ -109,23 +109,34 @@
     <!-- all reviews, except user if exists -->
     <div v-if="changeAllReviews">
       <hr v-if="changeUserReview" />
-      <h3
-        id="otherUsers"
-        class="review-title"
-        v-if="changeUserReview && changeAllReviews.length - 1 == 0"
-      >
-        No reviews found from other users.
-      </h3>
-      <h3
-        id="otherUsers"
-        class="review-title"
-        v-else-if="
-          changeAllReviews.length - 1 > 0 ||
-          (!changeUserReview && changeAllReviews.length - 1 == 0)
-        "
-      >
-        Reviews from other users
-      </h3>
+
+      <!-- SEARCH BY RATING -->
+      <div class="search-container" v-if="changeAllReviews">
+        <label>
+          <input type="radio" name="options" v-model="checkedFilter" value="" />
+          <span class="radio-button">All</span>
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="options"
+            v-model="checkedFilter"
+            value="positive"
+          />
+          <span class="radio-button">Recommended</span>
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="options"
+            v-model="checkedFilter"
+            value="negative"
+          />
+          <span class="radio-button">Not Recommended</span>
+        </label>
+      </div>
+      <!--END OF SEARCH BY RATING -->
+
       <p
         class="review-title"
         v-if="
@@ -207,9 +218,10 @@
         </div>
       </div>
     </div>
-    <div v-else>
+    <div v-else-if="getUrl == 'games'">
       <h3 id="otherUsers" class="review-title">No reviews found.</h3>
     </div>
+
     <div class="pages" v-if="!editingReview">
       <PaginationReview
         :totalPages="totalPages"
@@ -250,7 +262,23 @@ export default {
       profileEditReview: null,
       editingReview: false,
       reviewImage: `${process.env.VUE_APP_IMAGE_URL}`,
+      checkedFilter: "",
     };
+  },
+  watch: {
+    checkedFilter: {
+      handler(newValue) {
+        this.fetchReviews(this.game.id);
+      },
+    },
+    userReview: {
+      handler(newValue, oldValue) {
+        if (oldValue !== null && oldValue.updated_at !== newValue.updated_at) {
+          //resetando filtro para "all"
+          this.checkedFilter = "";
+        }
+      },
+    },
   },
   computed: {
     profileReviewsChecker() {
@@ -304,7 +332,6 @@ export default {
       }
     },
     changeUserReview() {
-      console.log(this.fetchNewDataUser);
       if (this.fetchNewDataUser !== null) {
         this.userReview = this.fetchNewDataUser;
         return this.userReview;
@@ -347,6 +374,10 @@ export default {
         return `${year}/${formattedMonth}/${day}`;
       };
     },
+    getUrl() {
+      const firstPath = this.$route.path.split("/");
+      return firstPath[1];
+    },
   },
   methods: {
     showEdit(review) {
@@ -380,6 +411,7 @@ export default {
           {
             params: {
               game_api_id: game,
+              filter_reviews: this.checkedFilter,
             },
           }
         );
@@ -387,7 +419,8 @@ export default {
           return false;
         }
         this.reviews = response.data;
-        console.log(this.reviews);
+        this.$emit("fetchNewData_All", response.data);
+
         //Se o usuario estiver logado, irá pegar a review dele.
         if (this.logged) {
           for (const review of response.data) {
@@ -559,6 +592,50 @@ hr {
   font-size: 2.7vh;
   text-align: center;
   color: white;
+}
+/* search container */
+.search-container {
+  margin: 0 auto;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+.search-container label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 33%;
+  cursor: pointer;
+  background-color: #6b5b95;
+  border: none;
+  border-radius: 5px;
+  user-select: none;
+  font-size: 1.7vh;
+  text-align: center;
+}
+
+.search-container label:hover {
+  background-color: #9b8ece;
+}
+.search-container .radio-button {
+  width: 100%;
+  height: 100%;
+  padding: 1.3vh 1.3vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.search-container label input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.search-container label input:checked + .radio-button,
+.search-container label input:focus + .radio-button {
+  background-color: #bb8ece;
+  border-radius: 5px;
 }
 @media screen and (min-width: 768px) {
   .container-left {

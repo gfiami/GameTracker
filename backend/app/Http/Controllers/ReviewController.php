@@ -7,7 +7,11 @@ use App\Models\Review;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\ValidationException;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
+
 use App\Models\PersonalAccessToken;
+use Illuminate\Validation\Rule;
+
 
 
 class ReviewController extends Controller
@@ -43,11 +47,27 @@ class ReviewController extends Controller
     //pega as reviews de determinado jogo
     public function fetchReviews(Request $request){
         try {
+            $validatedData = $request->validate([
+                'filter_reviews' => ['nullable', 'string', Rule::in(['positive', 'negative'])],
+            ]);
             $game_api_id = $request->input('game_api_id');
+            $filter = $validatedData['filter_reviews'];
             $reviews = Review::where('game_api_id', $game_api_id)
             ->where('approved', 1)
             ->with('user')
             ->get();
+            if(!empty($filter)){
+                $reviews = Review::where('game_api_id', $game_api_id)
+                ->where('approved', 1)
+                ->where('rating', $filter)
+                ->with('user')
+                ->get();
+            } else{
+                $reviews = Review::where('game_api_id', $game_api_id)
+                ->where('approved', 1)
+                ->with('user')
+                ->get();
+            }
             $reviewsData = $reviews->map(function($review) {
                 return [
                     'user_id' => $review->user_id,
@@ -71,12 +91,12 @@ class ReviewController extends Controller
     //adicionar uma review
     public function addReview(Request $request){
         try{
+
             $validateReviewInfo = $request->validate([
                 'review' => 'required|string|max:1000',
                 'rating' => 'required|string|max:10',
 
             ]);
-
             $token = $request->bearerToken();
             $user_id = $request->input('user_id');
             $game_api_id = $request->input('game_api_id');
@@ -102,10 +122,12 @@ class ReviewController extends Controller
                             'game_name' => $game_name,
                         ]);
                         //mandar de volta as reviews atualizadas
-                        $reviews = Review::where('game_api_id', $game_api_id)
-                        ->where('approved', 1)
-                        ->with('user')
-                        ->get();
+
+                            $reviews = Review::where('game_api_id', $game_api_id)
+                            ->where('approved', 1)
+                            ->with('user')
+                            ->get();
+
                         $reviewsData = $reviews->map(function($review) {
                             return [
                                 'user_id' => $review->user_id,
@@ -167,10 +189,10 @@ class ReviewController extends Controller
                             $review->rating = $rating;
                             $review->save();
                             //mandar de volta as reviews atualizadas
-                            $reviews = Review::where('game_api_id', $game_api_id)
-                            ->where('approved', 1)
-                            ->with('user')
-                            ->get();
+                                $reviews = Review::where('game_api_id', $game_api_id)
+                                ->where('approved', 1)
+                                ->with('user')
+                                ->get();
 
                             $reviewsData = $reviews->map(function($review) {
                                 return [
@@ -180,7 +202,7 @@ class ReviewController extends Controller
                                     'image' => $review->user->image,
                                     'rating' => $review->rating,
                                     'created_at' => $review->created_at,
-                                    'updated_at' => $review->updated_at
+                                    'updated_at' => $review->updated_at,
                                 ];
                             });
 

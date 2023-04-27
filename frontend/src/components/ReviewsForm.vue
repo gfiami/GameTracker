@@ -190,7 +190,6 @@ export default {
     async editReview() {
       this.reviewError = false;
       this.ratingError = false;
-
       try {
         const personal_token = this.$store.state.personal_token;
 
