@@ -58,7 +58,6 @@ export default {
     },
     changeSortIcon() {
       this.sortOrder = this.sortOrder === "" ? "-" : "";
-      console.log(this.sortOrder);
       if (this.sortOrder == "") {
         this.$emit("changeOrder", "asc");
       } else {
@@ -70,9 +69,9 @@ export default {
     const urlParams = new URLSearchParams(window.location.search);
     const orderChecker = urlParams.get("order") || "asc";
     if (orderChecker == "asc") {
-      this.sortOrder == "";
+      this.sortOrder = "";
     } else {
-      this.sortOrder == "-";
+      this.sortOrder = "-";
     }
     const searchChecker = urlParams.get("search") || "";
     this.showSearchResults = searchChecker;
