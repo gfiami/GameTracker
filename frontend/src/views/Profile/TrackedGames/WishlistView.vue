@@ -12,18 +12,18 @@
           <i class="fas fa-caret-left"></i> Back to Profile
         </router-link>
       </div>
-      <div class="title" v-if="checkOwnProfile">Your Favorite Games</div>
+      <div class="title" v-if="checkOwnProfile">Your Wishlisted Games</div>
       <div class="title" v-else>
-        <i>{{ user.name }}'s </i>&nbsp; Favorite Games
+        <i>{{ user.name }}'s </i>&nbsp; Wishlisted Games
       </div>
 
-      <div class="favorite-profile-container">
+      <div class="wishlist-profile-container">
         <TrackedGames
-          @favoriteGamesUpdate="updateFavorite"
-          :gameIds="favoriteIds"
+          @wishListedGamesUpdate="updateWishlist"
+          :gameIds="wishedIds"
           :owned="ownedIds"
-          :favorite="favoriteIds"
-          :wished="[]"
+          :favorite="[]"
+          :wished="wishedIds"
           @trackerClicked="onButtonClicked"
         />
       </div>
@@ -36,12 +36,12 @@
 
 <script>
 import axios from "axios";
-import TrackedGames from "../../components/TrackedGames.vue";
-import Loading from "../../components/Loading.vue";
-import Profile404 from "../../components/Profile404.vue";
+import TrackedGames from "../../../components/TrackedGames.vue";
+import Loading from "../../../components/Loading.vue";
+import Profile404 from "../../../components/Profile404.vue";
 
 export default {
-  name: "FavoriteView",
+  name: "OwnedView",
   components: {
     TrackedGames,
     Loading,
@@ -55,8 +55,8 @@ export default {
   data() {
     return {
       user: null,
+      wishedIds: "",
       ownedIds: "",
-      favoriteIds: "",
       loadingUser: true,
     };
   },
@@ -70,8 +70,8 @@ export default {
     },
   },
   methods: {
-    updateFavorite(newValue) {
-      this.favoriteIds = newValue;
+    updateWishlist(newValue) {
+      this.wishedIds = newValue;
     },
     async onButtonClicked(buttonType) {
       await this.getIdsGamesTracked();
@@ -105,16 +105,16 @@ export default {
           }
         );
         this.ownedIds = response.data.owned;
-        this.favoriteIds = response.data.favorite;
+        this.wishedIds = response.data.wished;
         if (this.ownedIds.length == 0) {
           this.emptyOwned = true;
         } else {
           this.emptyOwned = false;
         }
-        if (this.favoriteIds.length == 0) {
-          this.emptyFavorite = true;
+        if (this.wishedIds.length == 0) {
+          this.emptyWished = true;
         } else {
-          this.emptyFavorite = false;
+          this.emptyWished = false;
         }
       } catch (error) {
         console.log(error.response.data.error);
@@ -148,7 +148,7 @@ export default {
 }
 </style>
 <style>
-.favorite-profile-container #indicators {
+.wishlist-profile-container #indicators {
   display: none;
 }
 </style>

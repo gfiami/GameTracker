@@ -77,7 +77,7 @@
 
 <script>
 import axios from "axios";
-import Loading from "../components/Loading.vue";
+import Loading from "../../components/Loading.vue";
 import { mapMutations } from "vuex";
 
 export default {

@@ -43,7 +43,7 @@
 
 <script>
 import axios from "axios";
-import Message from "../components/Message.vue";
+import Message from "../../components/Message.vue";
 //isso serve para usar as "mutations" do store.js, importando elas com o mapMutations
 import { mapMutations } from "vuex";
 

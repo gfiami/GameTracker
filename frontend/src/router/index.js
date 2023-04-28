@@ -52,7 +52,9 @@ const routes = [
       }
     },
     component: () =>
-      import(/* webpackChunkName: "LoginView" */ "../views/LoginView.vue"),
+      import(
+        /* webpackChunkName: "LoginView" */ "../views/Authentication/LoginView.vue"
+      ),
   },
   {
     path: "/register",
@@ -67,7 +69,7 @@ const routes = [
     },
     component: () =>
       import(
-        /* webpackChunkName: "RegisterView" */ "../views/RegisterView.vue"
+        /* webpackChunkName: "RegisterView" */ "../views/Authentication/RegisterView.vue"
       ),
   },
   {
@@ -88,7 +90,9 @@ const routes = [
     path: "/profile/:id",
     name: "profile",
     component: () =>
-      import(/* webpackChunkName: "ProfileView" */ "../views/ProfileView.vue"),
+      import(
+        /* webpackChunkName: "ProfileView" */ "../views/Profile/ProfileView.vue"
+      ),
   },
   {
     path: "/profile/edit",
@@ -103,7 +107,7 @@ const routes = [
     },
     component: () =>
       import(
-        /* webpackChunkName: "EditProfileView" */ "../views/EditProfileView.vue"
+        /* webpackChunkName: "EditProfileView" */ "../views/Profile/EditProfileView.vue"
       ),
   },
   {
@@ -117,7 +121,7 @@ const routes = [
     name: "owned",
     component: () =>
       import(
-        /* webpackChunkName: "OwnedView" */ "../views/TrackedGames/OwnedView.vue"
+        /* webpackChunkName: "OwnedView" */ "../views/Profile/TrackedGames/OwnedView.vue"
       ),
   },
   {
@@ -125,7 +129,7 @@ const routes = [
     name: "favorite",
     component: () =>
       import(
-        /* webpackChunkName: "FavoriteView" */ "../views/TrackedGames/FavoriteView.vue"
+        /* webpackChunkName: "FavoriteView" */ "../views/Profile/TrackedGames/FavoriteView.vue"
       ),
   },
   {
@@ -133,7 +137,7 @@ const routes = [
     name: "wishlist",
     component: () =>
       import(
-        /* webpackChunkName: "WishlistView" */ "../views/TrackedGames/WishlistView.vue"
+        /* webpackChunkName: "WishlistView" */ "../views/Profile/TrackedGames/WishlistView.vue"
       ),
   },
 ];
