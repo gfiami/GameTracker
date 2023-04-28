@@ -91,8 +91,26 @@
         v-model="selectedPage"
         @change="changePage(selectedPage)"
       >
-        <option v-for="i in totalPages" :key="i" :value="i">
-          {{ i }}
+        <option value="1" v-if="currentPage !== 1">1</option>
+        <option disabled class="dots" v-if="currentPage > 4">...</option>
+        <option :value="currentPage - 2" v-if="currentPage - 2 > 1">
+          {{ currentPage - 2 }}
+        </option>
+        <option :value="currentPage - 1" v-if="currentPage - 1 > 1">
+          {{ currentPage - 1 }}
+        </option>
+        <option :value="currentPage">
+          {{ currentPage }}
+        </option>
+        <option :value="currentPage + 1" v-if="currentPage + 1 < totalPages">
+          {{ currentPage + 1 }}
+        </option>
+        <option :value="currentPage + 2" v-if="currentPage + 2 < totalPages">
+          {{ currentPage + 2 }}
+        </option>
+        <option disabled class="dots" v-if="currentPage > 4">...</option>
+        <option :value="totalPages">
+          {{ totalPages }}
         </option>
       </select>
       <button
