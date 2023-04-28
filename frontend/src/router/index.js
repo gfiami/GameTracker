@@ -25,6 +25,14 @@ const routes = [
       import(/* webpackChunkName: "HomeView" */ "../views/Home/HomeView.vue"),
   },
   {
+    path: "/contact",
+    name: "contact",
+    component: () =>
+      import(
+        /* webpackChunkName: "ContactView" */ "../views/Home/ContactView.vue"
+      ),
+  },
+  {
     path: "/games/game/:slug",
     name: "specificgame",
     component: () =>

@@ -90,12 +90,18 @@ export default {
       redirect: this.$route.query.redirect,
     };
   },
+  mounted() {
+    window.scrollTo(0, 0);
+  },
 };
 </script>
 
 <style scoped>
 * {
   text-shadow: 1px 1px 2px #6842ff;
+}
+#welcome {
+  margin-bottom: 8vh;
 }
 .back-route {
   margin-left: 2vw;

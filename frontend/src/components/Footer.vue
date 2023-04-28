@@ -9,7 +9,17 @@
           >Powered by <span class="rawg">RAWG</span></a
         >
       </div>
-      <div class="social-media">
+      <div class="links">
+        <div class="regular-link">
+          <router-link to="/contact" :key="$route.fullPath"
+            ><u>Contact</u></router-link
+          >
+        </div>
+        <div class="regular-link" v-if="logged">
+          <router-link to="/welcome" :key="$route.fullPath"
+            ><u>Help</u></router-link
+          >
+        </div>
         <div class="social-link"><i class="fab fa-twitter-square"></i></div>
         <div class="social-link"><i class="fab fa-reddit-square"></i></div>
         <div class="social-link"><i class="fab fa-instagram-square"></i></div>
@@ -21,6 +31,11 @@
 <script>
 export default {
   name: "Footer",
+  computed: {
+    logged() {
+      return this.$store.state.logged;
+    },
+  },
 };
 </script>
 
@@ -65,13 +80,22 @@ export default {
   padding: 0.5vh 0.5vh;
 }
 .api-credits,
-.social-media {
+.links {
   width: 50%;
 }
-.social-media {
+.links {
   display: flex;
   justify-content: flex-end;
   gap: 1vw;
+}
+.regular-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.regular-link a {
+  text-decoration: none;
+  color: white;
 }
 .social-link {
   font-size: 3.5vh;
