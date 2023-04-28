@@ -4,11 +4,14 @@
       <div class="title">Contact GameTracker</div>
       <div class="contact-container">
         <p class="contact-message">
-          If you have any questions, comments, or feedback, please email us at
+          Thanks for visiting GameTracker! We take your feedback seriously and
+          believe that it's a crucial part of our ongoing efforts to improve our
+          website. So, if you have any questions, comments, or suggestions,
+          please don't hesitate to reach out to us at
           <a href="mailto:contact@gametracker.com"
             ><u>contact@gametracker.com</u></a
-          >. We value your input and will strive to respond within 24 hours.
-          Thank you for visiting our website!
+          >. We promise to respond as quickly as possible, and we appreciate
+          your patience in advance.
         </p>
       </div>
     </div>
@@ -44,6 +47,7 @@ export default {
   width: 90%;
   border-radius: 12px;
   box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.5), 0 0 40px 10px rgba(0, 0, 0, 0.2);
+  margin-top: 4vh;
 }
 .contact-message {
   font-size: 2vh;
