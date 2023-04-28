@@ -111,7 +111,7 @@
       <hr v-if="changeUserReview" />
 
       <!-- SEARCH BY RATING -->
-      <div class="search-container" v-if="changeAllReviews">
+      <div class="search-container" v-if="changeAllReviews && showHideButtons">
         <label>
           <input type="radio" name="options" v-model="checkedFilter" value="" />
           <span class="radio-button">All</span>
@@ -138,6 +138,12 @@
       <!--END OF SEARCH BY RATING -->
       <p class="review-title" id="otherUsers">
         {{ showingCounter }}
+      </p>
+      <p class="review-title" id="otherUsers" v-if="currentPageWrong">
+        No reviews found for page {{ currentPage }}.
+        <button class="page-button" @click="goToPage(totalPages)">
+          Go to Last Page
+        </button>
       </p>
 
       <div v-for="review in paginatedReviews" :key="review.id">
@@ -189,6 +195,7 @@
 
     <div class="pages" v-if="!editingReview">
       <PaginationReview
+        v-if="!currentPageWrong"
         :totalPages="totalPages"
         :currentPage="currentPage"
         @goToPage="goToPage"
@@ -215,6 +222,7 @@ export default {
     fetchNewDataUser: null,
     fetchNewDataAll: null,
     profileReviews: null,
+    showHideButtons: Boolean,
   },
   data() {
     return {
@@ -227,15 +235,27 @@ export default {
       profileEditReview: null,
       editingReview: false,
       reviewImage: `${process.env.VUE_APP_IMAGE_URL}`,
-      checkedFilter: "",
+      checkedFilter: null,
       showingCounter: "",
+      pageStart: true,
     };
   },
   watch: {
     checkedFilter: {
       handler(newValue, oldValue) {
-        this.fetchReviews(this.game.id);
-        this.currentPage = 1;
+        if (oldValue !== null) {
+          this.fetchReviews(this.game.id);
+          this.currentPage = 1;
+          const page = this.currentPage;
+          const path = this.$route.path;
+          const order = newValue;
+          console.log("valor antigo");
+          console.log(oldValue);
+          this.$router.push({
+            path: path,
+            query: { page, order },
+          });
+        }
       },
     },
     changeAllReviews: {
@@ -245,20 +265,31 @@ export default {
     },
     userReview: {
       handler(newValue, oldValue) {
-        if (oldValue !== null && newValue !== null) {
-          if (oldValue.updated_at !== newValue.updated_at) {
-            //resetando filtro para "all"
+        if (this.pageStart) {
+          this.pageStart = false;
+        } else {
+          //user editou review
+          if (oldValue !== null && newValue !== null) {
+            if (oldValue.updated_at !== newValue.updated_at) {
+              console.log("editou review");
+              this.checkedFilter = "";
+            }
+            //deletou review
+          } else if (newValue == null) {
+            this.checkedFilter = "";
+            //criou review
+          } else if (newValue !== null && oldValue == null) {
+            console.log("criou review");
             this.checkedFilter = "";
           }
-        } else if (newValue == null) {
-          this.checkedFilter = "";
-        } else if (newValue !== null && oldValue == null) {
-          this.checkedFilter = "";
         }
       },
     },
   },
   computed: {
+    currentPageWrong() {
+      return this.currentPage > this.totalPages && this.totalPages > 0;
+    },
     profileReviewsChecker() {
       if (this.profileReviews !== null && this.profileReviews !== undefined) {
         return this.profileReviews;
@@ -428,6 +459,10 @@ export default {
       }
       const path = this.$route.path;
       const order = this.checkedFilter;
+      this.$router.push({
+        path: path,
+        query: { page, order },
+      });
     },
     async fetchReviews(game) {
       console.log("entrou no fetch review");
@@ -561,13 +596,29 @@ export default {
   },
   mounted() {
     if (this.game !== null && this.game !== undefined) {
+      const urlParams = new URLSearchParams(window.location.search);
+      this.currentPage = parseInt(urlParams.get("page")) || 1;
+      this.checkedFilter = urlParams.get("order") || "";
       this.fetchReviews(this.game.id);
+      console.log(this.showHideButtons);
     }
   },
 };
 </script>
 
 <style scoped>
+.page-button {
+  text-align: center;
+  font-weight: 800;
+  background-color: #23272a;
+  color: #fff;
+  font-size: 1.3vh;
+  margin: 0 0.6vw;
+  border: 1px solid #fff;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 2vh;
+}
 .button-container {
   display: flex;
   justify-content: space-around;
@@ -757,6 +808,9 @@ hr {
   border-radius: 5px;
 }
 @media screen and (min-width: 768px) {
+  .page-button {
+    padding: 2vh 1.6vw;
+  }
   .container-left {
     flex-direction: row;
     gap: 2vw;

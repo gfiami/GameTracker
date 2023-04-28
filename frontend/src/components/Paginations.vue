@@ -218,6 +218,7 @@ export default {
     // pega o valor da página da URL
     const urlParams = new URLSearchParams(window.location.search);
     const page = parseInt(urlParams.get("page")) || 1;
+    console.log(page);
     const search = urlParams.get("search") || "+";
     const ordering = urlParams.get("ordering") || "-added";
     this.fetchGames(page, search, ordering);

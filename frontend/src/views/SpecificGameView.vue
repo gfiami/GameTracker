@@ -205,6 +205,7 @@
             :logged="logged"
             :fetchNewDataUser="fetchNewDataUser"
             :fetchNewDataAll="fetchNewDataAll"
+            :showHideButtons="showHideButtons"
           />
           <hr v-if="fetchNewDataAll && fetchNewDataUser" />
         </div>
@@ -242,6 +243,7 @@ export default {
       loadingTracker: true,
       showHideAdd: null,
       showHideEdit: null,
+      showHideButtons: true,
       about: "hide",
       userHasReview: false,
       loggedUserReview: "",
@@ -291,9 +293,11 @@ export default {
     },
     showAddReview() {
       this.showHideAdd = true;
+      this.showHideButtons = false;
     },
     showEditReview() {
       this.showHideEdit = true;
+      this.showHideButtons = false;
     },
     userReview(review) {
       this.loggedUserReview = review;
@@ -303,6 +307,7 @@ export default {
     hideReviewForm() {
       this.showHideAdd = false;
       this.showHideEdit = false;
+      this.showHideButtons = true;
     },
     async gameRequest() {
       const response = await axios.get(
