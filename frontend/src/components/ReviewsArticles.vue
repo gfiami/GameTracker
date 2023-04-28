@@ -181,9 +181,10 @@
           </div>
         </div>
       </div>
+      <h3 id="otherUsers" class="review-title">{{ updateErrorMessage }}</h3>
     </div>
     <div v-else-if="getUrl == 'games'">
-      <h3 id="otherUsers" class="review-title">No reviews found.</h3>
+      <h3 id="otherUsers" class="review-title">{{ updateErrorMessage }}</h3>
     </div>
 
     <div class="pages" v-if="!editingReview">
@@ -214,8 +215,6 @@ export default {
     fetchNewDataUser: null,
     fetchNewDataAll: null,
     profileReviews: null,
-    updateFilter: null,
-    updatePage: null,
   },
   data() {
     return {
@@ -223,12 +222,12 @@ export default {
       filteredReviews: [],
       profileFilteredReviews: [],
       userReview: null,
-      currentPage: this.updatePage,
+      currentPage: 1,
       reviewsPerPage: 5,
       profileEditReview: null,
       editingReview: false,
       reviewImage: `${process.env.VUE_APP_IMAGE_URL}`,
-      checkedFilter: this.updateFilter,
+      checkedFilter: "",
       showingCounter: "",
     };
   },
@@ -237,13 +236,6 @@ export default {
       handler(newValue, oldValue) {
         this.fetchReviews(this.game.id);
         this.currentPage = 1;
-        const page = this.currentPage;
-        const path = this.$route.path;
-        const order = this.checkedFilter;
-        this.$router.push({
-          path: path,
-          query: { page, order },
-        });
       },
     },
     changeAllReviews: {
@@ -261,7 +253,7 @@ export default {
         } else if (newValue == null) {
           this.checkedFilter = "";
         } else if (newValue !== null && oldValue == null) {
-          this.checkedFilter = this.updateFilter;
+          this.checkedFilter = "";
         }
       },
     },
@@ -299,27 +291,28 @@ export default {
       return this.filteredReviews;
     },
     totalPages() {
-      if (
-        this.changeAllReviews !== null &&
-        this.changeAllReviews !== undefined
-      ) {
-        if (
-          this.changeUserReview !== null &&
-          this.changeUserReview !== undefined
-        ) {
-          if (
-            this.checkedFilter !== "" &&
-            this.checkedFilter !== this.changeUserReview.rating
-          ) {
-            return Math.ceil(
-              this.changeAllReviews.length / this.reviewsPerPage
-            );
+      const userReview = this.changeUserReview;
+      const allReviews = this.changeAllReviews;
+      const filter = this.checkedFilter;
+      const reviewsPerPage = this.reviewsPerPage;
+      let allCounter;
+      let countLessUser;
+      if (allReviews) {
+        allCounter = allReviews.length;
+      }
+      if (userReview) {
+        countLessUser = allReviews.length - 1;
+      }
+      if (allReviews) {
+        if (userReview) {
+          if (userReview.rating == filter || filter == "") {
+            return Math.ceil(countLessUser / reviewsPerPage);
+          } else {
+            return Math.ceil(allCounter / reviewsPerPage);
           }
-          return Math.ceil(
-            (this.changeAllReviews.length - 1) / this.reviewsPerPage
-          );
+        } else {
+          return Math.ceil(allCounter / reviewsPerPage);
         }
-        return Math.ceil(this.changeAllReviews.length / this.reviewsPerPage);
       }
       if (this.profileReviews !== null && this.profileReviews !== undefined) {
         return Math.ceil(this.profileReviews.length / this.reviewsPerPage);
@@ -335,6 +328,8 @@ export default {
       }
     },
     changeAllReviews() {
+      console.log("iniciando mudança no changeAll");
+
       if (this.fetchNewDataAll !== null) {
         this.reviews = this.fetchNewDataAll;
         return this.reviews;
@@ -372,6 +367,40 @@ export default {
       const firstPath = this.$route.path.split("/");
       return firstPath[1];
     },
+    updateErrorMessage() {
+      const userReview = this.changeUserReview;
+      const allReviews = this.changeAllReviews;
+      const filter = this.checkedFilter;
+      let allCounter;
+      let countLessUser;
+      if (allReviews) {
+        allCounter = allReviews.length;
+      }
+      if (userReview) {
+        countLessUser = allReviews.length - 1;
+      }
+      if (allReviews) {
+        if (userReview) {
+          if (userReview.rating == filter || filter == "") {
+            if (countLessUser > 0) {
+              return "";
+            } else {
+              return "No reviews found from other users.";
+            }
+          } else {
+            if (allCounter == 0) {
+              return "No reviews found from other users.";
+            } else {
+              return "";
+            }
+          }
+        } else {
+          if (allCounter == 0) {
+            return "No reviews found";
+          }
+        }
+      }
+    },
   },
   methods: {
     showEdit(review) {
@@ -399,12 +428,10 @@ export default {
       }
       const path = this.$route.path;
       const order = this.checkedFilter;
-      this.$router.push({
-        path: path,
-        query: { page, order },
-      });
     },
     async fetchReviews(game) {
+      console.log("entrou no fetch review");
+      console.log(this.checkedFilter);
       try {
         const response = await axios.get(
           `${process.env.VUE_APP_APIURL}fetch-game-reviews`,
@@ -415,9 +442,10 @@ export default {
             },
           }
         );
-        if (response.data.length == 0) {
+        /*if (response.data.length == 0) {
           return false;
-        }
+        }*/
+        console.log(response.data);
         this.reviews = response.data;
         this.$emit("fetchNewData_All", response.data);
         console.log("teste fetch");
@@ -440,89 +468,93 @@ export default {
       return this.formattedDates(created_at);
     },
     updateShowingCounter() {
-      //caso usuario não tenha reviews
-      if (this.changeAllReviews && !this.changeUserReview) {
-        //não está na ultima página
-        if (this.currentPage < this.totalPages) {
-          return (
-            "Showing " +
-            (this.currentPage * this.reviewsPerPage -
-              (this.reviewsPerPage - 1)) +
-            " to " +
-            this.reviewsPerPage * this.currentPage +
-            " of " +
-            this.changeAllReviews.length
-          );
-        }
-        //está na ultima página
-        if (this.currentPage == this.totalPages) {
-          return (
-            "Showing " +
-            (this.currentPage * this.reviewsPerPage -
-              (this.reviewsPerPage - 1)) +
-            " to " +
-            this.changeAllReviews.length +
-            " of " +
-            this.changeAllReviews.length
-          );
-        }
+      console.log("iniciando mudanças no showingCounter");
+      const userReview = this.changeUserReview;
+      const allReviews = this.changeAllReviews;
+      const filter = this.checkedFilter;
+      const page = this.currentPage;
+      const totalPages = this.totalPages;
+      const reviewsPerPage = this.reviewsPerPage;
+      let allCounter;
+      let countLessUser;
+      if (allReviews) {
+        allCounter = allReviews.length;
       }
-      //caso user tenha reviews
-      if (
-        this.changeUserReview &&
-        this.changeAllReviews &&
-        (this.changeUserReview.rating == this.checkedFilter ||
-          this.checkedFilter == "")
-      ) {
-        if (this.currentPage < this.totalPages) {
-          return (
-            "Showing " +
-            (this.currentPage * this.reviewsPerPage -
-              (this.reviewsPerPage - 1)) +
-            " to " +
-            this.reviewsPerPage * this.currentPage +
-            " of " +
-            (this.changeAllReviews.length - 1)
-          );
-        }
-        if (this.currentPage == this.totalPages) {
-          return (
-            "Showing " +
-            (this.currentPage * this.reviewsPerPage -
-              (this.reviewsPerPage - 1)) +
-            " to " +
-            (this.changeAllReviews.length - 1) +
-            " of " +
-            (this.changeAllReviews.length - 1)
-          );
-        }
+      if (userReview) {
+        countLessUser = allReviews.length - 1;
       }
-      if (
-        this.changeUserReview &&
-        this.changeAllReviews &&
-        this.changeUserReview.rating != this.checkedFilter
-      ) {
-        if (this.currentPage < this.totalPages) {
-          return (
-            "Showing " +
-            (this.currentPage * this.reviewsPerPage -
-              (this.reviewsPerPage - 1)) +
-            " to " +
-            this.reviewsPerPage * this.currentPage +
-            " of " +
-            (this.changeAllReviews.length - 1)
-          );
-        }
-        if (this.currentPage == this.totalPages) {
-          return (
-            "Showing " +
-            (this.currentPage * this.reviewsPerPage -
-              (this.reviewsPerPage - 1)) +
-            " to " +
-            this.changeAllReviews.length +
-            " of " +
-            this.changeAllReviews.length
-          );
+      //caso usuario tenha reviews
+      if (allReviews) {
+        if (!userReview) {
+          //não está na ultima página
+          if (page < totalPages) {
+            return (
+              "Showing " +
+              (page * reviewsPerPage - (reviewsPerPage - 1)) +
+              " to " +
+              reviewsPerPage * page +
+              " of " +
+              allCounter
+            );
+          }
+          //está na ultima página
+          if (page == totalPages) {
+            return (
+              "Showing " +
+              (page * reviewsPerPage - (reviewsPerPage - 1)) +
+              " to " +
+              allCounter +
+              " of " +
+              allCounter
+            );
+          }
+          //caso user tenha review
+        } else {
+          if (userReview.rating == filter || filter == "") {
+            //nao está na ultima pagina
+            if (page < totalPages) {
+              return (
+                "Showing " +
+                (page * reviewsPerPage - (reviewsPerPage - 1)) +
+                " to " +
+                reviewsPerPage * page +
+                " of " +
+                countLessUser
+              );
+            }
+            //esta na ultima página
+            if (page == totalPages) {
+              return (
+                "Showing " +
+                (page * reviewsPerPage - (reviewsPerPage - 1)) +
+                " to " +
+                countLessUser +
+                " of " +
+                countLessUser
+              );
+            }
+          } else {
+            if (page < totalPages) {
+              return (
+                "Showing " +
+                (page * reviewsPerPage - (reviewsPerPage - 1)) +
+                " to " +
+                reviewsPerPage * page +
+                " of " +
+                allCounter
+              );
+            }
+            if (page == totalPages) {
+              return (
+                "Showing " +
+                (page * reviewsPerPage - (reviewsPerPage - 1)) +
+                " to " +
+                allCounter +
+                " of " +
+                allCounter
+              );
+            }
+          }
         }
       }
     },

@@ -205,8 +205,6 @@
             :logged="logged"
             :fetchNewDataUser="fetchNewDataUser"
             :fetchNewDataAll="fetchNewDataAll"
-            :updateFilter="updateFilter"
-            :updatePage="updatePage"
           />
           <hr v-if="fetchNewDataAll && fetchNewDataUser" />
         </div>
@@ -249,8 +247,6 @@ export default {
       loggedUserReview: "",
       fetchNewDataUser: null,
       fetchNewDataAll: null,
-      updateFilter: "",
-      updatePage: Number,
     };
   },
   computed: {
@@ -279,11 +275,7 @@ export default {
       }
     },
   },
-  beforeMount() {
-    const urlParams = new URLSearchParams(window.location.search);
-    this.updatePage = parseInt(urlParams.get("page")) || 1;
-    this.updateFilter = urlParams.get("order") || "";
-  },
+
   async mounted() {
     await this.gameRequest();
   },
