@@ -38,10 +38,9 @@ body {
   position: relative;
 }
 .main-wrapper {
-  min-height: calc(100vh - 7vh);
+  min-height: calc(100vh - 6vh);
   position: relative;
-  padding-bottom: 10vh;
-  margin-bottom: 5vh;
+  padding-bottom: 40vh;
 }
 ::-webkit-scrollbar {
   height: 2px;
