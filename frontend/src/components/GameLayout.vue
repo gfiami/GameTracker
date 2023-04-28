@@ -652,10 +652,6 @@ export default {
 .game-hover i {
   font-size: 4vh;
 }
-.game-hover .wish,
-.game-hover .removeWishlist {
-  font-size: 3.6vh;
-}
 
 .game-hover a {
   color: white;
