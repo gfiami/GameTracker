@@ -1,5 +1,6 @@
 <template>
   <div class="main-wrapper">
+    <div class="title">Never lose track of your favorite games again</div>
     <!-- @está pegando lá de dentro, : está mandando -->
     <ApiSearch
       :key="resetSearch"
@@ -124,6 +125,13 @@ export default {
 </script>
 
 <style scoped>
+.title {
+  margin: 0 auto;
+  margin-top: 2.5vh;
+  text-align: center;
+  font-size: 4vh;
+  font-weight: 900;
+}
 /* not logged message tracker */
 .tracker {
   display: flex;
