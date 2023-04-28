@@ -214,12 +214,12 @@
           </button>
         </p>
 
-        <!-- ajustar essa rota, apenas teste no momento -->
         <router-link
           class="info-link"
           :to="{
             name: 'specificgame',
             params: { slug: game.slug },
+            query: { redirect: $route.fullPath },
           }"
           ><i class="fa fa-info-circle game-info"></i>
         </router-link>
@@ -233,6 +233,7 @@
           :to="{
             name: 'specificgame',
             params: { slug: game.slug },
+            query: { redirect: $route.fullPath },
           }"
           >{{ game.name }}</router-link
         >

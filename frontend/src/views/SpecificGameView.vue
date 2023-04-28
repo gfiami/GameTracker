@@ -3,6 +3,11 @@
     <Loading v-if="loading" />
     <!-- ajustar pro loading tracker -->
     <div v-else>
+      <div class="back-route" v-if="redirect">
+        <router-link :to="redirect">
+          <i class="fas fa-caret-left"></i> Back</router-link
+        >
+      </div>
       <div class="game-doesnt-exist" v-if="game404">
         <h1>404</h1>
         <p>Game not found</p>
@@ -250,6 +255,7 @@ export default {
       loggedUserReview: "",
       fetchNewDataUser: null,
       fetchNewDataAll: null,
+      redirect: this.$route.query.redirect,
     };
   },
   computed: {
@@ -576,6 +582,13 @@ export default {
 </script>
 
 <style scoped>
+.back-route {
+  margin-left: 2vw;
+  margin-top: 1vh;
+}
+.back-route a {
+  color: white;
+}
 .tracker {
   display: flex;
   flex-wrap: wrap;
