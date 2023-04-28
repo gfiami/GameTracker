@@ -14,7 +14,7 @@
         @favoriteGamesUpdate="updateFavorite"
         @wishListedGamesUpdate="updateWished"
       />
-      <PaginationReview
+      <Pagination
         :totalPages="totalPages"
         :currentPage="currentPage"
         @goToPage="goToPage"
@@ -26,8 +26,8 @@
 
 <script>
 import GameLayout from "./GameLayout.vue";
-import PaginationReview from "./PaginationReview.vue";
-import Loading from "./Loading.vue";
+import Pagination from "./Tools/Pagination.vue";
+import Loading from "./Tools/Loading.vue";
 
 import axios from "axios";
 
@@ -35,7 +35,7 @@ export default {
   name: "TrackedGames",
   components: {
     GameLayout,
-    PaginationReview,
+    Pagination,
     Loading,
   },
   data() {

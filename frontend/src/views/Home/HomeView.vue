@@ -91,7 +91,7 @@
 </template>
 
 <script>
-import Message from "../../components/Message.vue";
+import Message from "../../components/Tools/Message.vue";
 export default {
   name: "HomeView",
   data() {

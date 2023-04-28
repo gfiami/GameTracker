@@ -202,7 +202,7 @@
     </div>
 
     <div class="pages" v-if="!editingReview">
-      <PaginationReview
+      <Pagination
         v-if="!currentPageWrong"
         :totalPages="totalPages"
         :currentPage="currentPage"
@@ -214,13 +214,13 @@
 
 <script>
 import axios from "axios";
-import PaginationReview from "./PaginationReview.vue";
+import Pagination from "../Tools/Pagination.vue";
 import ReviewsForm from "./ReviewsForm.vue";
 
 export default {
   name: "ReviewsArticles",
   components: {
-    PaginationReview,
+    Pagination,
     ReviewsForm,
   },
   props: {

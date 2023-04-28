@@ -33,7 +33,7 @@
 
 <script>
 export default {
-  name: "SearchGeneric",
+  name: "SearchBar",
   props: {
     searchPlaceholder: String,
   },

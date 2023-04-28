@@ -37,8 +37,8 @@
 <script>
 import axios from "axios";
 import TrackedGames from "../../../components/TrackedGames.vue";
-import Loading from "../../../components/Loading.vue";
-import Profile404 from "../../../components/Profile404.vue";
+import Loading from "../../../components/Tools/Loading.vue";
+import Profile404 from "../../../components/Profile/Profile404.vue";
 
 export default {
   name: "OwnedView",

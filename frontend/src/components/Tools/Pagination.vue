@@ -108,7 +108,7 @@
 
 <script>
 export default {
-  name: "PaginationsReview",
+  name: "Pagination",
   props: {
     totalPages: Number,
     currentPage: Number,

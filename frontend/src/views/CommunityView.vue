@@ -1,7 +1,7 @@
 <template>
   <div class="main-wrapper">
     <h1 class="title">Explore community</h1>
-    <SearchGeneric
+    <SearchBar
       :key="resetSearch"
       :searchPlaceholder="placeholder"
       @searching="searching"
@@ -44,7 +44,7 @@
         <i class="fas fa-users-slash"></i>
       </div>
     </div>
-    <PaginationReview
+    <Pagination
       v-if="users"
       :totalPages="totalPages"
       :currentPage="currentPage"
@@ -55,16 +55,16 @@
 
 <script>
 import axios from "axios";
-import SearchGeneric from "../components/SearchGeneric.vue";
-import Loading from "../components/Loading.vue";
-import PaginationReview from "../components/PaginationReview.vue";
+import SearchBar from "../components/Tools/SearchBar.vue";
+import Loading from "../components/Tools/Loading.vue";
+import Pagination from "../components/Tools/Pagination.vue";
 
 export default {
   name: "CommunityView",
   components: {
-    SearchGeneric,
+    SearchBar,
     Loading,
-    PaginationReview,
+    Pagination,
   },
   data() {
     return {

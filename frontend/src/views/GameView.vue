@@ -1,7 +1,7 @@
 <template>
   <div class="main-wrapper">
     <!-- @está pegando lá de dentro, : está mandando -->
-    <SearchBar
+    <ApiSearch
       :key="resetSearch"
       @search="search"
       @order="order"
@@ -28,7 +28,7 @@
       </div>
     </div>
 
-    <Paginations
+    <ApiPagination
       :key="routeReset"
       @gamedata="gamedata"
       @setOrder="setOrder"
@@ -42,15 +42,15 @@
 </template>
 
 <script>
-import Paginations from "../components/Paginations.vue";
-import SearchBar from "../components/SearchBar.vue";
+import ApiPagination from "../components/ApiGames/ApiPagination.vue";
+import ApiSearch from "../components/ApiGames/ApiSearch.vue";
 import GameLayout from "../components/GameLayout.vue";
-import Loading from "../components/Loading.vue";
+import Loading from "../components/Tools/Loading.vue";
 export default {
   name: "GameView",
   components: {
-    Paginations,
-    SearchBar,
+    ApiPagination,
+    ApiSearch,
     GameLayout,
     Loading,
   },

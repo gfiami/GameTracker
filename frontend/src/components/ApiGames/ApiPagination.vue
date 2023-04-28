@@ -85,7 +85,7 @@
 import axios from "axios";
 
 export default {
-  name: "Paginations",
+  name: "ApiPagination",
   props: {
     searchText: null,
     orderSet: null,

@@ -41,7 +41,7 @@
 </template>
 <script>
 export default {
-  name: "SearchBar",
+  name: "ApiSearch",
   props: {
     counter: Number,
     resetSearch: "",

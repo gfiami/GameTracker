@@ -161,7 +161,8 @@
 
 <script>
 import axios from "axios";
-import GameLayout from "./GameLayout.vue";
+import GameLayout from "../GameLayout.vue";
+
 export default {
   name: "Profile",
   props: {

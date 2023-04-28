@@ -217,9 +217,9 @@
 
 <script>
 import axios from "axios";
-import ReviewsForm from "../components/ReviewsForm.vue";
-import ReviewsArticles from "../components/ReviewsArticles.vue";
-import Loading from "../components/Loading.vue";
+import ReviewsForm from "../components/Review/ReviewsForm.vue";
+import ReviewsArticles from "../components/Review/ReviewsArticles.vue";
+import Loading from "../components/Tools/Loading.vue";
 
 export default {
   name: "SpecificGameView",
