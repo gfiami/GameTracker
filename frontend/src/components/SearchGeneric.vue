@@ -107,9 +107,7 @@ export default {
   font-size: 2vh;
   font-weight: 500;
 }
-#sort {
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-}
+
 #results .search-bar-input {
   font-size: 2vh;
   font-weight: 900;
@@ -138,6 +136,7 @@ export default {
 #sort {
   background-color: #23272a;
   border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 /* botão bonitim com icone de pesquisa */
