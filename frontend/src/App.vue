@@ -38,9 +38,9 @@ body {
   position: relative;
 }
 .main-wrapper {
-  min-height: calc(100vh - 9vh);
+  min-height: calc(100vh - 7vh);
   position: relative;
-  padding-bottom: 12vh;
+  padding-bottom: 10vh;
   margin-bottom: 5vh;
 }
 ::-webkit-scrollbar {
