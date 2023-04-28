@@ -105,6 +105,11 @@
         </div>
       </div>
     </div>
+    <div v-else-if="logged">
+      <h3 class="review-title">You haven't reviewed this game yet.</h3>
+      <br />
+      <hr />
+    </div>
 
     <!-- all reviews, except user if exists -->
     <div v-if="changeAllReviews">
@@ -136,6 +141,9 @@
         </label>
       </div>
       <!--END OF SEARCH BY RATING -->
+      <div>
+        <h3 class="review-title" v-if="logged">Reviews from other users</h3>
+      </div>
       <p class="review-title" id="otherUsers">
         {{ showingCounter }}
       </p>
