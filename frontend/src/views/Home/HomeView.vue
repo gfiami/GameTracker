@@ -81,8 +81,11 @@
         <div class="info">
           <i class="fas fa-users"></i>
           <p class="info-description">
-            Connect with other by browsing profiles, where you can check each
-            user reviews and collection!
+            Connect with others by browsing profiles at the
+            <router-link to="/community" :key="$route.fullPath"
+              ><u>Community</u></router-link
+            >
+            page, where you can check each user's reviews and collection!
           </p>
         </div>
       </div>

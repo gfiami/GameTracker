@@ -9,6 +9,20 @@
       :updateSearch="updateSearch"
       :updateOrder="updateOrder"
     />
+    <div class="tracker offline" v-if="!logged && !loadingGames">
+      <p class="offline-text">
+        <router-link
+          :to="{ path: '/login', query: { redirect: $route.fullPath } }"
+          >Login</router-link
+        >
+        or
+        <router-link
+          :to="{ path: '/register', query: { redirect: $route.fullPath } }"
+          >Register</router-link
+        >
+        to track your games.
+      </p>
+    </div>
     <div v-if="loadingGames">
       <Loading />
     </div>
@@ -69,6 +83,9 @@ export default {
     userId() {
       return this.$store.state.user_id;
     },
+    logged() {
+      return this.$store.state.logged;
+    },
     routeReset() {
       this.searchQuery = "";
       this.orderSymbol = "-added";
@@ -107,6 +124,40 @@ export default {
 </script>
 
 <style scoped>
+/* not logged message tracker */
+.tracker {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: center;
+  gap: 30px;
+}
+div .offline {
+  width: 100%;
+}
+.offline-text {
+  text-align: center;
+}
+
+.offline {
+  background-color: rgba(0, 0, 0, 0.315);
+  padding: 20px;
+  font-size: 2.2vh;
+  margin: 2vh 0;
+}
+
+.offline a {
+  color: #6842ff;
+  font-weight: 500;
+  text-decoration: none;
+  transition: 0.4s;
+}
+.offline a:hover {
+  color: #d9ff42;
+}
+.tracker a {
+  font-size: 2.2vh;
+}
 /* game 404 */
 .game-doesnt-exist {
   text-align: center;
@@ -130,5 +181,11 @@ export default {
 .game-doesnt-exist i {
   font-size: 30px;
   padding: 2px;
+}
+@media screen and (max-width: 768px) {
+  .tracker .offline {
+    display: inline;
+    margin: 0 auto;
+  }
 }
 </style>
