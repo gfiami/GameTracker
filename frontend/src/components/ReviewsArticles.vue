@@ -465,35 +465,39 @@ export default {
       });
     },
     async fetchReviews(game) {
-      console.log("entrou no fetch review");
-      console.log(this.checkedFilter);
       try {
-        const response = await axios.get(
-          `${process.env.VUE_APP_APIURL}fetch-game-reviews`,
-          {
-            params: {
-              game_api_id: game,
-              filter_reviews: this.checkedFilter,
-            },
-          }
-        );
-        /*if (response.data.length == 0) {
-          return false;
-        }*/
-        console.log(response.data);
-        this.reviews = response.data;
-        this.$emit("fetchNewData_All", response.data);
-        console.log("teste fetch");
-        //Se o usuario estiver logado, irá pegar a review dele.
         if (this.logged) {
-          for (const review of response.data) {
-            if (this.userId == review.user_id) {
-              this.$emit("userReview", review);
-              this.userReview = review;
-              this.$emit("reviewChecker", true);
-              break;
+          const response = await axios.get(
+            `${process.env.VUE_APP_APIURL}fetch-game-reviews`,
+            {
+              params: {
+                game_api_id: game,
+                filter_reviews: this.checkedFilter,
+                user_id: this.userId,
+              },
             }
+          );
+          console.log(response.data.reviewsData);
+          this.reviews = response.data.reviewsData;
+          this.$emit("fetchNewData_All", response.data.reviewsData);
+          if (response.data.userReviewData) {
+            const review = response.data.userReviewData[0];
+            this.$emit("userReview", review);
+            this.userReview = review;
+            this.$emit("reviewChecker", true);
           }
+        } else {
+          const response = await axios.get(
+            `${process.env.VUE_APP_APIURL}fetch-game-reviews`,
+            {
+              params: {
+                game_api_id: game,
+                filter_reviews: this.checkedFilter,
+              },
+            }
+          );
+          this.reviews = response.data.reviewsData;
+          this.$emit("fetchNewData_All", response.data.reviewsData);
         }
       } catch (error) {
         console.log(error);

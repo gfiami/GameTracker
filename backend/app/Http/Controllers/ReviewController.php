@@ -50,12 +50,14 @@ class ReviewController extends Controller
             $validatedData = $request->validate([
                 'filter_reviews' => ['nullable', 'string', Rule::in(['positive', 'negative'])],
             ]);
+
             $game_api_id = $request->input('game_api_id');
             $filter = $validatedData['filter_reviews'];
+            $user_id = $request->input('user_id');
             $reviews = Review::where('game_api_id', $game_api_id)
             ->where('approved', 1)
-            ->with('user')
             ->get();
+
             if(!empty($filter)){
                 $reviews = Review::where('game_api_id', $game_api_id)
                 ->where('approved', 1)
@@ -80,7 +82,46 @@ class ReviewController extends Controller
                 ];
             });
 
-            return response()->json($reviewsData);
+            //logado
+            if($user_id){
+                $userReview = Review::where('user_id', $user_id)
+                ->where('game_api_id', $game_api_id)
+                ->where('approved', 1)
+                ->get();
+                //user has review
+                if(count($userReview) > 0){
+                    $userReviewData = $userReview->map(function($review) {
+                        return [
+                            'user_id' => $review->user_id,
+                            'username' => $review->user->name,
+                            'image' => $review->user->image,
+                            'review' => $review->review,
+                            'rating' => $review->rating,
+                            'created_at' => $review->created_at,
+                            'updated_at' => $review->updated_at
+                        ];
+                    });
+                    $responseData = [
+                        'userReviewData' => $userReviewData,
+                        'reviewsData' => $reviewsData,
+                    ];
+                    return response()->json($responseData);
+
+                //sem review
+                }else{
+                    $responseData = [
+                        'reviewsData' => $reviewsData,
+                    ];
+                    return response()->json($responseData);
+                }
+            //deslogado
+            }else{
+                $responseData = [
+                    'reviewsData' => $reviewsData,
+                ];
+                return response()->json($responseData);
+            }
+
 
 
         } catch (\Exception $e) {
