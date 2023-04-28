@@ -132,6 +132,7 @@
             <i class="far fa-star addFavorite"></i>
             <p class="button-legend">Add favorite</p>
           </button>
+          <!-- aqui posso tirar esse v-if para mostrar validação do backend -->
           <button v-if="!showForm" @click="showAddReview()" type="button">
             <i class="fas fa-comments showReview"></i>
             <p class="button-legend">Write a review</p>

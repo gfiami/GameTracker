@@ -155,6 +155,12 @@ class ReviewController extends Controller
                 $token_value = explode('|', $token)[1];
                 foreach ($personalAccessTokens as $personalAccessToken) {
                     if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
+                        $check_review = Review::where('user_id', $user_id)
+                        ->where('game_api_id', $game_api_id)
+                        ->first();
+                        if($check_review){
+                            return response()->json(['error' => 'Already has reviewed'], 400);
+                        }
                         $review = Review::create([
                             'user_id' => $user_id,
                             'game_api_id' => $game_api_id,
@@ -272,7 +278,7 @@ class ReviewController extends Controller
                         }else {
                             return response()->json([
                                 'message' => 'Review not found',
-                            ], 404);
+                            ], 400);
                         }
                     }
                 }
@@ -308,7 +314,6 @@ class ReviewController extends Controller
                                 ->first();
                         if($review){
                             $review->delete();
-
                             $reviews = Review::where('game_api_id', $game_api_id)
                             ->where('approved', 1)
                             ->with('user')
