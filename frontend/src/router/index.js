@@ -114,7 +114,9 @@ const routes = [
     path: "/profile/reviews/:id",
     name: "reviews",
     component: () =>
-      import(/* webpackChunkName: "ReviewView" */ "../views/ReviewsView.vue"),
+      import(
+        /* webpackChunkName: "ReviewView" */ "../views/Profile/ReviewsView.vue"
+      ),
   },
   {
     path: "/profile/owned-games/:id",
