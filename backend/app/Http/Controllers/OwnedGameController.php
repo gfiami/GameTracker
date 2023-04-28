@@ -69,6 +69,13 @@ class OwnedGameController extends Controller
                 $token_value = explode('|', $token)[1];
                 foreach ($personalAccessTokens as $personalAccessToken) {
                     if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
+                        //caso exista o jogo nos owned, retorna erro
+                        $check_owned = OwnedGame::where('user_id', $user_id)
+                        ->where('game_api_id', $game_api_id)
+                        ->first();
+                        if($check_owned){
+                            return response()->json(['error' => 'Already own'], 400);
+                        }
                         $owned_game = OwnedGame::create([
                             'user_id' => $user_id,
                             'game_api_id' => $game_api_id,
@@ -122,10 +129,16 @@ class OwnedGameController extends Controller
 
                 foreach ($personalAccessTokens as $personalAccessToken) {
                     if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
-                        Log::info("Entrou no remove owned autenticado!");
-                        OwnedGame::where('user_id', $user_id)
+
+                        //caso o jogo não exista nos owned, retorna erro
+                        $check_owned = OwnedGame::where('user_id', $user_id)
                         ->where('game_api_id', $game_api_id)
-                        ->delete();
+                        ->first();
+                        if(!$check_owned){
+                            return response()->json(['error' => 'Not owned'], 400);
+                        }
+                        $check_owned->delete();
+
                         $remove_favorite = FavoritedGame::where('user_id', $user_id)
                         ->where('game_api_id', $game_api_id)
                         ->first();
@@ -172,6 +185,13 @@ class OwnedGameController extends Controller
                 $token_value = explode('|', $token)[1];
                 foreach ($personalAccessTokens as $personalAccessToken) {
                     if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
+                        //caso exista o jogo nos owned, retorna erro
+                        $check_owned = OwnedGame::where('user_id', $user_id)
+                        ->where('game_api_id', $game_api_id)
+                        ->first();
+                        if($check_owned){
+                            return response()->json(['error' => 'Already own'], 400);
+                        }
                         $owned_game = OwnedGame::create([
                             'user_id' => $user_id,
                             'game_api_id' => $game_api_id,
@@ -220,9 +240,14 @@ class OwnedGameController extends Controller
 
             foreach ($personalAccessTokens as $personalAccessToken) {
                 if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
-                    OwnedGame::where('user_id', $user_id)
-                    ->where('game_api_id', $game_api_id)
-                    ->delete();
+                     //caso o jogo não exista nos owned, retorna erro
+                     $check_owned = OwnedGame::where('user_id', $user_id)
+                     ->where('game_api_id', $game_api_id)
+                     ->first();
+                     if(!$check_owned){
+                         return response()->json(['error' => 'Not owned'], 400);
+                     }
+                     $check_owned->delete();
 
                     $remove_favorite = FavoritedGame::where('user_id', $user_id)
                     ->where('game_api_id', $game_api_id)

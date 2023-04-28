@@ -47,6 +47,13 @@ class WishlistGameController extends Controller
                 $token_value = explode('|', $token)[1];
                 foreach ($personalAccessTokens as $personalAccessToken) {
                     if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
+                         //caso exista o jogo na wishlist, retorna erro
+                         $check_wishlist = WishlistGame::where('user_id', $user_id)
+                         ->where('game_api_id', $game_api_id)
+                         ->first();
+                         if($check_wishlist){
+                             return response()->json(['error' => 'Already wishlisted'], 400);
+                         }
                         $wishlist_games = WishlistGame::create([
                             'user_id' => $user_id,
                             'game_api_id' => $game_api_id,
@@ -80,10 +87,14 @@ class WishlistGameController extends Controller
 
                 foreach ($personalAccessTokens as $personalAccessToken) {
                     if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
-                        WishlistGame::where('user_id', $user_id)
+                        //caso o jogo não exista nos favorites, retorna erro
+                        $check_wishlist = WishlistGame::where('user_id', $user_id)
                         ->where('game_api_id', $game_api_id)
-                        ->first()
-                        ->delete();
+                        ->first();
+                        if(!$check_wishlist){
+                            return response()->json(['error' => 'Not wishlisted'], 400);
+                        }
+                        $check_wishlist->delete();
                         $wishlist_games = $this->checkWishList($user_id, $game_api_ids);
                         return response()->json($wishlist_games);
 
@@ -114,6 +125,13 @@ class WishlistGameController extends Controller
                 $token_value = explode('|', $token)[1];
                 foreach ($personalAccessTokens as $personalAccessToken) {
                     if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
+                        //caso exista o jogo na wishlist, retorna erro
+                        $check_wishlist = WishlistGame::where('user_id', $user_id)
+                        ->where('game_api_id', $game_api_id)
+                        ->first();
+                        if($check_wishlist){
+                            return response()->json(['error' => 'Already wishlisted'], 400);
+                        }
                         $wishlist_games = WishlistGame::create([
                             'user_id' => $user_id,
                             'game_api_id' => $game_api_id,
@@ -146,10 +164,14 @@ class WishlistGameController extends Controller
 
             foreach ($personalAccessTokens as $personalAccessToken) {
                 if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
-                    WishlistGame::where('user_id', $user_id)
+                    //caso o jogo não exista nos favorites, retorna erro
+                    $check_wishlist = WishlistGame::where('user_id', $user_id)
                     ->where('game_api_id', $game_api_id)
-                    ->first()
-                    ->delete();
+                    ->first();
+                    if(!$check_wishlist){
+                        return response()->json(['error' => 'Not wishlisted'], 400);
+                    }
+                    $check_wishlist->delete();
                     return response()->json(null); //mostra que agora o jogo nao tá nos wishlisted
                 }
             }

@@ -45,12 +45,19 @@ class FavoritedGameController extends Controller
                 $token_value = explode('|', $token)[1];
                 foreach ($personalAccessTokens as $personalAccessToken) {
                     if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
-                    $favorite_game = FavoritedGame::create([
-                        'user_id' => $user_id,
-                        'game_api_id' => $game_api_id,
-                    ]);
-                    $favorite_game = $this->checkFavoriteGames($user_id, $game_api_ids);
-                    return response()->json($favorite_game);
+                        //caso exista o jogo nos favorites, retorna erro
+                        $check_favorite = FavoritedGame::where('user_id', $user_id)
+                        ->where('game_api_id', $game_api_id)
+                        ->first();
+                        if($check_favorite){
+                            return response()->json(['error' => 'Already favorite'], 400);
+                        }
+                        $favorite_game = FavoritedGame::create([
+                            'user_id' => $user_id,
+                            'game_api_id' => $game_api_id,
+                        ]);
+                        $favorite_game = $this->checkFavoriteGames($user_id, $game_api_ids);
+                        return response()->json($favorite_game);
                     }
                 }
                 return response()->json(['error' => 'Unauthorized'], 401);
@@ -81,10 +88,14 @@ class FavoritedGameController extends Controller
 
                 foreach ($personalAccessTokens as $personalAccessToken) {
                     if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
-                        FavoritedGame::where('user_id', $user_id)
+                        //caso o jogo não exista nos favorites, retorna erro
+                        $check_favorite = FavoritedGame::where('user_id', $user_id)
                         ->where('game_api_id', $game_api_id)
-                        ->first()
-                        ->delete();
+                        ->first();
+                        if(!$check_favorite){
+                            return response()->json(['error' => 'Not favorited'], 400);
+                        }
+                        $check_favorite->delete();
                         $favorite_games = $this->checkFavoriteGames($user_id, $game_api_ids);
                         return response()->json($favorite_games);
                     }
@@ -116,6 +127,13 @@ class FavoritedGameController extends Controller
                 $token_value = explode('|', $token)[1];
                 foreach ($personalAccessTokens as $personalAccessToken) {
                     if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
+                         //caso exista o jogo nos favorites, retorna erro
+                        $check_favorite = FavoritedGame::where('user_id', $user_id)
+                        ->where('game_api_id', $game_api_id)
+                        ->first();
+                        if($check_favorite){
+                            return response()->json(['error' => 'Already favorite'], 400);
+                        }
                         $favorite_game = FavoritedGame::create([
                             'user_id' => $user_id,
                             'game_api_id' => $game_api_id,
@@ -148,10 +166,14 @@ class FavoritedGameController extends Controller
             $token_value = explode('|', $token)[1];
             foreach ($personalAccessTokens as $personalAccessToken) {
                 if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
-                    FavoritedGame::where('user_id', $user_id)
+                    //caso o jogo não exista nos favorites, retorna erro
+                    $check_favorite = FavoritedGame::where('user_id', $user_id)
                     ->where('game_api_id', $game_api_id)
-                    ->first()
-                    ->delete();
+                    ->first();
+                    if(!$check_favorite){
+                        return response()->json(['error' => 'Not favorited'], 400);
+                    }
+                    $check_favorite->delete();
                     return response()->json(null); //mostra que agora o jogo nao tá nos fav
                 }
             }

@@ -154,6 +154,7 @@
             <i class="fas fa-gamepad removeOwned"></i>
             <p class="button-legend">Remove from owned</p>
           </button>
+          <!-- Se eu remover esse v-if abaixo posso testar o addOwned caso já exista-->
           <button
             v-if="shouldShowIndicators && !ownedGames.includes(game.id)"
             @click="addOwned(game.id)"
