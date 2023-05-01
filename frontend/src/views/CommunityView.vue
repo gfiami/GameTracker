@@ -1,13 +1,16 @@
 <template>
   <div class="main-wrapper">
-    <div class="explore" v-if="!showFriendList">
+    <!-- explorar / adicionar amigos -->
+    <div class="explore" v-if="showCommunity">
       <h1 class="title">Explore community</h1>
-      <div class="button-container">
-        <button class="fc-button" @click="invertShowingFriends" v-if="logged">
+      <div class="button-container" v-if="logged">
+        <button class="fc-button" @click="invertShowing('list')">
           <i class="fas fa-address-book"></i>Friends List
         </button>
+        <button class="fc-button" @click="invertShowing('request')">
+          <i class="fas fa-hourglass"></i>Friends Requests
+        </button>
       </div>
-
       <SearchBar
         :key="resetSearch"
         :searchPlaceholder="placeholder"
@@ -41,8 +44,20 @@
           >
             <div class="username">{{ user.name }}</div>
           </router-link>
-          <div class="friend-interaction">
-            <button>Add As Friend</button>
+          <div class="friend-interaction" v-if="logged">
+            <button
+              @click="addFriend(user.id)"
+              v-if="!this.requestSend.includes(user.id)"
+            >
+              Add As Friend
+            </button>
+            <button
+              class="cancel-request"
+              @click="cancelRequest(user.id)"
+              v-if="this.requestSend.includes(user.id)"
+            >
+              Cancel Request
+            </button>
           </div>
         </div>
       </div>
@@ -61,21 +76,133 @@
         @goToPage="goToPage"
       />
     </div>
+    <!-- fim de explorar / adicionar amigos -->
+
     <!-- friend list -->
-    <div class="friends" v-if="showFriendList">
+    <div class="friends" v-if="logged && showFriends">
       <h1 class="title">Your Friends</h1>
       <div class="button-container">
-        <button class="fc-button" @click="invertShowingFriends">
-          <i class="fas fa-user-plus"></i>Add a Friend
+        <button class="fc-button" @click="invertShowing('add')">
+          <i class="fas fa-user-plus"></i>Add Friends
+        </button>
+        <button class="fc-button" @click="invertShowing('request')">
+          <i class="fas fa-hourglass"></i>Friend Requests
         </button>
       </div>
-      <SearchBar
-        :key="resetSearch"
-        :searchPlaceholder="placeholderFriends"
-        @searching="searching"
-        @changeOrder="changeOrder"
-      />
     </div>
+
+    <!-- fim da friend list -->
+
+    <!-- pending lists -->
+    <div v-if="logged && showPending">
+      <h1 class="title">Friend Requests</h1>
+      <div class="button-container">
+        <button class="fc-button" @click="invertShowing('add')">
+          <i class="fas fa-user-plus"></i>Add Friends
+        </button>
+        <button class="fc-button" @click="invertShowing('list')">
+          <i class="fas fa-address-book"></i>Friends List
+        </button>
+      </div>
+      <div class="button-container">
+        <button
+          class="request-button"
+          @click="invertRequestDisplay"
+          v-if="!showingSent"
+        >
+          Show sent requests
+        </button>
+        <button
+          class="request-button"
+          @click="invertRequestDisplay"
+          v-if="showingSent"
+        >
+          Show received requests
+        </button>
+      </div>
+      <!-- requests recebidos -->
+      <div class="users-container" v-if="allUsers && !showingSent">
+        <h3>All received requests</h3>
+        <div
+          v-for="user in allUsers"
+          :key="user.id"
+          class="user-container"
+          v-show="Object.values(this.requestReceived).includes(user.id)"
+        >
+          <router-link
+            :to="{ name: 'profile', params: { id: user.id } }"
+            :key="$route.fullPath"
+          >
+            <img
+              class="user-image"
+              :src="
+                user.image
+                  ? `${imgUrl}${user.image}`
+                  : require('@/assets/def-avatar-profile.jpg')
+              "
+              alt="user.name"
+            />
+          </router-link>
+          <router-link
+            :to="{ name: 'profile', params: { id: user.id } }"
+            :key="$route.fullPath"
+          >
+            <div class="username">{{ user.name }}</div>
+          </router-link>
+          <div class="friend-interaction">
+            <button class="pending">Accept</button>
+            <button
+              class="cancel-request pending"
+              @click="declineFriend(user.id)"
+            >
+              Decline
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- fim dos recebidos -->
+      <!-- inicio dos enviados -->
+      <div class="users-container" v-if="allUsers && showingSent">
+        <h3>All sent requests</h3>
+        <div
+          v-for="user in allUsers"
+          :key="user.id"
+          class="user-container"
+          v-show="Object.values(this.requestSend).includes(user.id)"
+        >
+          <router-link
+            :to="{ name: 'profile', params: { id: user.id } }"
+            :key="$route.fullPath"
+          >
+            <img
+              class="user-image"
+              :src="
+                user.image
+                  ? `${imgUrl}${user.image}`
+                  : require('@/assets/def-avatar-profile.jpg')
+              "
+              alt="user.name"
+            />
+          </router-link>
+          <router-link
+            :to="{ name: 'profile', params: { id: user.id } }"
+            :key="$route.fullPath"
+          >
+            <div class="username">{{ user.name }}</div>
+          </router-link>
+          <div class="friend-interaction">
+            <button
+              class="cancel-request pending"
+              @click="cancelRequest(user.id)"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- fim dos enviados-->
+    </div>
+    <!-- fim da pending lists -->
   </div>
 </template>
 
@@ -95,6 +222,9 @@ export default {
   data() {
     return {
       users: null,
+      allUsers: null,
+      requestSend: [],
+      requestReceived: [],
       totalPages: null,
       loadingUsers: true,
       placeholder: "Search users by name",
@@ -103,7 +233,10 @@ export default {
       currentPage: 1,
       search: "",
       order: "asc",
-      showFriends: true,
+      showCommunity: true,
+      showFriends: false,
+      showPending: false,
+      showingSent: false,
     };
   },
   watch: {
@@ -125,40 +258,133 @@ export default {
     logged() {
       return this.$store.state.logged;
     },
-    showFriendList() {
-      if (!this.logged) {
-        this.showFriends = false;
-        return false;
-      }
-      if (this.logged && this.showFriends) {
-        return true;
-      } else {
-        return false;
-      }
-    },
   },
   methods: {
     async getUsers(search) {
       this.loadingUsers = true;
       this.users = null;
+      const userId = this.$store.state.user_id || 0;
       const response = await axios.get(`${process.env.VUE_APP_APIURL}users`, {
         params: {
           search: search,
           page: this.currentPage,
           order: this.order,
+          user_id: userId,
         },
       });
-      if (response.data.data.length == 0) {
+      if (response.data.requestsSend !== undefined) {
+        this.requestSend = response.data.requestsSend;
+      }
+      if (response.data.requestsReceived !== undefined) {
+        this.requestReceived = response.data.requestsReceived;
+        console.log(this.requestReceived);
+      }
+      if (response.data.allUsers.length == 0) {
+        this.loadingUsers = false;
+        this.allUsers = null;
+      }
+      this.allUsers = response.data.allUsers;
+      if (response.data.users.data.length == 0) {
         this.loadingUsers = false;
         this.users = null;
         return false;
       }
-      this.totalPages = response.data.last_page;
-      this.users = response.data.data;
+      this.totalPages = response.data.users.last_page;
+      this.users = response.data.users.data;
       this.loadingUsers = false;
     },
-    invertShowingFriends() {
-      this.showFriends = !this.showFriends;
+    invertShowing(string) {
+      console.log(string);
+      switch (string) {
+        case "list":
+          this.showFriends = true;
+          this.showCommunity = false;
+          this.showPending = false;
+          break;
+        case "request":
+          this.showFriends = false;
+          this.showCommunity = false;
+
+          this.showPending = true;
+          break;
+        case "add":
+          this.showCommunity = true;
+          this.showFriends = false;
+          this.showPending = false;
+          break;
+      }
+    },
+
+    invertRequestDisplay() {
+      this.showingSent = !this.showingSent;
+    },
+    async addFriend(receiver) {
+      const userId = this.$store.state.user_id;
+      const personal_token = this.$store.state.personal_token;
+
+      try {
+        const response = await axios.post(
+          `${process.env.VUE_APP_APIURL}add-friend`,
+          {
+            user_id: userId,
+            request_to: receiver,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
+            },
+          }
+        );
+        this.requestSend = response.data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async cancelRequest(receiver) {
+      const userId = this.$store.state.user_id;
+      const personal_token = this.$store.state.personal_token;
+
+      try {
+        const response = await axios.delete(
+          `${process.env.VUE_APP_APIURL}cancel-friend-request`,
+          {
+            params: {
+              user_id: userId,
+              request_to: receiver,
+            },
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
+            },
+          }
+        );
+        console.log(response.data);
+        this.requestSend = response.data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async declineFriend(sender) {
+      const userId = this.$store.state.user_id;
+      const personal_token = this.$store.state.personal_token;
+
+      try {
+        const response = await axios.delete(
+          `${process.env.VUE_APP_APIURL}decline-friend`,
+          {
+            params: {
+              user_id: userId,
+              sender: sender,
+            },
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
+            },
+          }
+        );
+        console.log(response.data);
+        this.requestReceived = response.data;
+      } catch (error) {
+        console.log(error);
+      }
     },
     goToPage(page) {
       window.scroll(0, 0);
@@ -211,6 +437,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 2vw;
 }
 .fc-button {
   background: #1abc9c;
@@ -227,12 +454,30 @@ export default {
 .fc-button:hover {
   color: #4c1bbc;
 }
+.request-button {
+  margin-top: 1vh;
+  background: #1abc9c;
+  padding: 2vh 2vw;
+  border-radius: 35px;
+  width: 20vw;
+  cursor: pointer;
+  font-size: 1.2vh;
+  font-weight: bolder;
+  border: none;
+  box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.3);
+  transition: 0.4s;
+}
+.request-button:hover {
+  color: #4c1bbc;
+}
 .friend-interaction {
+  text-align: center;
   align-self: flex-end;
   margin-left: auto;
-  padding-right: 2vw;
+  margin-right: 1.5vw;
 }
 .friend-interaction button {
+  text-align: center;
   background: #1abc9c;
   padding: 1.5vh 1.5vw;
   border-radius: 5px;
@@ -243,6 +488,15 @@ export default {
   border: none;
   box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.3);
   transition: 0.4s;
+}
+.friend-interaction .cancel-request {
+  background: #bc1a3a;
+}
+.friend-interaction .pending {
+  width: 18vw;
+}
+.friend-interaction button:hover {
+  color: #4c1bbc;
 }
 
 .user-doesnt-exist {
@@ -325,6 +579,12 @@ export default {
     width: 15vw;
   }
   .friend-interaction button {
+    width: 10vw;
+  }
+  .friend-interaction .pending {
+    width: 8vw;
+  }
+  .request-button {
     width: 10vw;
   }
 }
