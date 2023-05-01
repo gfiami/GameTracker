@@ -22,7 +22,10 @@
           v-for="user in users"
           :key="user.id"
           class="user-container"
-          v-show="!($store.state.user_id == user.id)"
+          v-show="
+            !($store.state.user_id == user.id) &&
+            !this.friends.includes(user.id)
+          "
         >
           <router-link
             :to="{ name: 'profile', params: { id: user.id } }"
@@ -46,15 +49,42 @@
           </router-link>
           <div class="friend-interaction" v-if="logged">
             <button
+              class="cancel-friend"
+              @click="removeFriend(user.id)"
+              v-if="this.friends.includes(user.id)"
+            >
+              Remove Friend
+            </button>
+            <button
+              v-if="Object.values(this.requestReceived).includes(user.id)"
+              class="pending"
+              @click="acceptFriend(user.id)"
+            >
+              Accept
+            </button>
+            <button
+              v-if="Object.values(this.requestReceived).includes(user.id)"
+              class="cancel-request pending"
+              @click="declineFriend(user.id)"
+            >
+              Decline
+            </button>
+            <button
               @click="addFriend(user.id)"
-              v-if="!this.requestSend.includes(user.id)"
+              v-else-if="
+                !this.requestSend.includes(user.id) &&
+                !this.friends.includes(user.id)
+              "
             >
               Add As Friend
             </button>
             <button
               class="cancel-request"
               @click="cancelRequest(user.id)"
-              v-if="this.requestSend.includes(user.id)"
+              v-else-if="
+                this.requestSend.includes(user.id) &&
+                !this.friends.includes(user.id)
+              "
             >
               Cancel Request
             </button>
@@ -88,6 +118,44 @@
         <button class="fc-button" @click="invertShowing('request')">
           <i class="fas fa-hourglass"></i>Friend Requests
         </button>
+      </div>
+      <div class="users-container" v-if="allUsers">
+        <div
+          v-for="user in allUsers"
+          :key="user.id"
+          class="user-container"
+          v-show="this.friends.includes(user.id)"
+        >
+          <router-link
+            :to="{ name: 'profile', params: { id: user.id } }"
+            :key="$route.fullPath"
+          >
+            <img
+              class="user-image"
+              :src="
+                user.image
+                  ? `${imgUrl}${user.image}`
+                  : require('@/assets/def-avatar-profile.jpg')
+              "
+              alt="user.name"
+            />
+          </router-link>
+          <router-link
+            :to="{ name: 'profile', params: { id: user.id } }"
+            :key="$route.fullPath"
+          >
+            <div class="username">{{ user.name }}</div>
+          </router-link>
+          <div class="friend-interaction" v-if="logged">
+            <button
+              class="cancel-friend"
+              @click="removeFriend(user.id)"
+              v-if="this.friends.includes(user.id)"
+            >
+              Remove Friend
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -150,7 +218,9 @@
             <div class="username">{{ user.name }}</div>
           </router-link>
           <div class="friend-interaction">
-            <button class="pending">Accept</button>
+            <button class="pending" @click="acceptFriend(user.id)">
+              Accept
+            </button>
             <button
               class="cancel-request pending"
               @click="declineFriend(user.id)"
@@ -225,6 +295,7 @@ export default {
       allUsers: null,
       requestSend: [],
       requestReceived: [],
+      friends: [],
       totalPages: null,
       loadingUsers: true,
       placeholder: "Search users by name",
@@ -277,24 +348,26 @@ export default {
       }
       if (response.data.requestsReceived !== undefined) {
         this.requestReceived = response.data.requestsReceived;
-        console.log(this.requestReceived);
       }
-      if (response.data.allUsers.length == 0) {
+      if (response.data.allUsers == undefined) {
         this.loadingUsers = false;
         this.allUsers = null;
+      } else {
+        this.allUsers = response.data.allUsers;
       }
-      this.allUsers = response.data.allUsers;
       if (response.data.users.data.length == 0) {
         this.loadingUsers = false;
         this.users = null;
         return false;
+      }
+      if (this.logged) {
+        this.friends = response.data.friends;
       }
       this.totalPages = response.data.users.last_page;
       this.users = response.data.users.data;
       this.loadingUsers = false;
     },
     invertShowing(string) {
-      console.log(string);
       switch (string) {
         case "list":
           this.showFriends = true;
@@ -366,7 +439,6 @@ export default {
     async declineFriend(sender) {
       const userId = this.$store.state.user_id;
       const personal_token = this.$store.state.personal_token;
-
       try {
         const response = await axios.delete(
           `${process.env.VUE_APP_APIURL}decline-friend`,
@@ -382,6 +454,50 @@ export default {
         );
         console.log(response.data);
         this.requestReceived = response.data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async acceptFriend(sender) {
+      const userId = this.$store.state.user_id;
+      const personal_token = this.$store.state.personal_token;
+      try {
+        const response = await axios.put(
+          `${process.env.VUE_APP_APIURL}accept-friend`,
+          {
+            user_id: userId,
+            sender: sender,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
+            },
+          }
+        );
+        console.log(response.data);
+        this.friends = response.data.friends;
+        this.requestReceived = response.data.requestsReceived;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async removeFriend(friend) {
+      const userId = this.$store.state.user_id;
+      const personal_token = this.$store.state.personal_token;
+      try {
+        const response = await axios.delete(
+          `${process.env.VUE_APP_APIURL}remove-friend`,
+          {
+            params: {
+              user_id: userId,
+              friend: friend,
+            },
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
+            },
+          }
+        );
+        this.friends = response.data.friends;
       } catch (error) {
         console.log(error);
       }
@@ -489,8 +605,11 @@ export default {
   box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.3);
   transition: 0.4s;
 }
-.friend-interaction .cancel-request {
+.friend-interaction .cancel-friend {
   background: #bc1a3a;
+}
+.friend-interaction .cancel-request {
+  background: #bc4b1a;
 }
 .friend-interaction .pending {
   width: 18vw;

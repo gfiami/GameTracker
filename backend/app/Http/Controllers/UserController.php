@@ -152,25 +152,37 @@ class UserController extends Controller
         $page = $validatedData['page'] ?? 1;
         $order = $validatedData['order'];
         $pageSize = 10;
-        //se estiver deslogado, vem como padrão == 0, e ai dá false
 
         $allUsers = User::select('id', 'name', 'image');
         $all = $allUsers->get();
         $searchingUsers = $allUsers->where('name', 'like', '%' . $searchTerm . '%');
         $searchingUsers = $searchingUsers->orderBy('name', $order);
         $users = $searchingUsers->paginate($pageSize, ['*'], 'page', $page);
+        //se estiver deslogado, vem como padrão == 0, e ai dá false
         if($validatedData['user_id']){
             $user_id = $validatedData['user_id'];
             $requests_sent = FriendRequest::where('user_id', $user_id)
+            ->where('status', 0)
             ->pluck('request_to')
             ->toArray();
             $requests_received = FriendRequest::where('request_to', $user_id)
+            ->where('status', 0)
             ->pluck('user_id')
             ->toArray();
 
+            $friendsFirst = FriendRequest::where('user_id', $user_id)
+            ->where('status', 1)
+            ->pluck('request_to')
+            ->toArray();
+            $friendsSecond = FriendRequest::where('request_to', $user_id)
+            ->where('status', 1)
+            ->pluck('user_id')
+            ->toArray();
+            $friends = array_merge($friendsFirst, $friendsSecond);
             $response = [
                 'requestsReceived' => $requests_received,
                 'requestsSend' => $requests_sent,
+                'friends' => $friends,
                 'allUsers' => $all,
                 'users' => $users,
             ];
@@ -199,6 +211,7 @@ class UserController extends Controller
             if (!$token) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
+
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
              //se o token existir, entra
             if ($personalAccessTokens) {
