@@ -22,6 +22,7 @@ Route::get('/userinfo/{id}',[UserController::class, 'userInfo']);
 Route::get('/users', [UserController::class, 'getUsers']);
 
 //friendlist
+Route::get('/check-friends', [FriendRequestController::class, 'checkFriends']);
 Route::post('/add-friend', [FriendRequestController::class, 'addFriend']); //auth
 Route::delete('/cancel-friend-request', [FriendRequestController::class, 'cancelRequest']); //auth
 Route::delete('/decline-friend', [FriendRequestController::class, 'declineFriend']); //auth

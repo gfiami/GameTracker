@@ -11,6 +11,40 @@ use Illuminate\Support\Facades\Log;
 
 class FriendRequestController extends Controller
 {
+    public function checkFriends(Request $request){
+        try{
+            $validateUserInfo = $request->validate([
+                'user_id' => ['nullable', 'integer', 'min:1'],
+                'profile_id' => ['nullable', 'integer', 'min:1'],
+            ]);
+            $user_id = $validateUserInfo['user_id'];
+            $profile_id = $validateUserInfo['profile_id'];
+
+            $check_friends = FriendRequest::where('user_id', $user_id)
+            ->where('request_to', $profile_id)
+            ->where('status', 1)
+            ->first();
+            if($check_friends){
+                $friends = true;
+            }else{
+                $check_friends = FriendRequest::where('request_to', $user_id)
+                ->where('user_id', $profile_id)
+                ->where('status', 1)
+                ->first();
+                if($check_friends){
+                    $friends = true;
+                }else{
+                    $friends = false;
+                }
+            }
+            $response = [
+                'friends' => $friends,
+            ];
+            return response()->json($response);
+        }catch (\Exception $e) {
+            return response()->json(['Erro ao checar amigo' => $e->getMessage()], 500);
+        }
+    }
     public function addFriend(Request $request){
         try{
             $user_id = $request->input('user_id');

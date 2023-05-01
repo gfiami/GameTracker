@@ -11,6 +11,16 @@
         <img class="profile-image" :src="userImage" alt="" />
         <div class="user-edit-container">
           <h1 class="username">{{ user.name }}</h1>
+          <div class="check-friend" v-if="!checkOwnProfile">
+            <div class="friends" v-if="friends">
+              <i class="fas fa-gamepad"></i> You and <i>{{ user.name }}</i> are
+              friends! <i class="fas fa-gamepad"></i>
+            </div>
+            <div class="not-friends">
+              <button class="add-friend">Add to friendlist</button>
+              <button class="remove-friend">Remove from friendlist</button>
+            </div>
+          </div>
           <router-link
             v-if="checkOwnProfile"
             class="edit-profile"
@@ -101,6 +111,7 @@ export default {
       user: null,
       loadingUser: true,
       redirect: this.$route.query.redirect,
+      friends: false,
     };
   },
   computed: {
@@ -153,9 +164,25 @@ export default {
       }
       this.loadingUser = false;
     },
+    async checkFriendship() {
+      const userId = this.$store.state.user_id;
+      const response = await axios.get(
+        `${process.env.VUE_APP_APIURL}check-friends`,
+        {
+          params: {
+            user_id: userId,
+            profile_id: this.$route.params.id,
+          },
+        }
+      );
+      this.friends = response.data.friends;
+    },
   },
   async created() {
     await this.getUserInfo();
+    if (this.logged) {
+      await this.checkFriendship();
+    }
   },
   mounted() {
     window.scrollTo(0, 0);
