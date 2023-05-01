@@ -8,7 +8,7 @@
           <i class="fas fa-address-book"></i>Friends List
         </button>
         <button class="fc-button" @click="invertShowing('request')">
-          <i class="fas fa-hourglass"></i>Friends Requests
+          <i class="fas fa-hourglass"></i>Friend Requests
         </button>
       </div>
       <SearchBar
