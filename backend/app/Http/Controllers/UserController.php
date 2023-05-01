@@ -153,20 +153,25 @@ class UserController extends Controller
         $order = $validatedData['order'];
         $pageSize = 10;
         //se estiver deslogado, vem como padrão == 0, e ai dá false
-        if($validatedData['user_id']){
-            $user_id = $validatedData['user_id'];
-            $all_user_request = FriendRequest::where('user_id', $user_id)
-            ->pluck('request_to')
-            ->toArray();
-        }
-        $allUsers = User::select('id', 'name', 'image');
 
+        $allUsers = User::select('id', 'name', 'image');
+        $all = $allUsers->get();
         $searchingUsers = $allUsers->where('name', 'like', '%' . $searchTerm . '%');
         $searchingUsers = $searchingUsers->orderBy('name', $order);
         $users = $searchingUsers->paginate($pageSize, ['*'], 'page', $page);
-        if($all_user_request){
+        if($validatedData['user_id']){
+            $user_id = $validatedData['user_id'];
+            $requests_sent = FriendRequest::where('user_id', $user_id)
+            ->pluck('request_to')
+            ->toArray();
+            $requests_received = FriendRequest::where('request_to', $user_id)
+            ->pluck('user_id')
+            ->toArray();
+
             $response = [
-                'requestsSend' => $all_user_request,
+                'requestsReceived' => $requests_received,
+                'requestsSend' => $requests_sent,
+                'allUsers' => $all,
                 'users' => $users,
             ];
             return response()->json($response);

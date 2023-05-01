@@ -24,6 +24,7 @@ Route::get('/users', [UserController::class, 'getUsers']);
 //friendlist
 Route::post('/add-friend', [FriendRequestController::class, 'addFriend']);
 Route::delete('/cancel-friend-request', [FriendRequestController::class, 'cancelRequest']);
+Route::delete('/decline-friend', [FriendRequestController::class, 'declineFriend']);
 
 //games da api na página de games
 Route::get('/games/{page?}/{search?}/{order?}', [GamesController::class, 'games']);
