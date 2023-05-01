@@ -25,6 +25,15 @@ class User extends Authenticatable
     public function reviews(){
         return $this->hasMany(Review::class);
     }
+    public function friendRequestsSent()
+    {
+        return $this->hasMany(FriendRequest::class, 'user_id');
+    }
+
+    public function friendRequestsReceived()
+    {
+        return $this->hasMany(FriendRequest::class, 'request_to');
+    }
 
 
     /**

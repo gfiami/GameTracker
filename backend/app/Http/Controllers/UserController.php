@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\FriendRequest;
 use App\Models\OwnedGame;
 use App\Models\FavoritedGame;
 use App\Models\WishlistGame;
@@ -137,12 +138,13 @@ class UserController extends Controller
             ], 404);
         }
     }
-    //get all users for community tab
+    //get all users for community tab and friends_request if logged
     public function getUsers(Request $request){
         $validatedData = $request->validate([
             'search' => ['nullable', 'string', 'max:255'],
             'page' => ['nullable', 'integer', 'min:1'],
             'order' => ['nullable', 'string', Rule::in(['asc', 'desc'])],
+            'user_id' => ['nullable', 'integer', 'min:0'],
         ]);
 
 
@@ -150,14 +152,31 @@ class UserController extends Controller
         $page = $validatedData['page'] ?? 1;
         $order = $validatedData['order'];
         $pageSize = 10;
-
+        //se estiver deslogado, vem como padrão == 0, e ai dá false
+        if($validatedData['user_id']){
+            $user_id = $validatedData['user_id'];
+            $all_user_request = FriendRequest::where('user_id', $user_id)
+            ->pluck('request_to')
+            ->toArray();
+        }
         $allUsers = User::select('id', 'name', 'image');
 
         $searchingUsers = $allUsers->where('name', 'like', '%' . $searchTerm . '%');
         $searchingUsers = $searchingUsers->orderBy('name', $order);
         $users = $searchingUsers->paginate($pageSize, ['*'], 'page', $page);
+        if($all_user_request){
+            $response = [
+                'requestsSend' => $all_user_request,
+                'users' => $users,
+            ];
+            return response()->json($response);
+        }else{
+            $response = [
+                'users' => $users,
+            ];
+            return response()->json($response);
 
-        return response()->json($users);
+        }
 
     }
 

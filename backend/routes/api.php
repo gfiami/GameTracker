@@ -7,6 +7,8 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\OwnedGameController;
 use App\Http\Controllers\FavoritedGameController;
 use App\Http\Controllers\WishlistGameController;
+use App\Http\Controllers\FriendRequestController;
+
 
 //interações voltadas para definições do usuário login|register|logout
 Route::post('/signin', [UserController::class, 'signin']);//->middleware('throttle:5,1'); //isso serve para permitir apenas 5 tentativas de login por minuto e retorna erro de muitas tentativas 429
@@ -18,6 +20,9 @@ Route::post('/edit-image', [UserController::class, 'editImage']); // AUTH
 Route::get('/userinfo/{id}',[UserController::class, 'userInfo']);
 //pega todos os usuarios para a community view
 Route::get('/users', [UserController::class, 'getUsers']);
+
+//friendlist
+Route::post('/add-friend', [FriendRequestController::class, 'addFriend']);
 
 //games da api na página de games
 Route::get('/games/{page?}/{search?}/{order?}', [GamesController::class, 'games']);
