@@ -1,5 +1,10 @@
 <template>
   <div class="main-wrapper">
+    <div class="back-route" v-if="redirect">
+      <router-link :to="redirect">
+        <i class="fas fa-caret-left"></i> Back</router-link
+      >
+    </div>
     <div v-if="user">
       <!-- checar se o user existe -->
       <div class="personnal-info">
@@ -17,28 +22,44 @@
       <div class="nav-profile">
         <div class="user-reviews">
           <router-link
-            :to="{ name: 'reviews', params: { id: user.id } }"
+            :to="{
+              name: 'reviews',
+              params: { id: user.id },
+              query: { redirect: redirect },
+            }"
             :key="$route.fullPath"
             >Reviews</router-link
           >
         </div>
         <div class="user-owned-games">
           <router-link
-            :to="{ name: 'owned', params: { id: $route.params.id } }"
+            :to="{
+              name: 'owned',
+              params: { id: $route.params.id },
+              query: { redirect: redirect },
+            }"
             :key="$route.fullPath"
             >Owned</router-link
           >
         </div>
-        <div class="user-owned-games">
+        <div class="user-favorite-games">
           <router-link
-            :to="{ name: 'favorite', params: { id: $route.params.id } }"
+            :to="{
+              name: 'favorite',
+              params: { id: $route.params.id },
+              query: { redirect: redirect },
+            }"
             :key="$route.fullPath"
             >Favorite</router-link
           >
         </div>
-        <div class="user-owned-games">
+        <div class="user-wihlist-games">
           <router-link
-            :to="{ name: 'wishlist', params: { id: $route.params.id } }"
+            :to="{
+              name: 'wishlist',
+              params: { id: $route.params.id },
+              query: { redirect: redirect },
+            }"
             :key="$route.fullPath"
             >Wishlist</router-link
           >
@@ -79,6 +100,7 @@ export default {
       wishListedGames: [],
       user: null,
       loadingUser: true,
+      redirect: this.$route.query.redirect,
     };
   },
   computed: {
@@ -135,10 +157,21 @@ export default {
   async created() {
     await this.getUserInfo();
   },
+  mounted() {
+    window.scrollTo(0, 0);
+  },
 };
 </script>
 
 <style scoped>
+.back-route {
+  margin-left: 2vw;
+  margin-top: 1vh;
+}
+.back-route a {
+  color: white;
+}
+
 .loading-user {
   position: fixed;
   top: 0;

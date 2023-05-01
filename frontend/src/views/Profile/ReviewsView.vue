@@ -12,7 +12,11 @@
     <div v-if="user">
       <div class="back-profile">
         <router-link
-          :to="{ name: 'profile', params: { id: userId } }"
+          :to="{
+            name: 'profile',
+            params: { id: userId },
+            query: { redirect: redirect },
+          }"
           :key="$route.fullPath"
         >
           <i class="fas fa-caret-left"></i> Back to Profile
@@ -65,6 +69,7 @@ export default {
       loadingUser: true,
       loadingReviews: true,
       user: null,
+      redirect: this.$route.query.redirect,
     };
   },
   computed: {

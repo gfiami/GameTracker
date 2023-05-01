@@ -109,7 +109,7 @@
           {{ currentPage + 2 }}
         </option>
         <option disabled class="dots" v-if="currentPage > 4">...</option>
-        <option :value="totalPages">
+        <option :value="totalPages" v-if="currentPage !== totalPages">
           {{ totalPages }}
         </option>
       </select>

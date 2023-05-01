@@ -28,7 +28,11 @@
           "
         >
           <router-link
-            :to="{ name: 'profile', params: { id: user.id } }"
+            :to="{
+              name: 'profile',
+              params: { id: user.id },
+              query: { redirect: $route.fullPath },
+            }"
             :key="$route.fullPath"
           >
             <img
@@ -42,7 +46,11 @@
             />
           </router-link>
           <router-link
-            :to="{ name: 'profile', params: { id: user.id } }"
+            :to="{
+              name: 'profile',
+              params: { id: user.id },
+              query: { redirect: $route.fullPath },
+            }"
             :key="$route.fullPath"
           >
             <div class="username">{{ user.name }}</div>
@@ -127,7 +135,11 @@
           v-show="this.friends.includes(user.id)"
         >
           <router-link
-            :to="{ name: 'profile', params: { id: user.id } }"
+            :to="{
+              name: 'profile',
+              params: { id: user.id },
+              query: { redirect: $route.fullPath },
+            }"
             :key="$route.fullPath"
           >
             <img
@@ -141,7 +153,11 @@
             />
           </router-link>
           <router-link
-            :to="{ name: 'profile', params: { id: user.id } }"
+            :to="{
+              name: 'profile',
+              params: { id: user.id },
+              query: { redirect: $route.fullPath },
+            }"
             :key="$route.fullPath"
           >
             <div class="username">{{ user.name }}</div>
@@ -198,7 +214,11 @@
           v-show="Object.values(this.requestReceived).includes(user.id)"
         >
           <router-link
-            :to="{ name: 'profile', params: { id: user.id } }"
+            :to="{
+              name: 'profile',
+              params: { id: user.id },
+              query: { redirect: $route.fullPath },
+            }"
             :key="$route.fullPath"
           >
             <img
@@ -212,7 +232,11 @@
             />
           </router-link>
           <router-link
-            :to="{ name: 'profile', params: { id: user.id } }"
+            :to="{
+              name: 'profile',
+              params: { id: user.id },
+              query: { redirect: $route.fullPath },
+            }"
             :key="$route.fullPath"
           >
             <div class="username">{{ user.name }}</div>
@@ -241,7 +265,11 @@
           v-show="Object.values(this.requestSend).includes(user.id)"
         >
           <router-link
-            :to="{ name: 'profile', params: { id: user.id } }"
+            :to="{
+              name: 'profile',
+              params: { id: user.id },
+              query: { redirect: $route.fullPath },
+            }"
             :key="$route.fullPath"
           >
             <img
@@ -255,7 +283,11 @@
             />
           </router-link>
           <router-link
-            :to="{ name: 'profile', params: { id: user.id } }"
+            :to="{
+              name: 'profile',
+              params: { id: user.id },
+              query: { redirect: $route.fullPath },
+            }"
             :key="$route.fullPath"
           >
             <div class="username">{{ user.name }}</div>
@@ -548,7 +580,6 @@ export default {
 </script>
 
 <style scoped>
-/* user 404 */
 .button-container {
   display: flex;
   justify-content: center;
@@ -643,7 +674,6 @@ export default {
   font-size: 5vh;
   padding: 2px;
 }
-/* end users 404 */
 .title {
   font-size: 5vh;
   font-weight: 800;

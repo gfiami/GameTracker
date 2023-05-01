@@ -18,8 +18,9 @@
                 :to="{
                   name: 'specificgame',
                   params: { slug: review.game_api_id },
+                  query: { redirect: $route.fullPath },
                 }"
-                >{{ review.game_name }}
+                ><u>{{ review.game_name }}</u>
               </router-link>
             </h3>
             <div class="rating">
@@ -70,7 +71,11 @@
         <div class="container-left">
           <div class="personnal-info">
             <router-link
-              :to="{ name: 'profile', params: { id: userReview.user_id } }"
+              :to="{
+                name: 'profile',
+                params: { id: userReview.user_id },
+                query: { redirect: $route.fullPath },
+              }"
               :key="$route.fullPath"
             >
               <img
@@ -159,7 +164,11 @@
           <div class="container-left">
             <div class="personnal-info">
               <router-link
-                :to="{ name: 'profile', params: { id: review.user_id } }"
+                :to="{
+                  name: 'profile',
+                  params: { id: review.user_id },
+                  query: { redirect: $route.fullPath },
+                }"
                 :key="$route.fullPath"
               >
                 <img
