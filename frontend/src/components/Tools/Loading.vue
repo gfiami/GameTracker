@@ -14,7 +14,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 /*loading */
 .loading {
   position: fixed;

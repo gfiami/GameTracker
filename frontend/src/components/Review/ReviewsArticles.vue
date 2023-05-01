@@ -105,7 +105,7 @@
         </div>
       </div>
     </div>
-    <div v-else-if="logged">
+    <div v-else-if="logged && getUrl == 'games'">
       <h3 class="review-title">You haven't reviewed this game yet.</h3>
       <br />
       <hr />

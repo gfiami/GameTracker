@@ -1,55 +1,81 @@
 <template>
   <div class="main-wrapper">
-    <h1 class="title">Explore community</h1>
-    <SearchBar
-      :key="resetSearch"
-      :searchPlaceholder="placeholder"
-      @searching="searching"
-      @changeOrder="changeOrder"
-    />
-    <div class="users-container" v-if="users">
-      <div
-        v-for="user in users"
-        :key="user.id"
-        class="user-container"
-        v-show="!($store.state.user_id == user.id)"
-      >
-        <router-link
-          :to="{ name: 'profile', params: { id: user.id } }"
-          :key="$route.fullPath"
-        >
-          <img
-            class="user-image"
-            :src="
-              user.image
-                ? `${imgUrl}${user.image}`
-                : require('@/assets/def-avatar-profile.jpg')
-            "
-            alt="user.name"
-          />
-        </router-link>
-        <router-link
-          :to="{ name: 'profile', params: { id: user.id } }"
-          :key="$route.fullPath"
-        >
-          <div class="username">{{ user.name }}</div>
-        </router-link>
+    <div class="explore" v-if="!showFriendList">
+      <h1 class="title">Explore community</h1>
+      <div class="button-container">
+        <button class="fc-button" @click="invertShowingFriends" v-if="logged">
+          <i class="fas fa-address-book"></i>Friends List
+        </button>
       </div>
-    </div>
-    <Loading v-if="loadingUsers" />
-    <div class="error" v-if="!users && !loadingUsers">
-      <div class="user-doesnt-exist">
-        <h1>404</h1>
-        <p>No users found</p>
-        <i class="fas fa-users-slash"></i>
+
+      <SearchBar
+        :key="resetSearch"
+        :searchPlaceholder="placeholder"
+        @searching="searching"
+        @changeOrder="changeOrder"
+      />
+      <div class="users-container" v-if="users">
+        <div
+          v-for="user in users"
+          :key="user.id"
+          class="user-container"
+          v-show="!($store.state.user_id == user.id)"
+        >
+          <router-link
+            :to="{ name: 'profile', params: { id: user.id } }"
+            :key="$route.fullPath"
+          >
+            <img
+              class="user-image"
+              :src="
+                user.image
+                  ? `${imgUrl}${user.image}`
+                  : require('@/assets/def-avatar-profile.jpg')
+              "
+              alt="user.name"
+            />
+          </router-link>
+          <router-link
+            :to="{ name: 'profile', params: { id: user.id } }"
+            :key="$route.fullPath"
+          >
+            <div class="username">{{ user.name }}</div>
+          </router-link>
+          <div class="friend-interaction">
+            <button>Add As Friend</button>
+          </div>
+        </div>
       </div>
+      <Loading v-if="loadingUsers" />
+      <div class="error" v-if="!users && !loadingUsers">
+        <div class="user-doesnt-exist">
+          <h1>404</h1>
+          <p>No users found</p>
+          <i class="fas fa-users-slash"></i>
+        </div>
+      </div>
+      <Pagination
+        v-if="users"
+        :totalPages="totalPages"
+        :currentPage="currentPage"
+        @goToPage="goToPage"
+      />
     </div>
-    <Pagination
-      v-if="users"
-      :totalPages="totalPages"
-      :currentPage="currentPage"
-      @goToPage="goToPage"
-    />
+    <!-- friend list -->
+    <div class="friends" v-if="showFriendList">
+      <h1 class="title">Your Friends</h1>
+      <div class="button-container">
+        <button class="fc-button" @click="invertShowingFriends">
+          <i class="fas fa-user-plus"></i>Add a Friend
+        </button>
+      </div>
+      <SearchBar
+        :key="resetSearch"
+        :searchPlaceholder="placeholderFriends"
+        @searching="searching"
+        @changeOrder="changeOrder"
+      />
+    </div>
   </div>
 </template>
 
@@ -72,10 +98,12 @@ export default {
       totalPages: null,
       loadingUsers: true,
       placeholder: "Search users by name",
+      placeholderFriends: "Search friends by name",
       imgUrl: `${process.env.VUE_APP_IMAGE_URL}`,
       currentPage: 1,
       search: "",
       order: "asc",
+      showFriends: true,
     };
   },
   watch: {
@@ -97,6 +125,17 @@ export default {
     logged() {
       return this.$store.state.logged;
     },
+    showFriendList() {
+      if (!this.logged) {
+        this.showFriends = false;
+        return false;
+      }
+      if (this.logged && this.showFriends) {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   methods: {
     async getUsers(search) {
@@ -117,6 +156,9 @@ export default {
       this.totalPages = response.data.last_page;
       this.users = response.data.data;
       this.loadingUsers = false;
+    },
+    invertShowingFriends() {
+      this.showFriends = !this.showFriends;
     },
     goToPage(page) {
       window.scroll(0, 0);
@@ -165,6 +207,43 @@ export default {
 
 <style scoped>
 /* user 404 */
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.fc-button {
+  background: #1abc9c;
+  padding: 2vh 2vw;
+  border-radius: 35px;
+  width: 35vw;
+  cursor: pointer;
+  font-size: 1.5vh;
+  font-weight: bolder;
+  border: none;
+  box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.3);
+  transition: 0.4s;
+}
+.fc-button:hover {
+  color: #4c1bbc;
+}
+.friend-interaction {
+  align-self: flex-end;
+  margin-left: auto;
+  padding-right: 2vw;
+}
+.friend-interaction button {
+  background: #1abc9c;
+  padding: 1.5vh 1.5vw;
+  border-radius: 5px;
+  width: 25vw;
+  cursor: pointer;
+  font-size: 1.3vh;
+  font-weight: 700;
+  border: none;
+  box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.3);
+  transition: 0.4s;
+}
 
 .user-doesnt-exist {
   margin-top: 4vh;
@@ -241,6 +320,12 @@ export default {
 @media screen and (min-width: 768px) {
   .users-container {
     width: 40vw;
+  }
+  .fc-button {
+    width: 15vw;
+  }
+  .friend-interaction button {
+    width: 10vw;
   }
 }
 </style>
