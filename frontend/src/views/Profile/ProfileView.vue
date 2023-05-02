@@ -14,7 +14,13 @@
           <div class="check-friend" v-if="!checkOwnProfile">
             <div class="friends" v-if="friends">
               <i class="fas fa-gamepad"></i> You and <i>{{ user.name }}</i> are
-              friends! <i class="fas fa-gamepad"></i>
+              friends!
+            </div>
+            <div class="sent" v-if="sent">
+              <i class="fas fa-user-clock"></i> Friend request sent
+            </div>
+            <div class="received" v-if="received">
+              <i class="fas fa-user-clock"></i> Friend request received
             </div>
             <select
               name=""
@@ -127,7 +133,7 @@
             v-if="checkOwnProfile"
             class="edit-profile"
             to="/profile/edit"
-            >Edit Profile</router-link
+            ><i class="fas fa-user-edit"></i> Edit Profile</router-link
           >
         </div>
       </div>
@@ -140,7 +146,7 @@
               query: { redirect: redirect },
             }"
             :key="$route.fullPath"
-            >Reviews</router-link
+            ><i class="fas fa-comments"></i> Reviews</router-link
           >
         </div>
         <div class="user-owned-games">
@@ -151,7 +157,7 @@
               query: { redirect: redirect },
             }"
             :key="$route.fullPath"
-            >Owned</router-link
+            ><i class="fas fa-gamepad"></i> Owned</router-link
           >
         </div>
         <div class="user-favorite-games">
@@ -162,7 +168,7 @@
               query: { redirect: redirect },
             }"
             :key="$route.fullPath"
-            >Favorite</router-link
+            ><i class="fas fa-star"></i> Favorite</router-link
           >
         </div>
         <div class="user-wihlist-games">
@@ -173,7 +179,7 @@
               query: { redirect: redirect },
             }"
             :key="$route.fullPath"
-            >Wishlist</router-link
+            ><i class="fas fa-heart"></i> Wishlist</router-link
           >
         </div>
       </div>
