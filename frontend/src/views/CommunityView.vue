@@ -45,57 +45,59 @@
               alt="user.name"
             />
           </router-link>
-          <router-link
-            :to="{
-              name: 'profile',
-              params: { id: user.id },
-              query: { redirect: $route.fullPath },
-            }"
-            :key="$route.fullPath"
-          >
-            <div class="username">{{ user.name }}</div>
-          </router-link>
-          <div class="friend-interaction" v-if="logged">
-            <button
-              class="cancel-friend"
-              @click="removeFriend(user.id)"
-              v-if="this.friends.includes(user.id)"
+          <div class="secondary-container-profile">
+            <router-link
+              :to="{
+                name: 'profile',
+                params: { id: user.id },
+                query: { redirect: $route.fullPath },
+              }"
+              :key="$route.fullPath"
             >
-              Remove Friend
-            </button>
-            <button
-              v-if="Object.values(this.requestReceived).includes(user.id)"
-              class="pending"
-              @click="acceptFriend(user.id)"
-            >
-              Accept
-            </button>
-            <button
-              v-if="Object.values(this.requestReceived).includes(user.id)"
-              class="cancel-request pending"
-              @click="declineFriend(user.id)"
-            >
-              Decline
-            </button>
-            <button
-              @click="addFriend(user.id)"
-              v-else-if="
-                !this.requestSend.includes(user.id) &&
-                !this.friends.includes(user.id)
-              "
-            >
-              Add As Friend
-            </button>
-            <button
-              class="cancel-request"
-              @click="cancelRequest(user.id)"
-              v-else-if="
-                this.requestSend.includes(user.id) &&
-                !this.friends.includes(user.id)
-              "
-            >
-              Cancel Request
-            </button>
+              <div class="username">{{ user.name }}</div>
+            </router-link>
+            <div class="friend-interaction" v-if="logged">
+              <button
+                class="cancel-friend"
+                @click="removeFriend(user.id)"
+                v-if="this.friends.includes(user.id)"
+              >
+                Remove Friend
+              </button>
+              <button
+                v-if="Object.values(this.requestReceived).includes(user.id)"
+                class="pending"
+                @click="acceptFriend(user.id)"
+              >
+                Accept
+              </button>
+              <button
+                v-if="Object.values(this.requestReceived).includes(user.id)"
+                class="cancel-request pending"
+                @click="declineFriend(user.id)"
+              >
+                Decline
+              </button>
+              <button
+                @click="addFriend(user.id)"
+                v-else-if="
+                  !this.requestSend.includes(user.id) &&
+                  !this.friends.includes(user.id)
+                "
+              >
+                Add As Friend
+              </button>
+              <button
+                class="cancel-request"
+                @click="cancelRequest(user.id)"
+                v-else-if="
+                  this.requestSend.includes(user.id) &&
+                  !this.friends.includes(user.id)
+                "
+              >
+                Cancel Request
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -127,7 +129,7 @@
           <i class="fas fa-hourglass"></i>Friend Requests
         </button>
       </div>
-      <div class="users-container" v-if="allUsers">
+      <div class="users-container friend-list" v-if="allUsers">
         <div
           v-for="user in allUsers"
           :key="user.id"
@@ -152,24 +154,26 @@
               alt="user.name"
             />
           </router-link>
-          <router-link
-            :to="{
-              name: 'profile',
-              params: { id: user.id },
-              query: { redirect: $route.fullPath },
-            }"
-            :key="$route.fullPath"
-          >
-            <div class="username">{{ user.name }}</div>
-          </router-link>
-          <div class="friend-interaction" v-if="logged">
-            <button
-              class="cancel-friend"
-              @click="removeFriend(user.id)"
-              v-if="this.friends.includes(user.id)"
+          <div class="secondary-container-profile">
+            <router-link
+              :to="{
+                name: 'profile',
+                params: { id: user.id },
+                query: { redirect: $route.fullPath },
+              }"
+              :key="$route.fullPath"
             >
-              Remove Friend
-            </button>
+              <div class="username">{{ user.name }}</div>
+            </router-link>
+            <div class="friend-interaction" v-if="logged">
+              <button
+                class="cancel-friend"
+                @click="removeFriend(user.id)"
+                v-if="this.friends.includes(user.id)"
+              >
+                Remove Friend
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -178,7 +182,7 @@
     <!-- fim da friend list -->
 
     <!-- pending lists -->
-    <div v-if="logged && showPending">
+    <div class="requests" v-if="logged && showPending">
       <h1 class="title">Friend Requests</h1>
       <div class="button-container">
         <button class="fc-button" @click="invertShowing('add')">
@@ -205,8 +209,10 @@
         </button>
       </div>
       <!-- requests recebidos -->
-      <div class="users-container" v-if="allUsers && !showingSent">
-        <h3>All received requests</h3>
+      <h3 class="request-title" v-if="allUsers && !showingSent">
+        All received requests
+      </h3>
+      <div class="users-container request-list" v-if="allUsers && !showingSent">
         <div
           v-for="user in allUsers"
           :key="user.id"
@@ -231,33 +237,37 @@
               alt="user.name"
             />
           </router-link>
-          <router-link
-            :to="{
-              name: 'profile',
-              params: { id: user.id },
-              query: { redirect: $route.fullPath },
-            }"
-            :key="$route.fullPath"
-          >
-            <div class="username">{{ user.name }}</div>
-          </router-link>
-          <div class="friend-interaction">
-            <button class="pending" @click="acceptFriend(user.id)">
-              Accept
-            </button>
-            <button
-              class="cancel-request pending"
-              @click="declineFriend(user.id)"
+          <div class="secondary-container-profile">
+            <router-link
+              :to="{
+                name: 'profile',
+                params: { id: user.id },
+                query: { redirect: $route.fullPath },
+              }"
+              :key="$route.fullPath"
             >
-              Decline
-            </button>
+              <div class="username">{{ user.name }}</div>
+            </router-link>
+            <div class="friend-interaction">
+              <button class="pending" @click="acceptFriend(user.id)">
+                Accept
+              </button>
+              <button
+                class="cancel-request pending"
+                @click="declineFriend(user.id)"
+              >
+                Decline
+              </button>
+            </div>
           </div>
         </div>
       </div>
       <!-- fim dos recebidos -->
       <!-- inicio dos enviados -->
-      <div class="users-container" v-if="allUsers && showingSent">
-        <h3>All sent requests</h3>
+      <h3 class="request-title" v-if="allUsers && showingSent">
+        All sent requests
+      </h3>
+      <div class="users-container request-list" v-if="allUsers && showingSent">
         <div
           v-for="user in allUsers"
           :key="user.id"
@@ -282,23 +292,25 @@
               alt="user.name"
             />
           </router-link>
-          <router-link
-            :to="{
-              name: 'profile',
-              params: { id: user.id },
-              query: { redirect: $route.fullPath },
-            }"
-            :key="$route.fullPath"
-          >
-            <div class="username">{{ user.name }}</div>
-          </router-link>
-          <div class="friend-interaction">
-            <button
-              class="cancel-request pending"
-              @click="cancelRequest(user.id)"
+          <div class="secondary-container-profile">
+            <router-link
+              :to="{
+                name: 'profile',
+                params: { id: user.id },
+                query: { redirect: $route.fullPath },
+              }"
+              :key="$route.fullPath"
             >
-              Cancel
-            </button>
+              <div class="username">{{ user.name }}</div>
+            </router-link>
+            <div class="friend-interaction">
+              <button
+                class="cancel-request pending"
+                @click="cancelRequest(user.id)"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -580,6 +592,21 @@ export default {
 </script>
 
 <style scoped>
+.friends,
+.requests {
+  margin-bottom: 5vh;
+}
+.friend-list,
+.request-list {
+  height: 70vh;
+  padding: 4.5vh 4.5vh;
+  overflow-y: scroll;
+}
+.request-title {
+  width: 90vh;
+  margin: 0 auto;
+  padding: 0 2vh;
+}
 .button-container {
   display: flex;
   justify-content: center;
@@ -606,7 +633,7 @@ export default {
   background: #1abc9c;
   padding: 2vh 2vw;
   border-radius: 35px;
-  width: 20vw;
+  width: 35vw;
   cursor: pointer;
   font-size: 1.2vh;
   font-weight: bolder;
@@ -626,7 +653,7 @@ export default {
 .friend-interaction button {
   text-align: center;
   background: #1abc9c;
-  padding: 1.5vh 1.5vw;
+  padding: 1.3vh 1.3vw;
   border-radius: 5px;
   width: 25vw;
   cursor: pointer;
@@ -636,6 +663,12 @@ export default {
   box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.3);
   transition: 0.4s;
 }
+.secondary-container-profile {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .friend-interaction .cancel-friend {
   background: #bc1a3a;
 }
@@ -686,7 +719,6 @@ export default {
   margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
   justify-content: space-between;
   margin-top: 4vh;
 }
@@ -721,7 +753,8 @@ export default {
   align-self: flex-start;
 }
 @media screen and (min-width: 768px) {
-  .users-container {
+  .users-container,
+  .request-title {
     width: 40vw;
   }
   .fc-button {
@@ -734,7 +767,7 @@ export default {
     width: 8vw;
   }
   .request-button {
-    width: 10vw;
+    width: 14vw;
   }
 }
 </style>

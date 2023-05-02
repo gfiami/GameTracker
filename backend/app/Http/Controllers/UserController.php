@@ -179,6 +179,12 @@ class UserController extends Controller
             ->pluck('user_id')
             ->toArray();
             $friends = array_merge($friendsFirst, $friendsSecond);
+            //retorna users sem os amigos
+            $users = $allUsers
+            ->whereNotIn('id', $friends)
+            ->where('name', 'like', '%' . $searchTerm . '%')
+            ->orderBy('name', $order)
+            ->paginate($pageSize, ['*'], 'page', $page);
             $response = [
                 'requestsReceived' => $requests_received,
                 'requestsSend' => $requests_sent,
