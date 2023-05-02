@@ -205,7 +205,7 @@ export default {
     position: fixed;
     top: 2.7vh;
     right: 13vw;
-    z-index: 999;
+    z-index: 9999;
     font-size: 4vh;
   }
   #secondary-nav {

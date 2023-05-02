@@ -129,32 +129,16 @@
           <i class="fas fa-hourglass"></i>Friend Requests
         </button>
       </div>
-      <div class="users-container friend-list" v-if="allUsers">
+      <div class="empty-list" v-if="allUsers && friendsEmpty">
+        Your friendlist is empty <i class="fas fa-heart-broken"></i>
+      </div>
+      <div class="users-container friend-list" v-if="allUsers && !friendsEmpty">
         <div
           v-for="user in allUsers"
           :key="user.id"
-          class="user-container"
-          v-show="this.friends.includes(user.id)"
+          class="user-container-primary"
         >
-          <router-link
-            :to="{
-              name: 'profile',
-              params: { id: user.id },
-              query: { redirect: $route.fullPath },
-            }"
-            :key="$route.fullPath"
-          >
-            <img
-              class="user-image"
-              :src="
-                user.image
-                  ? `${imgUrl}${user.image}`
-                  : require('@/assets/def-avatar-profile.jpg')
-              "
-              alt="user.name"
-            />
-          </router-link>
-          <div class="secondary-container-profile">
+          <div class="user-container" v-if="this.friends.includes(user.id)">
             <router-link
               :to="{
                 name: 'profile',
@@ -163,16 +147,36 @@
               }"
               :key="$route.fullPath"
             >
-              <div class="username">{{ user.name }}</div>
+              <img
+                class="user-image"
+                :src="
+                  user.image
+                    ? `${imgUrl}${user.image}`
+                    : require('@/assets/def-avatar-profile.jpg')
+                "
+                alt="user.name"
+              />
             </router-link>
-            <div class="friend-interaction" v-if="logged">
-              <button
-                class="cancel-friend"
-                @click="removeFriend(user.id)"
-                v-if="this.friends.includes(user.id)"
+            <div class="secondary-container-profile">
+              <router-link
+                :to="{
+                  name: 'profile',
+                  params: { id: user.id },
+                  query: { redirect: $route.fullPath },
+                }"
+                :key="$route.fullPath"
               >
-                <i class="fas fa-user-minus"></i> Remove Friend
-              </button>
+                <div class="username">{{ user.name }}</div>
+              </router-link>
+              <div class="friend-interaction" v-if="logged">
+                <button
+                  class="cancel-friend"
+                  @click="removeFriend(user.id)"
+                  v-if="this.friends.includes(user.id)"
+                >
+                  <i class="fas fa-user-minus"></i> Remove Friend
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -212,32 +216,23 @@
       <h3 class="request-title" v-if="allUsers && !showingSent">
         All received requests
       </h3>
-      <div class="users-container request-list" v-if="allUsers && !showingSent">
+      <div class="empty-list" v-if="receivedEmpty && !showingSent">
+        No requests found.
+      </div>
+
+      <div
+        class="users-container request-list"
+        v-if="allUsers && !showingSent && !receivedEmpty && !receivedEmpty"
+      >
         <div
           v-for="user in allUsers"
           :key="user.id"
-          class="user-container"
-          v-show="Object.values(this.requestReceived).includes(user.id)"
+          class="user-container-primary"
         >
-          <router-link
-            :to="{
-              name: 'profile',
-              params: { id: user.id },
-              query: { redirect: $route.fullPath },
-            }"
-            :key="$route.fullPath"
+          <div
+            class="user-container"
+            v-if="Object.values(this.requestReceived).includes(user.id)"
           >
-            <img
-              class="user-image"
-              :src="
-                user.image
-                  ? `${imgUrl}${user.image}`
-                  : require('@/assets/def-avatar-profile.jpg')
-              "
-              alt="user.name"
-            />
-          </router-link>
-          <div class="secondary-container-profile">
             <router-link
               :to="{
                 name: 'profile',
@@ -246,18 +241,38 @@
               }"
               :key="$route.fullPath"
             >
-              <div class="username">{{ user.name }}</div>
+              <img
+                class="user-image"
+                :src="
+                  user.image
+                    ? `${imgUrl}${user.image}`
+                    : require('@/assets/def-avatar-profile.jpg')
+                "
+                alt="user.name"
+              />
             </router-link>
-            <div class="friend-interaction">
-              <button class="pending" @click="acceptFriend(user.id)">
-                <i class="fas fa-user-check"></i> Accept
-              </button>
-              <button
-                class="cancel-request pending"
-                @click="declineFriend(user.id)"
+            <div class="secondary-container-profile">
+              <router-link
+                :to="{
+                  name: 'profile',
+                  params: { id: user.id },
+                  query: { redirect: $route.fullPath },
+                }"
+                :key="$route.fullPath"
               >
-                <i class="fas fa-user-times"></i> Decline
-              </button>
+                <div class="username">{{ user.name }}</div>
+              </router-link>
+              <div class="friend-interaction">
+                <button class="pending" @click="acceptFriend(user.id)">
+                  <i class="fas fa-user-check"></i> Accept
+                </button>
+                <button
+                  class="cancel-request pending"
+                  @click="declineFriend(user.id)"
+                >
+                  <i class="fas fa-user-times"></i> Decline
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -267,32 +282,22 @@
       <h3 class="request-title" v-if="allUsers && showingSent">
         All sent requests
       </h3>
-      <div class="users-container request-list" v-if="allUsers && showingSent">
+      <div class="empty-list" v-if="sentEmpty && showingSent">
+        No requests found.
+      </div>
+      <div
+        class="users-container request-list"
+        v-if="allUsers && showingSent && !sentEmpty"
+      >
         <div
           v-for="user in allUsers"
           :key="user.id"
-          class="user-container"
-          v-show="Object.values(this.requestSend).includes(user.id)"
+          class="user-container-primary"
         >
-          <router-link
-            :to="{
-              name: 'profile',
-              params: { id: user.id },
-              query: { redirect: $route.fullPath },
-            }"
-            :key="$route.fullPath"
+          <div
+            class="user-container"
+            v-if="Object.values(this.requestSend).includes(user.id)"
           >
-            <img
-              class="user-image"
-              :src="
-                user.image
-                  ? `${imgUrl}${user.image}`
-                  : require('@/assets/def-avatar-profile.jpg')
-              "
-              alt="user.name"
-            />
-          </router-link>
-          <div class="secondary-container-profile">
             <router-link
               :to="{
                 name: 'profile',
@@ -301,15 +306,35 @@
               }"
               :key="$route.fullPath"
             >
-              <div class="username">{{ user.name }}</div>
+              <img
+                class="user-image"
+                :src="
+                  user.image
+                    ? `${imgUrl}${user.image}`
+                    : require('@/assets/def-avatar-profile.jpg')
+                "
+                alt="user.name"
+              />
             </router-link>
-            <div class="friend-interaction">
-              <button
-                class="cancel-request pending"
-                @click="cancelRequest(user.id)"
+            <div class="secondary-container-profile">
+              <router-link
+                :to="{
+                  name: 'profile',
+                  params: { id: user.id },
+                  query: { redirect: $route.fullPath },
+                }"
+                :key="$route.fullPath"
               >
-                <i class="fas fa-user-clock"></i> Cancel
-              </button>
+                <div class="username">{{ user.name }}</div>
+              </router-link>
+              <div class="friend-interaction">
+                <button
+                  class="cancel-request pending"
+                  @click="cancelRequest(user.id)"
+                >
+                  <i class="fas fa-user-clock"></i> Cancel
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -352,6 +377,9 @@ export default {
       showFriends: false,
       showPending: false,
       showingSent: false,
+      friendsEmpty: null,
+      receivedEmpty: null,
+      sentEmpty: null,
     };
   },
   watch: {
@@ -389,9 +417,15 @@ export default {
       });
       if (response.data.requestsSend !== undefined) {
         this.requestSend = response.data.requestsSend;
+        response.data.requestsSend.length == 0
+          ? (this.sentEmpty = true)
+          : (this.sentEmpty = false);
       }
       if (response.data.requestsReceived !== undefined) {
         this.requestReceived = response.data.requestsReceived;
+        response.data.requestsReceived.length == 0
+          ? (this.receivedEmpty = true)
+          : (this.receivedEmpty = false);
       }
       if (response.data.allUsers == undefined) {
         this.loadingUsers = false;
@@ -399,14 +433,18 @@ export default {
       } else {
         this.allUsers = response.data.allUsers;
       }
+      if (this.logged) {
+        this.friends = response.data.friends;
+        response.data.friends.length == 0
+          ? (this.friendsEmpty = true)
+          : (this.friendsEmpty = false);
+      }
       if (response.data.users.data.length == 0) {
         this.loadingUsers = false;
         this.users = null;
         return false;
       }
-      if (this.logged) {
-        this.friends = response.data.friends;
-      }
+
       this.totalPages = response.data.users.last_page;
       this.users = response.data.users.data;
       this.loadingUsers = false;
@@ -453,7 +491,11 @@ export default {
           }
         );
         this.requestSend = response.data;
+        response.data.length == 0
+          ? (this.sentEmpty = true)
+          : (this.sentEmpty = false);
       } catch (error) {
+        this.getUsers(this.search);
         console.log(error);
       }
     },
@@ -476,7 +518,11 @@ export default {
         );
         console.log(response.data);
         this.requestSend = response.data;
+        response.data.length == 0
+          ? (this.sentEmpty = true)
+          : (this.sentEmpty = false);
       } catch (error) {
+        this.getUsers(this.search);
         console.log(error);
       }
     },
@@ -498,7 +544,12 @@ export default {
         );
         console.log(response.data);
         this.requestReceived = response.data;
+        response.data.length == 0
+          ? (this.receivedEmpty = true)
+          : (this.receivedEmpty = false);
       } catch (error) {
+        this.getUsers(this.search);
+
         console.log(error);
       }
     },
@@ -521,7 +572,15 @@ export default {
         console.log(response.data);
         this.friends = response.data.friends;
         this.requestReceived = response.data.requestsReceived;
+        response.data.requestsReceived.length == 0
+          ? (this.receivedEmpty = true)
+          : (this.receivedEmpty = false);
+        response.data.friends.length == 0
+          ? (this.friendsEmpty = true)
+          : (this.friendsEmpty = false);
       } catch (error) {
+        this.getUsers(this.search);
+
         console.log(error);
       }
     },
@@ -542,7 +601,12 @@ export default {
           }
         );
         this.friends = response.data.friends;
+        response.data.friends.length == 0
+          ? (this.friendsEmpty = true)
+          : (this.friendsEmpty = false);
       } catch (error) {
+        this.getUsers(this.search);
+
         console.log(error);
       }
     },
@@ -597,9 +661,11 @@ export default {
   margin-bottom: 5vh;
 }
 
-.request-title {
-  width: 90vh;
+.request-title,
+.empty-list {
+  width: 90%;
   margin: 0 auto;
+  margin-top: 2vh;
   padding: 0 2vh;
 }
 .button-container {
@@ -683,7 +749,6 @@ export default {
 
 .user-doesnt-exist {
   margin-top: 4vh;
-
   text-align: center;
   position: absolute;
   top: 30%;
@@ -719,12 +784,12 @@ export default {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  margin-top: 4vh;
+  margin-top: 2vh;
 }
 div .friend-list,
 div .request-list {
   height: 70vh;
-  padding: 3vh 3vh;
+  padding: 2.5vh 2.5vh;
   overflow-y: scroll;
   justify-content: flex-start;
   display: block;
@@ -761,7 +826,8 @@ div .request-list {
 }
 @media screen and (min-width: 768px) {
   .users-container,
-  .request-title {
+  .request-title,
+  .empty-list {
     width: 40vw;
   }
   .fc-button {
@@ -775,6 +841,10 @@ div .request-list {
   }
   .request-button {
     width: 14vw;
+  }
+  div .friend-list,
+  div .request-list {
+    padding: 3.5vh 3.5vh;
   }
 }
 </style>
