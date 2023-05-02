@@ -36,17 +36,25 @@
         v-if="logged"
         :to="{ name: 'profile', params: { id: $store.state.user_id } }"
         :key="$route.fullPath"
-        >Profile</router-link
+        ><i class="fas fa-user"></i> Profile</router-link
       >
       <router-link to="/community" :key="$route.fullPath"
-        >Community</router-link
+        ><i class="fas fa-users"></i> Community</router-link
       >
 
-      <router-link to="/games" :key="$route.fullPath">Games</router-link>
+      <router-link to="/games" :key="$route.fullPath"
+        ><i class="fas fa-gamepad"></i> Games</router-link
+      >
       <!--:key="$route.fullPath" FORÇA A rota a renderizar de novo-->
-      <router-link v-if="!logged" to="/login">Login</router-link>
-      <router-link v-if="!logged" to="/register">Register</router-link>
-      <a @click="logout" v-if="logged">Logout</a>
+      <router-link v-if="!logged" to="/login"
+        ><i class="fas fa-sign-in-alt"></i> Login</router-link
+      >
+      <router-link v-if="!logged" to="/register"
+        ><i class="fas fa-user-plus"></i> Register</router-link
+      >
+      <a @click="logout" v-if="logged"
+        ><i class="fas fa-sign-out-alt"></i> Logout</a
+      >
     </div>
     <div id="nav-burger" v-if="!showMenu" @click="toggleMenu">
       <i class="fas fa-bars"></i>
@@ -62,22 +70,24 @@
           v-if="logged"
           :to="{ name: 'profile', params: { id: $store.state.user_id } }"
           :key="$route.fullPath"
-          >Profile</router-link
+          ><i class="fas fa-user"></i> Profile</router-link
         >
         <router-link @click="toggleMenu" to="/community" :key="$route.fullPath"
-          >Community</router-link
+          ><i class="fas fa-users"></i> Community</router-link
         >
         <router-link @click="toggleMenu" to="/games" :key="$route.fullPath"
-          >Games</router-link
+          ><i class="fas fa-gamepad"></i> Games</router-link
         >
         <!--:key="$route.fullPath" FORÇA A rota a renderizar de novo-->
         <router-link @click="toggleMenu" v-if="!logged" to="/login"
-          >Login</router-link
+          ><i class="fas fa-sign-in-alt"></i> Login</router-link
         >
         <router-link @click="toggleMenu" v-if="!logged" to="/register"
-          >Register</router-link
+          ><i class="fas fa-user-plus"></i> Register</router-link
         >
-        <a @click="logout" v-if="logged">Logout</a>
+        <a @click="logout" v-if="logged"
+          ><i class="fas fa-sign-out-alt"></i> Logout</a
+        >
       </div>
     </div>
   </div>

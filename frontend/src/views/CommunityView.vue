@@ -62,21 +62,21 @@
                 @click="removeFriend(user.id)"
                 v-if="this.friends.includes(user.id)"
               >
-                Remove Friend
+                <i class="fas fa-user-minus"></i> Remove Friend
               </button>
               <button
                 v-if="Object.values(this.requestReceived).includes(user.id)"
                 class="pending"
                 @click="acceptFriend(user.id)"
               >
-                Accept
+                <i class="fas fa-user-check"></i> Accept
               </button>
               <button
                 v-if="Object.values(this.requestReceived).includes(user.id)"
                 class="cancel-request pending"
                 @click="declineFriend(user.id)"
               >
-                Decline
+                <i class="fas fa-user-times"></i> Decline
               </button>
               <button
                 @click="addFriend(user.id)"
@@ -85,7 +85,7 @@
                   !this.friends.includes(user.id)
                 "
               >
-                Add As Friend
+                <i class="fas fa-user-plus"></i> Add Friend
               </button>
               <button
                 class="cancel-request"
@@ -95,7 +95,7 @@
                   !this.friends.includes(user.id)
                 "
               >
-                Cancel Request
+                <i class="fas fa-user-clock"></i> Cancel Request
               </button>
             </div>
           </div>
@@ -171,7 +171,7 @@
                 @click="removeFriend(user.id)"
                 v-if="this.friends.includes(user.id)"
               >
-                Remove Friend
+                <i class="fas fa-user-minus"></i> Remove Friend
               </button>
             </div>
           </div>
@@ -250,13 +250,13 @@
             </router-link>
             <div class="friend-interaction">
               <button class="pending" @click="acceptFriend(user.id)">
-                Accept
+                <i class="fas fa-user-check"></i> Accept
               </button>
               <button
                 class="cancel-request pending"
                 @click="declineFriend(user.id)"
               >
-                Decline
+                <i class="fas fa-user-times"></i> Decline
               </button>
             </div>
           </div>
@@ -308,7 +308,7 @@
                 class="cancel-request pending"
                 @click="cancelRequest(user.id)"
               >
-                Cancel
+                <i class="fas fa-user-clock"></i> Cancel
               </button>
             </div>
           </div>
@@ -626,11 +626,11 @@ export default {
   transition: 0.4s;
 }
 .fc-button:hover {
-  color: #4c1bbc;
+  color: rgba(54, 30, 148, 0.9);
 }
 .request-button {
   margin-top: 1vh;
-  background: #1abc9c;
+  background: #bb8ece;
   padding: 2vh 2vw;
   border-radius: 35px;
   width: 35vw;
@@ -642,7 +642,7 @@ export default {
   transition: 0.4s;
 }
 .request-button:hover {
-  color: #4c1bbc;
+  color: rgba(54, 30, 148, 0.9);
 }
 .friend-interaction {
   text-align: center;
@@ -679,7 +679,7 @@ export default {
   width: 18vw;
 }
 .friend-interaction button:hover {
-  color: #4c1bbc;
+  color: rgba(54, 30, 148, 0.9);
 }
 
 .user-doesnt-exist {

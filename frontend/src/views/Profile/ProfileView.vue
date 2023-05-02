@@ -566,11 +566,15 @@ select {
   width: 10vw;
   text-align: center;
   background-color: #23272a;
-  color: #fff;
+  color: rgba(255, 255, 255, 0.596);
   font-size: 1.7vh;
   font-weight: 300;
   padding: 0.8vh 0.8vh;
   border-radius: 10px;
+  transition: 0.4s;
+}
+.edit-profile:hover {
+  color: #fff;
 }
 .user-edit-container {
   margin-bottom: 1vh;
@@ -638,6 +642,11 @@ select {
 }
 .nav-profile a {
   text-decoration: none;
+  transition: 0.4s;
+
+  color: rgba(255, 255, 255, 0.596);
+}
+.nav-profile a:hover {
   color: white;
 }
 @media screen and (min-width: 768px) {

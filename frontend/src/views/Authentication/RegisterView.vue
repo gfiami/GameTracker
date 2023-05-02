@@ -10,7 +10,7 @@
         </p>
         <div class="input-group">
           <div class="label-container">
-            <label for="username">Username</label>
+            <label for="username"><i class="fas fa-user"></i> Username</label>
             <span v-if="usernameError" class="error">*{{ usernameError }}</span>
           </div>
 
@@ -23,7 +23,7 @@
         </div>
         <div class="input-group">
           <div class="label-container">
-            <label for="email">Email</label>
+            <label for="email"><i class="fas fa-at"></i> Email</label>
             <span v-if="emailError" class="error">*{{ emailError }}</span>
           </div>
           <input
@@ -35,7 +35,7 @@
         </div>
         <div class="input-group">
           <div class="label-container">
-            <label for="password">Password</label>
+            <label for="password"><i class="fas fa-lock"></i> Password</label>
             <span v-if="passwordError" class="error">*{{ passwordError }}</span>
           </div>
           <input
@@ -47,7 +47,9 @@
         </div>
         <div class="input-group">
           <div class="label-container">
-            <label for="passwordConfirmation">Password confirmation</label>
+            <label for="passwordConfirmation"
+              ><i class="fas fa-lock"></i> Password confirmation</label
+            >
             <span v-if="confirmationError" class="error"
               >*{{ confirmationError }}</span
             >
@@ -61,7 +63,9 @@
           />
         </div>
 
-        <button @click="register" type="button">Register</button>
+        <button @click="register" type="button">
+          <i class="fas fa-user-plus"></i> Register
+        </button>
         <p class="loginMessage">
           Already on GameTracker?
           <router-link to="/login">Login</router-link>
