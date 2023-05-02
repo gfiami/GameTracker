@@ -667,9 +667,7 @@ export default {
   display: flex;
   flex-direction: column;
 }
-.friend-interaction .cancel-friend {
-  padding: 0.5vh 0.5vh;
-}
+
 .friend-interaction .cancel-friend {
   background: #bc1a3a;
 }

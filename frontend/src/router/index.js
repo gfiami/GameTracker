@@ -46,7 +46,8 @@ const routes = [
     beforeEnter: (to, from, next) => {
       const loggedIn = store.state.logged;
       if (loggedIn) {
-        next("/"); // aqui evitamos que usuario logado entre novametne no login
+        const id = store.state.user_id;
+        next(`/profile/${id}`); // aqui evitamos que usuario logado entre novametne no login
       } else {
         next(); // segue pro login se n tá logad
       }
@@ -62,7 +63,8 @@ const routes = [
     beforeEnter: (to, from, next) => {
       const loggedIn = store.state.logged;
       if (loggedIn) {
-        next("/"); // aqui evitamos que usuario logado entre novametne no login
+        const id = store.state.user_id;
+        next(`/profile/${id}`); // aqui evitamos que usuario logado entre novametne no login
       } else {
         next(); // segue pro login se n tá logad
       }
