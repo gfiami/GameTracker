@@ -16,9 +16,111 @@
               <i class="fas fa-gamepad"></i> You and <i>{{ user.name }}</i> are
               friends! <i class="fas fa-gamepad"></i>
             </div>
-            <div class="not-friends">
-              <button class="add-friend">Add to friendlist</button>
-              <button class="remove-friend">Remove from friendlist</button>
+            <select
+              name=""
+              id=""
+              v-model="profileInteraction"
+              @change="confirmInteraction"
+            >
+              <option selected disabled value="...">...</option>
+              <option v-if="friends" value="remove">Unfriend</option>
+              <option v-if="!friends && !received && !sent" value="add">
+                Add as Friend
+              </option>
+              <option v-if="sent" value="cancel">Cancel Friend Request</option>
+              <option v-if="received" value="decline">
+                Decline Friend Request
+              </option>
+              <option v-if="received" value="accept">
+                Accept Friend Request
+              </option>
+            </select>
+            <div class="confirmations" v-if="showConfirm">
+              <div class="confirm-option" v-if="showAddConfirm">
+                <h3 class="confirm-title">Add Friend</h3>
+                <p class="confirm-text">
+                  Send friend request to {{ user.name }}?
+                </p>
+                <div class="button-container">
+                  <button
+                    class="confirm-button"
+                    @click="profileSelectInteraction"
+                  >
+                    Send
+                  </button>
+                  <button class="cancel-button" @click="cancelConfirm">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+              <div class="confirm-option" v-if="showRemoveConfirm">
+                <h3 class="confirm-title">Remove Friend</h3>
+                <p class="confirm-text">
+                  Remove {{ user.name }} from your friends?
+                </p>
+                <div class="button-container">
+                  <button
+                    class="confirm-button danger"
+                    @click="profileSelectInteraction"
+                  >
+                    Remove
+                  </button>
+                  <button class="cancel-button" @click="cancelConfirm">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+              <div class="confirm-option" v-if="showCancelConfirm">
+                <h3 class="confirm-title">Cancel Friend Request</h3>
+                <p class="confirm-text">
+                  Cancel friend request to {{ user.name }}?
+                </p>
+                <div class="button-container">
+                  <button
+                    class="confirm-button danger"
+                    @click="profileSelectInteraction"
+                  >
+                    Cancel Friend Request
+                  </button>
+                  <button class="cancel-button" @click="cancelConfirm">
+                    Don't Cancel Request
+                  </button>
+                </div>
+              </div>
+              <div class="confirm-option" v-if="showDeclineConfirm">
+                <h3 class="confirm-title">Decline Friend Request</h3>
+                <p class="confirm-text">
+                  Decline friend request from {{ user.name }}?
+                </p>
+                <div class="button-container">
+                  <button
+                    class="confirm-button danger"
+                    @click="profileSelectInteraction"
+                  >
+                    Decline
+                  </button>
+                  <button class="cancel-button" @click="cancelConfirm">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+              <div class="confirm-option" v-if="showAcceptConfirm">
+                <h3 class="confirm-title">Accept Friend Request</h3>
+                <p class="confirm-text">
+                  Accept friend request from {{ user.name }}?
+                </p>
+                <div class="button-container">
+                  <button
+                    class="confirm-button"
+                    @click="profileSelectInteraction"
+                  >
+                    Accept
+                  </button>
+                  <button class="cancel-button" @click="cancelConfirm">
+                    Cancel
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
           <router-link
@@ -112,6 +214,15 @@ export default {
       loadingUser: true,
       redirect: this.$route.query.redirect,
       friends: false,
+      received: false,
+      sent: false,
+      profileInteraction: "...",
+      showConfirm: false,
+      showAddConfirm: false,
+      showRemoveConfirm: false,
+      showCancelConfirm: false,
+      showDeclineConfirm: false,
+      showAcceptConfirm: false,
     };
   },
   computed: {
@@ -165,17 +276,204 @@ export default {
       this.loadingUser = false;
     },
     async checkFriendship() {
+      try {
+        const userId = this.$store.state.user_id;
+        const response = await axios.get(
+          `${process.env.VUE_APP_APIURL}check-friends`,
+          {
+            params: {
+              user_id: userId,
+              profile_id: this.$route.params.id,
+            },
+          }
+        );
+        this.friends = response.data.friends;
+        this.received = response.data.received;
+        this.sent = response.data.sent;
+        console.log(this.sent);
+        //checar se recebeu amizade para o "accept or deny";
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    cancelConfirm() {
+      this.showConfirm = false;
+      this.showAddConfirm = false;
+      this.showRemoveConfirm = false;
+      this.showCancelConfirm = false;
+      this.showDeclineConfirm = false;
+      this.showAcceptConfirm = false;
+      this.profileInteraction = "...";
+    },
+    confirmInteraction() {
+      switch (this.profileInteraction) {
+        case "...":
+          return false;
+        case "add":
+          this.showConfirm = true;
+          this.showAddConfirm = true;
+          break;
+        case "remove":
+          this.showConfirm = true;
+          this.showRemoveConfirm = true;
+          break;
+        case "cancel":
+          this.showConfirm = true;
+
+          this.showCancelConfirm = true;
+          break;
+        case "decline":
+          this.showConfirm = true;
+          this.showDeclineConfirm = true;
+          break;
+        case "accept":
+          this.showConfirm = true;
+          this.showAcceptConfirm = true;
+          break;
+        default:
+          this.profileInteraction = "...";
+          return false;
+      }
+    },
+    profileSelectInteraction() {
+      switch (this.profileInteraction) {
+        case "...":
+          return false;
+        case "add":
+          this.addProfileFriend();
+          break;
+        case "remove":
+          this.removeProfileFriend();
+          break;
+        case "cancel":
+          this.cancelProfileFriend();
+          break;
+        case "decline":
+          this.declineProfileFriend();
+          break;
+        case "accept":
+          this.acceptProfileFriend();
+          break;
+        default:
+          this.profileInteraction = "...";
+          return false;
+      }
+      this.profileInteraction = "...";
+      this.cancelConfirm();
+    },
+    async addProfileFriend() {
       const userId = this.$store.state.user_id;
-      const response = await axios.get(
-        `${process.env.VUE_APP_APIURL}check-friends`,
-        {
-          params: {
+      const personal_token = this.$store.state.personal_token;
+      const receiver = this.$route.params.id;
+      try {
+        const response = await axios.post(
+          `${process.env.VUE_APP_APIURL}add-friend`,
+          {
             user_id: userId,
-            profile_id: this.$route.params.id,
+            request_to: receiver,
           },
-        }
-      );
-      this.friends = response.data.friends;
+          {
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
+            },
+          }
+        );
+        this.sent = true;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async removeProfileFriend() {
+      const userId = this.$store.state.user_id;
+      const personal_token = this.$store.state.personal_token;
+      const friend = this.$route.params.id;
+      try {
+        const response = await axios.delete(
+          `${process.env.VUE_APP_APIURL}remove-friend`,
+          {
+            params: {
+              user_id: userId,
+              friend: friend,
+            },
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
+            },
+          }
+        );
+        this.friends = false;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async cancelProfileFriend() {
+      const userId = this.$store.state.user_id;
+      const personal_token = this.$store.state.personal_token;
+      const receiver = this.$route.params.id;
+
+      try {
+        const response = await axios.delete(
+          `${process.env.VUE_APP_APIURL}cancel-friend-request`,
+          {
+            params: {
+              user_id: userId,
+              request_to: receiver,
+            },
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
+            },
+          }
+        );
+        this.sent = false;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async declineProfileFriend() {
+      const userId = this.$store.state.user_id;
+      const personal_token = this.$store.state.personal_token;
+      const sender = this.$route.params.id;
+
+      try {
+        const response = await axios.delete(
+          `${process.env.VUE_APP_APIURL}decline-friend`,
+          {
+            params: {
+              user_id: userId,
+              sender: sender,
+            },
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
+            },
+          }
+        );
+        this.received = false;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async acceptProfileFriend() {
+      const userId = this.$store.state.user_id;
+      const personal_token = this.$store.state.personal_token;
+      const sender = this.$route.params.id;
+
+      try {
+        const response = await axios.put(
+          `${process.env.VUE_APP_APIURL}accept-friend`,
+          {
+            user_id: userId,
+            sender: sender,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
+            },
+          }
+        );
+        this.friends = true;
+        this.received = false;
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
   async created() {
@@ -184,6 +482,7 @@ export default {
       await this.checkFriendship();
     }
   },
+
   mounted() {
     window.scrollTo(0, 0);
   },
@@ -191,6 +490,64 @@ export default {
 </script>
 
 <style scoped>
+.confirmations {
+  position: absolute;
+  background-color: #161b3a;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 998;
+  opacity: 95%;
+}
+.confirm-option {
+  margin: 0 auto;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 50%;
+}
+.confirm-button {
+  background: #1abc9c;
+  color: #23272a;
+  padding: 2vh 2vw;
+  border-radius: 35px;
+  width: 35vw;
+  cursor: pointer;
+  font-size: 1.5vh;
+  font-weight: bolder;
+  border: none;
+  box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.3);
+}
+
+.cancel-button {
+  background-color: white;
+  color: #23272a;
+  padding: 2vh 2vw;
+  border-radius: 35px;
+  width: 35vw;
+  cursor: pointer;
+  font-size: 1.5vh;
+  font-weight: bolder;
+  border: none;
+  box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.3);
+}
+.danger {
+  background: #bc1a3a;
+  color: white;
+}
+select {
+  width: 15vw;
+  height: 4vh;
+  text-align: center;
+  background-color: #23272a;
+  color: #fff;
+  font-weight: 1.3vh;
+  border-radius: 10px;
+}
 .back-route {
   margin-left: 2vw;
   margin-top: 1vh;
@@ -198,7 +555,20 @@ export default {
 .back-route a {
   color: white;
 }
-
+.edit-profile {
+  text-decoration: none;
+  width: 10vw;
+  text-align: center;
+  background-color: #23272a;
+  color: #fff;
+  font-size: 1.7vh;
+  font-weight: 300;
+  padding: 0.8vh 0.8vh;
+  border-radius: 10px;
+}
+.user-edit-container {
+  margin-bottom: 1vh;
+}
 .loading-user {
   position: fixed;
   top: 0;
@@ -265,6 +635,13 @@ export default {
   color: white;
 }
 @media screen and (min-width: 768px) {
+  .confirm-button,
+  .cancel-button {
+    width: 15vw;
+  }
+  select {
+    width: 5vw;
+  }
   .personnal-info {
     display: flex;
     flex-direction: row;
@@ -287,16 +664,14 @@ export default {
 .username {
   font-size: 4vh;
   font-weight: 700;
+  margin-bottom: 1.5vh;
 }
 .profile-image {
   width: 100px;
   height: 100px;
   border-radius: 50%;
 }
-.edit-profile {
-  color: #fff;
-  font-size: 1.7vh;
-}
+
 .lds-facebook div {
   display: inline-block;
   position: absolute;

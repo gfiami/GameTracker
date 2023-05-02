@@ -25,20 +25,47 @@ class FriendRequestController extends Controller
             ->where('status', 1)
             ->first();
             if($check_friends){
-                $friends = true;
+                $friends = 1;
+                $sent = 0;
+                $received = 0;
             }else{
                 $check_friends = FriendRequest::where('request_to', $user_id)
                 ->where('user_id', $profile_id)
                 ->where('status', 1)
                 ->first();
                 if($check_friends){
-                    $friends = true;
+                    $friends = 1;
+                    $sent = 0;
+                    $received = 0;
                 }else{
-                    $friends = false;
+                    $friends = 0;
+                    $check_sent = FriendRequest::where('user_id', $user_id)
+                    ->where('request_to', $profile_id)
+                    ->where('status', 0)
+                    ->first();
+                    if($check_sent){
+                        $sent = 1;
+                    } else{
+                        $sent = 0;
+                    }
+                    $check_received = FriendRequest::where('request_to', $user_id)
+                    ->where('user_id', $profile_id)
+                    ->where('status', 0)
+                    ->first();
+                    if($check_received){
+                        $received = 1;
+                    } else{
+                        $received = 0;
+                    }
                 }
             }
+            Log::info($friends);
+            Log::info($sent);
+            Log::info($received);
             $response = [
                 'friends' => $friends,
+                'sent' => $sent,
+                'received' => $received,
             ];
             return response()->json($response);
         }catch (\Exception $e) {
