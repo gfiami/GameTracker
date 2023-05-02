@@ -129,7 +129,7 @@
           <i class="fas fa-hourglass"></i>Friend Requests
         </button>
       </div>
-      <div class="empty-list" v-if="allUsers && friendsEmpty">
+      <div class="empty-list" v-if="friendsEmpty">
         Your friendlist is empty <i class="fas fa-heart-broken"></i>
       </div>
       <div class="users-container friend-list" v-if="allUsers && !friendsEmpty">
@@ -213,10 +213,11 @@
         </button>
       </div>
       <!-- requests recebidos -->
-      <h3 class="request-title" v-if="allUsers && !showingSent">
-        All received requests
-      </h3>
-      <div class="empty-list" v-if="receivedEmpty && !showingSent">
+      <h3 class="request-title" v-if="!showingSent">All received requests</h3>
+      <div
+        class="empty-list"
+        v-if="(receivedEmpty && !showingSent) || (!allUsers && !showingSent)"
+      >
         No requests found.
       </div>
 
@@ -279,10 +280,11 @@
       </div>
       <!-- fim dos recebidos -->
       <!-- inicio dos enviados -->
-      <h3 class="request-title" v-if="allUsers && showingSent">
-        All sent requests
-      </h3>
-      <div class="empty-list" v-if="sentEmpty && showingSent">
+      <h3 class="request-title" v-if="showingSent">All sent requests</h3>
+      <div
+        class="empty-list"
+        v-if="(sentEmpty && showingSent) || (!allUsers && showingSent)"
+      >
         No requests found.
       </div>
       <div
@@ -421,12 +423,14 @@ export default {
           ? (this.sentEmpty = true)
           : (this.sentEmpty = false);
       }
+      console.log(this.sentEmpty);
       if (response.data.requestsReceived !== undefined) {
         this.requestReceived = response.data.requestsReceived;
         response.data.requestsReceived.length == 0
           ? (this.receivedEmpty = true)
           : (this.receivedEmpty = false);
       }
+      console.log(this.receivedEmpty);
       if (response.data.allUsers == undefined) {
         this.loadingUsers = false;
         this.allUsers = null;
