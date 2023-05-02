@@ -3,6 +3,7 @@
     <div class="title">Never lose track of your favorite games again</div>
     <!-- @está pegando lá de dentro, : está mandando -->
     <ApiSearch
+      v-if="!loadingGames"
       :key="resetSearch"
       @search="search"
       @order="order"
@@ -24,7 +25,7 @@
         to track your games.
       </p>
     </div>
-    <div v-if="loadingGames">
+    <div v-if="loadingGames" class="loading">
       <Loading />
     </div>
     <div v-else-if="gameinfo.count !== 0">
