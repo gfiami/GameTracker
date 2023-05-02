@@ -1,6 +1,20 @@
 <template>
   <div class="main-wrapper">
     <!-- explorar / adicionar amigos -->
+    <div class="tracker offline" v-if="!logged">
+      <p class="offline-text">
+        <router-link
+          :to="{ path: '/login', query: { redirect: $route.fullPath } }"
+          >Login</router-link
+        >
+        or
+        <router-link
+          :to="{ path: '/register', query: { redirect: $route.fullPath } }"
+          >Register</router-link
+        >
+        to add new friends!
+      </p>
+    </div>
     <div class="explore" v-if="showCommunity">
       <h1 class="title">Explore community</h1>
       <div class="button-container" v-if="logged">
@@ -660,6 +674,40 @@ export default {
 </script>
 
 <style scoped>
+/* not logged message tracker */
+.tracker {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: center;
+  gap: 30px;
+}
+div .offline {
+  width: 100%;
+}
+.offline-text {
+  text-align: center;
+}
+
+.offline {
+  background-color: rgba(0, 0, 0, 0.315);
+  padding: 20px;
+  font-size: 2.2vh;
+  margin: 2vh 0;
+}
+
+.offline a {
+  color: #6842ff;
+  font-weight: 500;
+  text-decoration: none;
+  transition: 0.4s;
+}
+.offline a:hover {
+  color: #d9ff42;
+}
+.tracker a {
+  font-size: 2.2vh;
+}
 .friends,
 .requests {
   margin-bottom: 5vh;
