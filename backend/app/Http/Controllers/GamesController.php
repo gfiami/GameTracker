@@ -156,14 +156,14 @@ class GamesController extends Controller
     public function games($page = 1, $search = null, $order = '-added'){
         //order: -name / released / added / rating
         $search = $search !== null ? $search : '';
-        $cacheKey = 'games_page_' . $page . '_search_' . $search . '_order_' . $order;
+        $cacheKey = 'games_page_' . $page . '_search_' . $search . '_order_' . $order . '_size_18';
         $games = Cache::get($cacheKey);
 
         if (!$games) {
             Log::info("Requisição feita a API Rawg");
             $response = Http::withOptions([
                 'verify' => false
-            ])->get("https://api.rawg.io/api/games?key=".env('RAWG_API_KEY')."&page=".$page."&page_size=24&search=".$search ."&ordering=".$order);
+            ])->get("https://api.rawg.io/api/games?key=".env('RAWG_API_KEY')."&page=".$page."&page_size=18&search=".$search ."&ordering=".$order);
             if ($response->failed()) {
                 $exception = $response->toException();
                 Log::error("Request to RAWG API failed: " . $exception->getMessage() . "\n" . $exception->getTraceAsString());
