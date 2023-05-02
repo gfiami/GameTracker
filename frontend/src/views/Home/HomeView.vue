@@ -158,6 +158,7 @@ export default {
   text-align: center;
   font-size: 4vh;
   font-weight: 900;
+  padding: 0 0.3vh;
 }
 .register {
   text-align: center;
@@ -167,13 +168,17 @@ export default {
   font-weight: 700;
 }
 .register a {
-  background-color: #1abc9c;
+  background-color: #6842ff;
   padding: 1.5vh 1.5vh;
   width: 65vw;
   border-radius: 12px;
-
+  font-weight: 550;
   text-decoration: none;
-  color: black;
+  color: #fff;
+  transition: 0.4s;
+}
+.register a:hover {
+  color: #161b3a;
 }
 .games-text {
   color: #1abc9c;
