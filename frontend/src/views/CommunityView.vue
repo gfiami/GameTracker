@@ -596,12 +596,7 @@ export default {
 .requests {
   margin-bottom: 5vh;
 }
-.friend-list,
-.request-list {
-  height: 70vh;
-  padding: 4.5vh 4.5vh;
-  overflow-y: scroll;
-}
+
 .request-title {
   width: 90vh;
   margin: 0 auto;
@@ -653,7 +648,7 @@ export default {
 .friend-interaction button {
   text-align: center;
   background: #1abc9c;
-  padding: 1.3vh 1.3vw;
+  padding: 1vh 1.3vh;
   border-radius: 5px;
   width: 25vw;
   cursor: pointer;
@@ -662,13 +657,19 @@ export default {
   border: none;
   box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.3);
   transition: 0.4s;
+  height: 100%;
+}
+.pending {
+  margin-right: 0.2vw;
 }
 .secondary-container-profile {
   width: 100%;
   display: flex;
   flex-direction: column;
 }
-
+.friend-interaction .cancel-friend {
+  padding: 0.5vh 0.5vh;
+}
 .friend-interaction .cancel-friend {
   background: #bc1a3a;
 }
@@ -721,6 +722,14 @@ export default {
   flex-wrap: wrap;
   justify-content: space-between;
   margin-top: 4vh;
+}
+div .friend-list,
+div .request-list {
+  height: 70vh;
+  padding: 3vh 3vh;
+  overflow-y: scroll;
+  justify-content: flex-start;
+  display: block;
 }
 .user-container {
   border-radius: 12px;
