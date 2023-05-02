@@ -11,7 +11,7 @@
         <img class="profile-image" :src="userImage" alt="" />
         <div class="user-edit-container">
           <h1 class="username">{{ user.name }}</h1>
-          <div class="check-friend" v-if="!checkOwnProfile">
+          <div class="check-friend" v-if="!checkOwnProfile && logged">
             <div class="friends" v-if="friends">
               <i class="fas fa-gamepad"></i> You and <i>{{ user.name }}</i> are
               friends!

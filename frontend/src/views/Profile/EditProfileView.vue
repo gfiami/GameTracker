@@ -38,7 +38,9 @@
                 placeholder="4-12 characters"
               />
             </div>
-            <button @click="editUsername" type="button">Edit username</button>
+            <button @click="editUsername" type="button">
+              <i class="fas fa-edit"></i> Edit username
+            </button>
           </form>
         </div>
         <div class="form-container">
@@ -67,7 +69,9 @@
             <div class="file-name-container">
               <p class="file-name">{{ fileName }}</p>
             </div>
-            <button @click="editImage" type="button">Submit avatar</button>
+            <button @click="editImage" type="button">
+              <i class="fas fa-edit"></i> Submit avatar
+            </button>
           </form>
         </div>
       </div>

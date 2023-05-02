@@ -143,12 +143,12 @@
             <p class="button-legend">Write a review</p>
           </button>
           <button v-if="showForm" @click="showEditReview()" type="button">
-            <i class="fas fa-comments editReview"></i>
-            <p class="button-legend">Edit your review</p>
+            <i class="fas fa-solid fa-comment editReview"></i>
+            <p class="button-legend">Edit review</p>
           </button>
           <button v-if="showForm" @click="deleteReview()" type="button">
-            <i class="fas fa-comments editReview"></i>
-            <p class="button-legend">Delete your review</p>
+            <i class="fas fa-solid fa-comment-slash deleteReview"></i>
+            <p class="button-legend">Delete review</p>
           </button>
         </div>
 
