@@ -179,7 +179,9 @@
         </button>
       </div>
       <div class="empty-list" v-if="friendsEmpty">
-        Your friendlist is empty <i class="fas fa-heart-broken"></i>
+        <div class="empty-item">
+          Your friendlist is empty <i class="fas fa-heart-broken"></i>
+        </div>
       </div>
       <div class="users-container friend-list" v-if="allUsers && !friendsEmpty">
         <div
@@ -275,7 +277,7 @@
         class="empty-list"
         v-if="(receivedEmpty && !showingSent) || (!allUsers && !showingSent)"
       >
-        No requests found.
+        <div class="empty-item">No requests found.</div>
       </div>
 
       <div
@@ -342,7 +344,7 @@
         class="empty-list"
         v-if="(sentEmpty && showingSent) || (!allUsers && showingSent)"
       >
-        No requests found.
+        <div class="empty-item">No requests found.</div>
       </div>
       <div
         class="users-container request-list"
@@ -744,6 +746,17 @@ export default {
 </script>
 
 <style scoped>
+.empty-item {
+  color: #ffffffa4;
+  font-weight: 300;
+  border-radius: 6px;
+  font-size: 12px;
+  background-color: rgba(48, 25, 189, 0.62);
+  width: 40%;
+  padding: 10px;
+  margin-bottom: 0;
+  text-align: center;
+}
 /*botão de confirmar deleção de amigo */
 .confirmations {
   position: absolute;
@@ -864,6 +877,11 @@ div .offline {
   margin-top: 2vh;
   padding: 0 2vh;
 }
+.empty-list {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .button-container {
   display: flex;
   justify-content: center;
@@ -899,7 +917,7 @@ div .offline {
   transition: 0.4s;
 }
 .request-button:hover {
-  color: rgba(54, 30, 148, 0.9);
+  background: #dea9f5;
 }
 .friend-interaction {
   text-align: center;
