@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\FavoritedGame;
+use App\Models\OwnedGame;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\ValidationException;
 use App\Models\PersonalAccessToken;
@@ -10,7 +11,7 @@ use App\Models\PersonalAccessToken;
 class FavoritedGameController extends Controller
 {
 
-    //serve para recursivamente checarmos todos os jogos favoritos
+    //serve para recursivamente checarmos todos os jogos favoritos(feito aqui dentro mesmo)
     public function checkFavoriteGames($user_id, $game_api_ids){
         return FavoritedGame::where('user_id', $user_id)
                 ->whereIn('game_api_id', $game_api_ids)
@@ -19,27 +20,43 @@ class FavoritedGameController extends Controller
     }
     //usada no inicio do carregamento
     public function checkFavoriteGamesStarter(Request $request){
-        $user_id = $request->input('user_id');
-        $game_api_ids = $request->input('game_api_ids');
-        return FavoritedGame::where('user_id', $user_id)
-                ->whereIn('game_api_id', $game_api_ids)
-                ->pluck('game_api_id')
-                ->toArray();
+        try {
+            $request->validate([
+                'user_id' => 'required|integer',
+                'game_api_ids' => 'required|array',
+                'game_api_ids.*' => 'integer',
+            ]);
+            $user_id = $request->input('user_id');
+            $game_api_ids = $request->input('game_api_ids');
+            return FavoritedGame::where('user_id', $user_id)
+            ->whereIn('game_api_id', $game_api_ids)
+            ->pluck('game_api_id')
+            ->toArray();
+
+        }catch (\Exception $e) {
+            return response()->json(['Erro ao checar favoritos' => $e->getMessage()], 500);
+        }
     }
 
     //adiciona jogo a lista de favoritos
     public function addFavorite(Request $request){
         try {
             $token = $request->bearerToken();
-            $user_id = $request->input('user_id');
-            $game_api_id = $request->input('game_api_id');
-            $game_api_ids = $request->input('game_api_ids');
             //requisição nao enviou token junto
             if (!$token) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
-            $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
+            $request->validate([
+                'user_id' => 'required|integer',
+                'game_api_id' => 'required|integer',
+                'game_api_ids' => 'required|array',
+                'game_api_ids.*' => 'integer',
+            ]);
+            $user_id = $request->input('user_id');
+            $game_api_id = $request->input('game_api_id');
+            $game_api_ids = $request->input('game_api_ids');
 
+            $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
             //se o token existir, entra
             if ($personalAccessTokens) {
                 $token_value = explode('|', $token)[1];
@@ -51,6 +68,12 @@ class FavoritedGameController extends Controller
                         ->first();
                         if($check_favorite){
                             return response()->json(['error' => 'Already favorite'], 400);
+                        }
+                        $check_owned = OwnedGame::where('user_id', $user_id)
+                        ->where('game_api_id', $game_api_id)
+                        ->first();
+                        if(!$check_owned){
+                            return response()->json(['error' => 'Not owned'], 400);
                         }
                         $favorite_game = FavoritedGame::create([
                             'user_id' => $user_id,
@@ -74,13 +97,19 @@ class FavoritedGameController extends Controller
     public function removeFavorite (Request $request){
         try{
             $token = $request->bearerToken();
-            $user_id = $request->input('user_id');
-            $game_api_id = $request->input('game_api_id');
-            $game_api_ids = $request->input('game_api_ids');
             //requisição nao enviou token junto
             if (!$token) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
+            $request->validate([
+                'user_id' => 'required|integer',
+                'game_api_id' => 'required|integer',
+                'game_api_ids' => 'required|array',
+                'game_api_ids.*' => 'integer',
+            ]);
+            $user_id = $request->input('user_id');
+            $game_api_id = $request->input('game_api_id');
+            $game_api_ids = $request->input('game_api_ids');
 
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
             if ($personalAccessTokens) {
@@ -114,12 +143,17 @@ class FavoritedGameController extends Controller
     public function addSpecificFavorite(Request $request){
         try {
             $token = $request->bearerToken();
-            $user_id = $request->input('user_id');
-            $game_api_id = $request->input('game_api_id');
             //requisição nao enviou token junto
             if (!$token) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
+            $request->validate([
+                'user_id' => 'required|integer',
+                'game_api_id' => 'required|integer',
+            ]);
+            $user_id = $request->input('user_id');
+            $game_api_id = $request->input('game_api_id');
+
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
 
             //se o token existir, entra
@@ -133,6 +167,12 @@ class FavoritedGameController extends Controller
                         ->first();
                         if($check_favorite){
                             return response()->json(['error' => 'Already favorite'], 400);
+                        }
+                        $check_owned = OwnedGame::where('user_id', $user_id)
+                        ->where('game_api_id', $game_api_id)
+                        ->first();
+                        if(!$check_owned){
+                            return response()->json(['error' => 'Not owned'], 400);
                         }
                         $favorite_game = FavoritedGame::create([
                             'user_id' => $user_id,
@@ -154,12 +194,17 @@ class FavoritedGameController extends Controller
     public function removeSpecificFavorite (Request $request){
         try{
         $token = $request->bearerToken();
-        $user_id = $request->input('user_id');
-        $game_api_id = $request->input('game_api_id');
         //requisição nao enviou token junto
         if (!$token) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+        $request->validate([
+            'user_id' => 'required|integer',
+            'game_api_id' => 'required|integer',
+        ]);
+        $user_id = $request->input('user_id');
+        $game_api_id = $request->input('game_api_id');
+
 
         $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
         if ($personalAccessTokens) {

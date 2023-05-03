@@ -366,7 +366,6 @@ export default {
       const personal_token = this.$store.state.personal_token;
       console.log(personal_token);
       try {
-        console.log("Entrou no try do remove Owned");
         const response = await axios.delete(
           `${process.env.VUE_APP_APIURL}remove-owned`,
           {
@@ -447,7 +446,6 @@ export default {
       const personal_token = this.$store.state.personal_token;
 
       try {
-        console.log("entrou no try do remove favorite");
         const response = await axios.delete(
           `${process.env.VUE_APP_APIURL}remove-favorite`,
           {

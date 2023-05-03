@@ -40,26 +40,40 @@ class OwnedGameController extends Controller
 
     //usado para checar na página atual quais jogos o usuário possui
     public function checkOwnedGamesStarter(Request $request){
-        $user_id = $request->input('user_id');
-        $game_api_ids = $request->input('game_api_ids');
-        return OwnedGame::where('user_id', $user_id)
-                ->whereIn('game_api_id', $game_api_ids)
-                ->pluck('game_api_id')
-                ->toArray();
+        try {
+            $request->validate([
+                'user_id' => 'required|integer',
+                'game_api_ids' => 'required|array',
+                'game_api_ids.*' => 'integer',
+            ]);
+            $user_id = $request->input('user_id');
+            $game_api_ids = $request->input('game_api_ids');
+            return OwnedGame::where('user_id', $user_id)
+            ->whereIn('game_api_id', $game_api_ids)
+            ->pluck('game_api_id')
+            ->toArray();
+        }catch (\Exception $e) {
+            return response()->json(['Erro ao checar jogos owned' => $e->getMessage()], 500);
+        }
     }
 
     //adiciona o jogo a lista de owned e retorna o novo conjunto do owned games (também remove da wishlist se precisar)
     public function addOwned(Request $request){
         try {
             $token = $request->bearerToken();
-            $user_id = $request->input('user_id');
-            $game_api_id = $request->input('game_api_id');
-            $game_api_ids = $request->input('game_api_ids');
-
             //requisição nao enviou token junto
             if (!$token) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
+            $request->validate([
+                'user_id' => 'required|integer',
+                'game_api_id' => 'required|integer',
+                'game_api_ids' => 'required|array',
+                'game_api_ids.*' => 'integer',
+            ]);
+            $user_id = $request->input('user_id');
+            $game_api_id = $request->input('game_api_id');
+            $game_api_ids = $request->input('game_api_ids');
 
             //$tokenId = explode('|', $token)[0]; isso era qndo só tinha uma sessão permitida
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
@@ -111,14 +125,19 @@ class OwnedGameController extends Controller
         try{
 
             $token = $request->bearerToken();
-            $user_id = $request->input('user_id');
-            $game_api_id = $request->input('game_api_id');
-            $game_api_ids = $request->input('game_api_ids');
-
             //requisição nao enviou token junto
             if (!$token) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
+            $request->validate([
+                'user_id' => 'required|integer',
+                'game_api_id' => 'required|integer',
+                'game_api_ids' => 'required|array',
+                'game_api_ids.*' => 'integer',
+            ]);
+            $user_id = $request->input('user_id');
+            $game_api_id = $request->input('game_api_id');
+            $game_api_ids = $request->input('game_api_ids');
 
             //$tokenId = explode('|', $token)[0]; isso era qndo só tinha uma sessão permitida
             //$personalAccessToken = PersonalAccessToken::where('id', $tokenId)->first(); isso tbm
@@ -168,14 +187,16 @@ class OwnedGameController extends Controller
     public function addSpecificOwned(Request $request){
         try {
             $token = $request->bearerToken();
-            $user_id = $request->input('user_id');
-            $game_api_id = $request->input('game_api_id');
-            $game_api_ids = $request->input('game_api_ids');
-
             //requisição nao enviou token junto
             if (!$token) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
+            $request->validate([
+                'user_id' => 'required|integer',
+                'game_api_id' => 'required|integer',
+            ]);
+            $user_id = $request->input('user_id');
+            $game_api_id = $request->input('game_api_id');
 
             //$tokenId = explode('|', $token)[0]; isso era qndo só tinha uma sessão permitida
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
@@ -224,12 +245,17 @@ class OwnedGameController extends Controller
     public function removeSpecificOwned (Request $request){
         try{
         $token = $request->bearerToken();
-        $user_id = $request->input('user_id');
-        $game_api_id = $request->input('game_api_id');
-        //requisição nao enviou token junto
-        if (!$token) {
+         //requisição nao enviou token junto
+         if (!$token) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+        $request->validate([
+            'user_id' => 'required|integer',
+            'game_api_id' => 'required|integer',
+        ]);
+        $user_id = $request->input('user_id');
+        $game_api_id = $request->input('game_api_id');
+
 
         //$tokenId = explode('|', $token)[0]; isso era qndo só tinha uma sessão permitida
         //$personalAccessToken = PersonalAccessToken::where('id', $tokenId)->first(); isso tbm
