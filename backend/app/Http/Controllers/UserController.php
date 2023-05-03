@@ -208,16 +208,21 @@ class UserController extends Controller
     //Editar username
     public function editUsername(Request $request){
         try{
+            $token = $request->bearerToken();
+            if (!$token) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+            $request->validate([
+                'user_id' =>'required|integer',
+            ]);
             $user_id = $request->input('user_id');
+
             $validateUserInfo = $request->validate([
                 'username' =>'required|min:4|max:12|unique:users,name,' . $user_id,
             ]);
 
             $name = $validateUserInfo['username'];
-            $token = $request->bearerToken();
-            if (!$token) {
-                return response()->json(['error' => 'Unauthorized'], 401);
-            }
+
 
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
              //se o token existir, entra
