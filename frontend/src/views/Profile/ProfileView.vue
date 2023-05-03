@@ -35,7 +35,7 @@
               >
               <div class="check-friend" v-if="!checkOwnProfile && logged">
                 <div class="friends" v-if="friends">
-                  <i class="fas fa-gamepad"></i> You and
+                  <i class="fas fa-user-friends"></i> You and
                   <i>{{ user.name }}</i> are friends!
                 </div>
                 <div class="sent" v-if="sent">
