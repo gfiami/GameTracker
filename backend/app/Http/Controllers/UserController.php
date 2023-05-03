@@ -96,12 +96,15 @@ class UserController extends Controller
     public function logout(Request $request){
         try{
             $token = $request->bearerToken();
-            $user_id = $request->input('user_id');
-
             //requisição nao enviou token junto
             if (!$token) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
+
+            $request->validate([
+                'user_id' => 'required|integer',
+            ]);
+            $user_id = $request->input('user_id');
 
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
 
