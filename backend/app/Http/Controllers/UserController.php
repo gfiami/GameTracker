@@ -182,6 +182,7 @@ class UserController extends Controller
             //retorna users sem os amigos
             $users = $allUsers
             ->whereNotIn('id', $friends)
+            ->where('id', '!=', $user_id)
             ->where('name', 'like', '%' . $searchTerm . '%')
             ->orderBy('name', $order)
             ->paginate($pageSize, ['*'], 'page', $page);

@@ -516,6 +516,8 @@ export default {
 
       this.totalPages = response.data.users.last_page;
       this.users = response.data.users.data;
+      console.log(this.users);
+
       this.loadingUsers = false;
     },
     invertShowing(string) {
@@ -680,10 +682,10 @@ export default {
           ? (this.friendsEmpty = true)
           : (this.friendsEmpty = false);
       } catch (error) {
-        this.getUsers(this.search);
-
         console.log(error);
       }
+      this.getUsers(this.search);
+
       this.cancelConfirm();
     },
     goToPage(page) {
@@ -954,7 +956,7 @@ div .offline {
 }
 
 .user-doesnt-exist {
-  margin-top: 4vh;
+  margin-top: 6vh;
   text-align: center;
   position: absolute;
   top: 30%;
