@@ -13,12 +13,12 @@ class FriendRequestController extends Controller
 {
     public function checkFriends(Request $request){
         try{
-            $validateUserInfo = $request->validate([
-                'user_id' => ['nullable', 'integer', 'min:1'],
-                'profile_id' => ['nullable', 'integer', 'min:1'],
+            $request->validate([
+                'user_id' => ['required', 'integer', 'min:1'],
+                'profile_id' => ['required', 'integer', 'min:1'],
             ]);
-            $user_id = $validateUserInfo['user_id'];
-            $profile_id = $validateUserInfo['profile_id'];
+            $user_id = $request->input('user_id');
+            $profile_id = $request->input('profile_id');
 
             $check_friends = FriendRequest::where('user_id', $user_id)
             ->where('request_to', $profile_id)
@@ -59,9 +59,6 @@ class FriendRequestController extends Controller
                     }
                 }
             }
-            Log::info($friends);
-            Log::info($sent);
-            Log::info($received);
             $response = [
                 'friends' => $friends,
                 'sent' => $sent,
@@ -74,13 +71,17 @@ class FriendRequestController extends Controller
     }
     public function addFriend(Request $request){
         try{
-            $user_id = $request->input('user_id');
-            $request_to = $request->input('request_to');
             $token = $request->bearerToken();
-
             if (!$token) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
+            $request->validate([
+                'user_id' => ['required', 'integer', 'min:1'],
+                'request_to' => ['required', 'integer', 'min:1'],
+            ]);
+            $user_id = $request->input('user_id');
+            $request_to = $request->input('request_to');
+
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
             if ($personalAccessTokens) {
                 $token_value = explode('|', $token)[1];
@@ -122,13 +123,18 @@ class FriendRequestController extends Controller
     }
     public function cancelRequest(Request $request){
         try{
-            $user_id = $request->input('user_id');
-            $request_to = $request->input('request_to');
             $token = $request->bearerToken();
-
             if (!$token) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
+
+            $request->validate([
+                'user_id' => ['required', 'integer', 'min:1'],
+                'request_to' => ['required', 'integer', 'min:1'],
+            ]);
+            $user_id = $request->input('user_id');
+            $request_to = $request->input('request_to');
+
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
             if ($personalAccessTokens) {
                 $token_value = explode('|', $token)[1];
@@ -163,13 +169,17 @@ class FriendRequestController extends Controller
     }
     public function declineFriend(Request $request){
         try{
-            $user_id = $request->input('user_id');
-            $sender = $request->input('sender');
             $token = $request->bearerToken();
-
             if (!$token) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
+            $request->validate([
+                'user_id' => ['required', 'integer', 'min:1'],
+                'sender' => ['required', 'integer', 'min:1'],
+            ]);
+            $user_id = $request->input('user_id');
+            $sender = $request->input('sender');
+
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
             if ($personalAccessTokens) {
                 $token_value = explode('|', $token)[1];
@@ -203,12 +213,17 @@ class FriendRequestController extends Controller
     }
     public function acceptFriend(Request $request){
         try{
-            $user_id = $request->input('user_id');
-            $sender = $request->input('sender');
             $token = $request->bearerToken();
             if (!$token) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
+            $request->validate([
+                'user_id' => ['required', 'integer', 'min:1'],
+                'sender' => ['required', 'integer', 'min:1'],
+            ]);
+            $user_id = $request->input('user_id');
+            $sender = $request->input('sender');
+
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
             if ($personalAccessTokens) {
                 $token_value = explode('|', $token)[1];
@@ -268,13 +283,18 @@ class FriendRequestController extends Controller
     }
     public function removeFriend(Request $request){
         try{
-            $user_id = $request->input('user_id');
-            $friend = $request->input('friend');
             $token = $request->bearerToken();
 
             if (!$token) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
+            $request->validate([
+                'user_id' => ['required', 'integer', 'min:1'],
+                'friend' => ['required', 'integer', 'min:1'],
+            ]);
+            $user_id = $request->input('user_id');
+            $friend = $request->input('friend');
+
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
             if ($personalAccessTokens) {
                 $token_value = explode('|', $token)[1];
