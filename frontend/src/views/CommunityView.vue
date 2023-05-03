@@ -26,7 +26,7 @@
           @click="invertShowing('request')"
         >
           <i class="fas fa-hourglass"></i>Friend Requests
-          <span v-if="!receivedEmpty" class="notification"
+          <span v-if="!receivedEmpty && !loadingUsers" class="notification"
             ><i class="fas fa-exclamation"></i
           ></span>
         </button>
@@ -137,11 +137,32 @@
       />
     </div>
     <!-- fim de explorar / adicionar amigos -->
-
+    <!--confirmation remove friend -->
+    <div class="confirmations" v-if="showRemoveConfirm">
+      <div class="confirm-option">
+        <h3 class="confirm-title">Remove Friend</h3>
+        <p class="confirm-text">
+          Remove {{ removeFriendName }} from your friends?
+        </p>
+        <div class="button-container">
+          <button
+            class="confirm-button danger"
+            @click="removeFriend(removeFriendId)"
+          >
+            Remove
+          </button>
+          <button class="cancel-button" @click="cancelConfirm">Cancel</button>
+        </div>
+      </div>
+    </div>
+    <!-- end confirmation remove friend -->
     <!-- friend list -->
     <div class="friends" v-if="logged && showFriends">
       <h1 class="title">
-        Your Friends <span v-if="!friendsEmpty">({{ friendsCounter }})</span>
+        Your Friends
+        <span v-if="!friendsEmpty && !loadingUsers"
+          >({{ friendsCounter }})</span
+        >
       </h1>
       <div class="button-container">
         <button class="fc-button" @click="invertShowing('add')">
@@ -152,7 +173,7 @@
           @click="invertShowing('request')"
         >
           <i class="fas fa-hourglass"></i>Friend Requests
-          <span v-if="!receivedEmpty" class="notification"
+          <span v-if="!receivedEmpty && !loadingUsers" class="notification"
             ><i class="fas fa-exclamation"></i
           ></span>
         </button>
@@ -199,7 +220,7 @@
               <div class="friend-interaction" v-if="logged">
                 <button
                   class="cancel-friend"
-                  @click="removeFriend(user.id)"
+                  @click="showConfirm(user.name, user.id)"
                   v-if="this.friends.includes(user.id)"
                 >
                   <i class="fas fa-user-minus"></i> Remove Friend
@@ -238,7 +259,7 @@
           v-if="showingSent"
         >
           Show received requests
-          <span v-if="!receivedEmpty" class="notification"
+          <span v-if="!receivedEmpty && !loadingUsers" class="notification"
             ><i class="fas fa-exclamation"></i
           ></span>
         </button>
@@ -246,7 +267,9 @@
       <!-- requests recebidos -->
       <h3 class="request-title" v-if="!showingSent">
         All received requests
-        <span v-if="!receivedEmpty">({{ receivedCounter }})</span>
+        <span v-if="!receivedEmpty && !loadingUsers"
+          >({{ receivedCounter }})</span
+        >
       </h3>
       <div
         class="empty-list"
@@ -418,6 +441,9 @@ export default {
       sentEmpty: null,
       receivedCounter: 0,
       friendsCounter: 0,
+      showRemoveConfirm: false,
+      removeFriendName: "",
+      removeFriendId: null,
     };
   },
   watch: {
@@ -658,6 +684,7 @@ export default {
 
         console.log(error);
       }
+      this.cancelConfirm();
     },
     goToPage(page) {
       window.scroll(0, 0);
@@ -693,6 +720,16 @@ export default {
         query: { page, search, order },
       });
     },
+    cancelConfirm() {
+      this.removeFriendName = "";
+      this.removeFriendId = null;
+      this.showRemoveConfirm = false;
+    },
+    showConfirm(name, id) {
+      this.removeFriendName = name;
+      this.removeFriendId = id;
+      this.showRemoveConfirm = true;
+    },
   },
   mounted() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -705,6 +742,63 @@ export default {
 </script>
 
 <style scoped>
+/*botão de confirmar deleção de amigo */
+.confirmations {
+  position: absolute;
+  background-color: #161b3a;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 998;
+  opacity: 95%;
+}
+.confirm-option {
+  margin: 0 auto;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 50%;
+}
+.confirm-button {
+  background: #1abc9c;
+  color: #23272a;
+  padding: 2vh 2vw;
+  border-radius: 35px;
+  width: 35vw;
+  cursor: pointer;
+  font-size: 1.5vh;
+  font-weight: bolder;
+  border: none;
+  box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.3);
+}
+
+.cancel-button {
+  background: rba(255, 255, 255, 0.596);
+  color: #23272a;
+  padding: 2vh 2vw;
+  border-radius: 35px;
+  width: 35vw;
+  cursor: pointer;
+  font-size: 1.5vh;
+  font-weight: bolder;
+  border: none;
+  box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.3);
+}
+.cancel-button:hover {
+  background-color: white;
+}
+.danger {
+  background: #bc1a3a;
+  color: white;
+}
+.danger:hover {
+  background: #f3224b;
+}
+/*fim deleção*/
 .received-container {
   position: relative;
   display: inline-block;
@@ -717,7 +811,10 @@ export default {
   border-radius: 50%;
   background: red;
   color: white;
-  font-size: 1.3vh;
+  font-size: 1.5vh;
+}
+.notification i {
+  font-weight: 600;
 }
 /* not logged message tracker */
 .tracker {
@@ -784,7 +881,7 @@ div .offline {
   transition: 0.4s;
 }
 .fc-button:hover {
-  color: rgba(54, 30, 148, 0.9);
+  background: #22ebc2;
 }
 .request-button {
   margin-top: 1vh;
@@ -822,6 +919,21 @@ div .offline {
   transition: 0.4s;
   height: 100%;
 }
+.friend-interaction button:hover {
+  background: #22ebc2;
+}
+.friend-interaction .cancel-friend {
+  background: #bc1a3a;
+}
+.friend-interaction .cancel-friend:hover {
+  background: #f3224b;
+}
+.friend-interaction .cancel-request {
+  background: #bc4b1a;
+}
+.friend-interaction .cancel-request:hover {
+  background: #f05f21;
+}
 .pending {
   margin-right: 0.2vw;
 }
@@ -839,9 +951,6 @@ div .offline {
 }
 .friend-interaction .pending {
   width: 18vw;
-}
-.friend-interaction button:hover {
-  color: rgba(54, 30, 148, 0.9);
 }
 
 .user-doesnt-exist {
@@ -922,6 +1031,10 @@ div .request-list {
   align-self: flex-start;
 }
 @media screen and (min-width: 768px) {
+  .confirm-button,
+  .cancel-button {
+    width: 15vw;
+  }
   .users-container,
   .request-title,
   .empty-list {

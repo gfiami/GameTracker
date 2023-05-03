@@ -576,9 +576,12 @@ div .offline {
   border: none;
   box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.3);
 }
+.confirm-button:hover {
+  background: #22ebc2;
+}
 
 .cancel-button {
-  background-color: white;
+  background: rba(255, 255, 255, 0.596);
   color: #23272a;
   padding: 2vh 2vw;
   border-radius: 35px;
@@ -589,9 +592,15 @@ div .offline {
   border: none;
   box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.3);
 }
+.cancel-button:hover {
+  background-color: white;
+}
 .danger {
   background: #bc1a3a;
   color: white;
+}
+.danger:hover {
+  background: #f3224b;
 }
 select {
   width: 15vw;
