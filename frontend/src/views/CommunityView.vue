@@ -473,6 +473,10 @@ export default {
       this.loadingUsers = true;
       this.users = null;
       const userId = this.$store.state.user_id || 0;
+      console.log(localStorage.getItem("personal_token"));
+      console.log(userId);
+      console.log(this.$store.state.personal_token);
+
       const response = await axios.get(`${process.env.VUE_APP_APIURL}users`, {
         params: {
           search: search,

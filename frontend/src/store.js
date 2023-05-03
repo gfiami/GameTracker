@@ -18,11 +18,14 @@ const store = createStore({
       state.personal_token = localStorage.getItem("personal_token");
     },
     logout(state) {
-      state.logged = false;
       localStorage.removeItem("userState");
       localStorage.removeItem("gameTrackerUserToken");
       localStorage.removeItem("user_id");
       localStorage.removeItem("personal_token");
+      state.logged = false;
+      state.token = null;
+      state.user_id = null;
+      state.personal_token = null;
     },
   },
 });
