@@ -98,7 +98,7 @@ export default {
       this.loadingUser = false;
     },
     async getIdsGamesTracked() {
-      const user_id = this.user;
+      const user_id = this.user.id;
       try {
         const response = await axios.get(
           `${process.env.VUE_APP_APIURL}game-ids-user-tracked`,
@@ -121,7 +121,7 @@ export default {
           this.emptyFavorite = false;
         }
       } catch (error) {
-        console.log(error.response.data.error);
+        console.log(error);
       }
     },
   },

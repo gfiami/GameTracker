@@ -17,22 +17,28 @@ class GamesController extends Controller
     //pega o id de todos os jogos que o usuario tem para cada categoria
     public function getIdsGamesTracked(Request $request){
         try{
-        $user_id = $request->input('user_id');
-        $owned_games = OwnedGame::where('user_id', $user_id)
-        ->pluck('game_api_id')
-        ->toArray();
-        $favorite_games = FavoritedGame::where('user_id', $user_id)
-        ->pluck('game_api_id')
-        ->toArray();
-        $wishlist_games = WishlistGame::where('user_id', $user_id)
-        ->pluck('game_api_id')
-        ->toArray();
-        return response()->json([
-            'owned' => $owned_games,
-            'favorite' => $favorite_games,
-            'wished' => $wishlist_games,
-        ]);
+            $request->validate([
+                'user_id' => 'required|integer',
+            ]);
+            $user_id = $request->input('user_id');
 
+            $owned_games = OwnedGame::where('user_id', $user_id)
+            ->pluck('game_api_id')
+            ->toArray();
+
+            $favorite_games = FavoritedGame::where('user_id', $user_id)
+            ->pluck('game_api_id')
+            ->toArray();
+
+            $wishlist_games = WishlistGame::where('user_id', $user_id)
+            ->pluck('game_api_id')
+            ->toArray();
+
+            return response()->json([
+                'owned' => $owned_games,
+                'favorite' => $favorite_games,
+                'wished' => $wishlist_games,
+            ]);
         } catch (\Exception $e) {
                 return response()->json(['Erro na requisição' => $e->getMessage()], 500);
         }
@@ -40,37 +46,52 @@ class GamesController extends Controller
 
     //Para cada página de own|favorite|wishlist, apenas de determinada categoria
     public function trackedGameCategory(Request $request){
-        $game_ids = $request->input('game_ids');
-        $page = $request->input('page');
-        Log::info($page);
-        if($game_ids == null){
-            $games = [];
-        } else{
-            sort($game_ids);
-            $ids = implode(",", $game_ids);
-            $cacheKey = 'all_user_games_owned' . implode('_', $game_ids) . '_page_' . $page;
-            $games = Cache::get($cacheKey);
-            if(!$games){
-                Log::info("Requisição do usuário feita a API Rawg");
-                $response = Http::withOptions([
+        try {
+            $request->validate([
+                'game_ids' => 'nullable|array',
+                'game_api_ids.*' => 'integer',
+            ]);
+            $game_ids = $request->input('game_ids');
+            $page = $request->input('page');
+            if($game_ids == null){
+                $games = [];
+            } else{
+                sort($game_ids);
+                $ids = implode(",", $game_ids);
+                $cacheKey = 'all_user_games_owned' . implode('_', $game_ids) . '_page_' . $page;
+                $games = Cache::get($cacheKey);
+                if(!$games){
+                    Log::info("Requisição do usuário feita a API Rawg");
+                    $response = Http::withOptions([
                     'verify' => false
                     ])->get("https://api.rawg.io/api/games?key=".env('RAWG_API_KEY') ."&ids={$ids}&page_size=18&page={$page}");
                     if ($response->failed()) {
                     $exception = $response->toException();
                     Log::error("Request to RAWG API failed: " . $exception->getMessage() . "\n" . $exception->getTraceAsString());
+                    }
+                    $games = $response->json();
+                    //salvando no cache por 2 meses
+                    Cache::put($cacheKey, $games, 86400);
+                }else{
+                    Log::info("Dados do usuário resgatados do cache");
                 }
-                $games = $response->json();
-                //salvando no cache por 2 meses
-                Cache::put($cacheKey, $games, 86400);
-            }else{
-                Log::info("Dados do usuário resgatados do cache");
             }
+            return compact('games');
+        } catch (\Exception $e) {
+            return response()->json(['Erro na requisição' => $e->getMessage()], 500);
         }
-        return compact('games');
     }
 
     //Usado no perfil para mostrar até 10 jogos de cada categoria, pegando na api de acordo com os jogos que o user rastreou
     public function allGamesUserTracked(Request $request){
+        $request->validate([
+            'owned_games' => 'nullable|array',
+            'owned_games.*' => 'integer',
+            'favorite_games' => 'nullable|array',
+            'favorite_games.*' => 'integer',
+            'wished_games' => 'nullable|array',
+            'wished_games.*' => 'integer',
+        ]);
         $ownedArray = $request->input('owned_games');
         $favoriteArray = $request->input('favorite_games');
         $wishedArray = $request->input('wished_games');
@@ -203,8 +224,13 @@ class GamesController extends Controller
     //pega dados específicos em relação ao usuario na página de determinado jogo
     public function fetchTrackedSpecific(Request $request){
         try {
+            $request->validate([
+                'user_id' => 'required|integer',
+                'game_api_id' => 'required|integer',
+            ]);
             $user_id = $request->input('user_id');
             $game_api_id = $request->input('game_api_id');
+
             $owned_game = OwnedGame::where('user_id', $user_id)
             ->where('game_api_id', $game_api_id)
             ->first();
