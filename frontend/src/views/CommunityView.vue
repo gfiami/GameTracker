@@ -1047,7 +1047,7 @@ div .request-list {
 }
 .username {
   font-size: 2.3vh;
-  margin-left: 2vw;
+  margin-left: 0.5vw;
   align-self: flex-start;
 }
 @media screen and (min-width: 768px) {

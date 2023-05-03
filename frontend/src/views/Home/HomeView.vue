@@ -162,10 +162,10 @@ export default {
 }
 .register {
   text-align: center;
-  margin: 0 auto;
-  margin-top: 2vh;
+  margin: 2vh auto;
   font-size: 1.9vh;
   font-weight: 700;
+  margin-bottom: 3vh;
 }
 .register a {
   background-color: #6842ff;
