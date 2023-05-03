@@ -323,7 +323,48 @@ class UserController extends Controller
             ], 422);
         }
     }
+    public function logoutGeneral(Request $request){
+        try {
+            $token = $request->bearerToken();
+            //requisição nao enviou token junto
+            if (!$token) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+            $request->validate([
+                'user_id' => 'required|integer',
+                'email' => 'required|email',
+            ]);
 
+            $user_id = $request->input('user_id');
+            $email = $request->input('email');
+            $user = User::where('id', $user_id)
+            ->where('email', $email);
+            if(!$user){
+                return response()->json(['error' => 'Bad response'], 400);
+            }
+            $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
+            if ($personalAccessTokens) {
+                $token_value = explode('|', $token)[1];
+                foreach ($personalAccessTokens as $personalAccessToken) {
+                    if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
+                        //if current token is valid
+                        $personalAccessToken->delete();
+                        $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->delete();
+
+                        $response = [
+                            'message' => "Logout realizado com sucesso",
+                        ];
+                        return response()->json($response);
+                    }
+                }
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }else{
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+        }catch (\Exception $e) {
+            return response()->json(['Erro ao realizar logout' => $e->getMessage()], 400);
+        }
+    }
 
 
 

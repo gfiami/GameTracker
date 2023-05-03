@@ -120,8 +120,6 @@ export default {
       this.showMenu = false;
       this.deleteTokenDatabase();
       this.$store.commit("logout", false);
-      localStorage.removeItem("gameTrackerUserToken");
-      localStorage.removeItem("user_id");
       this.$router.push({
         path: "/",
         query: {

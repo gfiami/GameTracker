@@ -74,6 +74,40 @@
             </button>
           </form>
         </div>
+
+        <div class="logout-general">
+          <button type="button" id="logout" @click="showConfirmLogout">
+            Logout from all devices
+          </button>
+        </div>
+      </div>
+      <!--logout confirmation -->
+      <div class="confirmations" v-if="logoutConfirm">
+        <div class="confirm-option">
+          <h3 class="confirm-title">Logout from all devices?</h3>
+          <p class="confirm-text">You will need to login again.</p>
+          <p class="confirm-text">
+            Type your email and click the 'Logout' button to confirm.
+          </p>
+          <input
+            v-model="email"
+            type="email"
+            id="email"
+            placeholder="email@address.com"
+          />
+          <div class="button-container">
+            <button
+              class="confirm-button"
+              v-if="showButton"
+              @click="logoutGeneral"
+            >
+              Logout
+            </button>
+            <button class="cancel-button" @click="showConfirmLogout">
+              Cancel
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -90,6 +124,7 @@ export default {
     return {
       user: null,
       error: null,
+      email: null,
       usernameError: null,
       imageError: null,
       loadingUser: true,
@@ -98,6 +133,7 @@ export default {
       newImage: false,
       newUserName: false,
       fileName: "No image selected",
+      logoutConfirm: false,
     };
   },
   computed: {
@@ -116,12 +152,51 @@ export default {
     userNameChanged() {
       return this.newUserName ? "focusUser" : "";
     },
+    showButton() {
+      return this.email != null && this.email != "";
+    },
   },
   components: {
     Loading,
   },
   methods: {
-    ...mapMutations(["login"]),
+    ...mapMutations(["login", "logout"]),
+
+    showConfirmLogout() {
+      this.logoutConfirm = !this.logoutConfirm;
+      this.email = null;
+    },
+    async logoutGeneral() {
+      const id = this.$store.state.user_id;
+      const personal_token = this.$store.state.personal_token;
+      try {
+        const response = await axios.delete(
+          `${process.env.VUE_APP_APIURL}logout-general`,
+          {
+            params: {
+              user_id: id,
+              email: this.email,
+            },
+            headers: {
+              Authorization: `Bearer ${personal_token}`,
+            },
+          }
+        );
+
+        this.showConfirmLogout();
+        this.$store.commit("logout", false);
+        this.$router.push({
+          path: "/",
+          query: {
+            messageLogout:
+              "Your logout was successful. Come back soon to track and review your games on GameTracker!",
+          },
+          key: this.$route.fullPath,
+        });
+      } catch (error) {
+        console.log(error.data);
+      }
+    },
     async getUserInfo() {
       this.loadingUser = true;
       const id = this.$store.state.user_id;
@@ -237,6 +312,69 @@ export default {
 </script>
 
 <style scoped>
+/*confirmations */
+.confirmations {
+  position: absolute;
+  background-color: #161b3a;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 998;
+  opacity: 95%;
+}
+.confirm-option {
+  margin: 0 auto;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 50%;
+}
+.confirm-button {
+  background: #bc1a3a;
+  color: white;
+  padding: 2vh 2vw;
+  border-radius: 35px;
+  width: 35vw;
+  cursor: pointer;
+  font-size: 1.5vh;
+  font-weight: bolder;
+  border: none;
+  box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.3);
+}
+.confirm-button:hover {
+  background: #f3224b;
+}
+
+.cancel-button {
+  background: rba(255, 255, 255, 0.596);
+  color: #23272a;
+  padding: 2vh 2vw;
+  border-radius: 35px;
+  width: 35vw;
+  cursor: pointer;
+  font-size: 1.5vh;
+  font-weight: bolder;
+  border: none;
+  box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.3);
+}
+.cancel-button:hover {
+  background-color: white;
+}
+/*end confirm buttons */
+#logout {
+  color: rgba(255, 255, 255, 0.596);
+
+  background: #bc1a3a;
+}
+#logout:hover {
+  color: white;
+  background: #f3224b;
+}
+
 #focusImage {
   border-radius: 50%;
   border: 2px solid #1abc9c;
@@ -312,7 +450,7 @@ export default {
   background: #1abc9c;
   padding: 2vh 2vw;
   border-radius: 35px;
-  width: 25vw;
+  width: 40vw;
   height: 80%;
   cursor: pointer;
   font-size: 1.5vh;
@@ -374,6 +512,10 @@ input[type="file"] {
 }
 
 @media screen and (min-width: 768px) {
+  .confirm-button,
+  .cancel-button {
+    width: 15vw;
+  }
   .personnal-info {
     display: flex;
     justify-content: center;
