@@ -36,13 +36,17 @@
             <div class="received" v-if="received">
               <i class="fas fa-user-clock"></i> Friend request received
             </div>
+
             <select
               name=""
               id=""
               v-model="profileInteraction"
               @change="confirmInteraction"
+              class="fa"
             >
-              <option selected disabled value="...">...</option>
+              <option selected disabled value="..." class="fa">
+                &#xf4fe; Interact
+              </option>
               <option v-if="friends" value="remove">Unfriend</option>
               <option v-if="!friends && !received && !sent" value="add">
                 Add as Friend
@@ -510,6 +514,11 @@ export default {
 </script>
 
 <style scoped>
+/* font awesome inside select tag */
+.font-awesome .fa {
+  font-family: "Font Awesome 5 Free", Open Sans;
+  font-weight: 501;
+}
 /* not logged message tracker */
 .tracker {
   display: flex;
@@ -603,13 +612,18 @@ div .offline {
   background: #f3224b;
 }
 select {
-  width: 15vw;
+  width: 30vw;
   height: 4vh;
   text-align: center;
   background-color: #23272a;
-  color: #fff;
+  color: rgba(255, 255, 255, 0.596);
   font-weight: 1.3vh;
   border-radius: 10px;
+  transition: 0.4s;
+}
+
+select:hover {
+  color: #fff;
 }
 .back-route {
   margin-left: 2vw;
@@ -712,7 +726,7 @@ select {
     width: 15vw;
   }
   select {
-    width: 5vw;
+    width: 6vw;
   }
   .personnal-info {
     display: flex;
