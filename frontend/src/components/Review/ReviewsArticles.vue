@@ -66,7 +66,7 @@
 
     <!-- user review -->
     <div v-if="changeUserReview">
-      <h3 class="review-title">Your review</h3>
+      <h3 class="review-title text-focus">Your review</h3>
       <div class="review-container">
         <div class="container-left">
           <div class="personnal-info">
@@ -111,7 +111,9 @@
       </div>
     </div>
     <div v-else-if="logged && getUrl == 'games'">
-      <h3 class="review-title">You haven't reviewed this game yet.</h3>
+      <h3 class="review-title text-focus user-warn">
+        You haven't reviewed this game yet.
+      </h3>
       <br />
       <hr />
     </div>
@@ -147,7 +149,9 @@
       </div>
       <!--END OF SEARCH BY RATING -->
       <div>
-        <h3 class="review-title" v-if="logged">Reviews from other users</h3>
+        <h3 class="review-title text-focus" v-if="logged">
+          Reviews from other users
+        </h3>
       </div>
       <p class="review-title" id="otherUsers">
         {{ showingCounter }}
@@ -694,7 +698,19 @@ hr {
   text-shadow: 1px 1px #000;
 
   width: 95%;
-  margin: 0 auto;
+  margin: 0vh auto;
+}
+.text-focus {
+  color: #ffffffa4;
+  font-weight: 300;
+  border-radius: 6px;
+  background-color: rgba(48, 25, 189, 0.62);
+  padding: 1vh 1vh;
+  align-self: flex-start;
+  margin-bottom: 1vh;
+}
+.user-warn {
+  margin-bottom: 0;
 }
 .review-container {
   border-radius: 12px;
