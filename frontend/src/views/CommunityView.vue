@@ -21,8 +21,14 @@
         <button class="fc-button" @click="invertShowing('list')">
           <i class="fas fa-address-book"></i>Friends List
         </button>
-        <button class="fc-button" @click="invertShowing('request')">
+        <button
+          class="fc-button received-container"
+          @click="invertShowing('request')"
+        >
           <i class="fas fa-hourglass"></i>Friend Requests
+          <span v-if="!receivedEmpty" class="notification"
+            ><i class="fas fa-exclamation"></i
+          ></span>
         </button>
       </div>
       <SearchBar
@@ -134,13 +140,21 @@
 
     <!-- friend list -->
     <div class="friends" v-if="logged && showFriends">
-      <h1 class="title">Your Friends</h1>
+      <h1 class="title">
+        Your Friends <span v-if="!friendsEmpty">({{ friendsCounter }})</span>
+      </h1>
       <div class="button-container">
         <button class="fc-button" @click="invertShowing('add')">
           <i class="fas fa-user-plus"></i>Add Friends
         </button>
-        <button class="fc-button" @click="invertShowing('request')">
+        <button
+          class="fc-button received-container"
+          @click="invertShowing('request')"
+        >
           <i class="fas fa-hourglass"></i>Friend Requests
+          <span v-if="!receivedEmpty" class="notification"
+            ><i class="fas fa-exclamation"></i
+          ></span>
         </button>
       </div>
       <div class="empty-list" v-if="friendsEmpty">
@@ -219,15 +233,21 @@
           Show sent requests
         </button>
         <button
-          class="request-button"
+          class="request-button received-container"
           @click="invertRequestDisplay"
           v-if="showingSent"
         >
           Show received requests
+          <span v-if="!receivedEmpty" class="notification"
+            ><i class="fas fa-exclamation"></i
+          ></span>
         </button>
       </div>
       <!-- requests recebidos -->
-      <h3 class="request-title" v-if="!showingSent">All received requests</h3>
+      <h3 class="request-title" v-if="!showingSent">
+        All received requests
+        <span v-if="!receivedEmpty">({{ receivedCounter }})</span>
+      </h3>
       <div
         class="empty-list"
         v-if="(receivedEmpty && !showingSent) || (!allUsers && !showingSent)"
@@ -396,6 +416,8 @@ export default {
       friendsEmpty: null,
       receivedEmpty: null,
       sentEmpty: null,
+      receivedCounter: 0,
+      friendsCounter: 0,
     };
   },
   watch: {
@@ -440,7 +462,9 @@ export default {
       console.log(this.sentEmpty);
       if (response.data.requestsReceived !== undefined) {
         this.requestReceived = response.data.requestsReceived;
-        response.data.requestsReceived.length == 0
+        this.receivedCounter = response.data.requestsReceived.length;
+
+        this.receivedCounter == 0
           ? (this.receivedEmpty = true)
           : (this.receivedEmpty = false);
       }
@@ -453,7 +477,8 @@ export default {
       }
       if (this.logged) {
         this.friends = response.data.friends;
-        response.data.friends.length == 0
+        this.friendsCounter = response.data.friends.length;
+        this.friendsCounter == 0
           ? (this.friendsEmpty = true)
           : (this.friendsEmpty = false);
       }
@@ -562,7 +587,9 @@ export default {
         );
         console.log(response.data);
         this.requestReceived = response.data;
-        response.data.length == 0
+        this.receivedCounter = response.data.requestsReceived.length;
+
+        this.receivedCounter == 0
           ? (this.receivedEmpty = true)
           : (this.receivedEmpty = false);
       } catch (error) {
@@ -590,10 +617,13 @@ export default {
         console.log(response.data);
         this.friends = response.data.friends;
         this.requestReceived = response.data.requestsReceived;
-        response.data.requestsReceived.length == 0
+        this.receivedCounter = response.data.requestsReceived.length;
+        this.friendsCounter = response.data.friends.length;
+
+        this.receivedCounter == 0
           ? (this.receivedEmpty = true)
           : (this.receivedEmpty = false);
-        response.data.friends.length == 0
+        this.friendsCounter == 0
           ? (this.friendsEmpty = true)
           : (this.friendsEmpty = false);
       } catch (error) {
@@ -619,7 +649,8 @@ export default {
           }
         );
         this.friends = response.data.friends;
-        response.data.friends.length == 0
+        this.friendsCounter = response.data.friends.length;
+        this.friendsCounter == 0
           ? (this.friendsEmpty = true)
           : (this.friendsEmpty = false);
       } catch (error) {
@@ -674,6 +705,20 @@ export default {
 </script>
 
 <style scoped>
+.received-container {
+  position: relative;
+  display: inline-block;
+}
+.notification {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  padding: 5px 10px;
+  border-radius: 50%;
+  background: red;
+  color: white;
+  font-size: 1.3vh;
+}
 /* not logged message tracker */
 .tracker {
   display: flex;
@@ -729,7 +774,7 @@ div .offline {
 .fc-button {
   background: #1abc9c;
   padding: 2vh 2vw;
-  border-radius: 35px;
+  border-radius: 12px;
   width: 35vw;
   cursor: pointer;
   font-size: 1.5vh;
@@ -745,7 +790,7 @@ div .offline {
   margin-top: 1vh;
   background: #bb8ece;
   padding: 2vh 2vw;
-  border-radius: 35px;
+  border-radius: 12px;
   width: 35vw;
   cursor: pointer;
   font-size: 1.2vh;
