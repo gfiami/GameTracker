@@ -74,6 +74,11 @@ export default {
       if (this.gameIds !== null && this.gameIds !== undefined) {
         window.scrollTo(0, 0);
       }
+      const path = this.$route.path;
+      this.$router.push({
+        path: path,
+        query: { page },
+      });
     },
     updateOwned(newValue) {
       this.$emit("ownedGamesUpdate", newValue);
@@ -114,6 +119,10 @@ export default {
       console.log(response.data.games.results);
       this.loadingGames = false;
     },
+  },
+  mounted() {
+    const urlParams = new URLSearchParams(window.location.search);
+    this.currentPage = parseInt(urlParams.get("page")) || 1;
   },
 };
 </script>
