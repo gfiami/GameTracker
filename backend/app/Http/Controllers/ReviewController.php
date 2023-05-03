@@ -19,6 +19,9 @@ class ReviewController extends Controller
     //pega as reviews de determinado usuario
     public function fetchUserReviews(Request $request){
     try {
+        $request->validate([
+            'user_id' => 'required|integer',
+        ]);
         $user_id = $request->input('user_id');
         $reviews = Review::where('user_id', $user_id)
         ->where('approved', 1)
@@ -47,13 +50,16 @@ class ReviewController extends Controller
     //pega as reviews de determinado jogo
     public function fetchReviews(Request $request){
         try {
-            $validatedData = $request->validate([
+            $request->validate([
+                'user_id' => 'nullable|integer',
+                'game_api_id' => 'required|integer',
                 'filter_reviews' => ['nullable', 'string', Rule::in(['positive', 'negative'])],
             ]);
 
-            $game_api_id = $request->input('game_api_id');
-            $filter = $validatedData['filter_reviews'];
             $user_id = $request->input('user_id');
+            $game_api_id = $request->input('game_api_id');
+            $filter = $request->input('filter_reviews');
+
             $reviews = Review::where('game_api_id', $game_api_id)
             ->where('approved', 1)
             ->get();
@@ -132,22 +138,23 @@ class ReviewController extends Controller
     //adicionar uma review
     public function addReview(Request $request){
         try{
-
-            $validateReviewInfo = $request->validate([
-                'review' => 'required|string|max:1000',
-                'rating' => 'required|string|max:10',
-
-            ]);
             $token = $request->bearerToken();
-            $user_id = $request->input('user_id');
-            $game_api_id = $request->input('game_api_id');
-            $review_text = $request->input('review');
-            $rating = $request->input('rating');
-            $game_name = $request->input('game_name');
             //requisição nao enviou token junto
             if (!$token) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
+            $request->validate([
+                'user_id' => 'required|integer',
+                'review' => 'required|string|max:1000',
+                'rating' => 'required|string|max:10',
+                'game_api_id' => 'required|integer',
+                'game_name' => 'required|string|max:100',
+            ]);
+            $user_id = $request->input('user_id');
+            $review_text = $request->input('review');
+            $rating = $request->input('rating');
+            $game_api_id = $request->input('game_api_id');
+            $game_name = $request->input('game_name');
 
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
              //se o token existir, entra
@@ -209,19 +216,22 @@ class ReviewController extends Controller
     //edit a review
     public function editReview(Request $request){
         try{
-            $validateReviewInfo = $request->validate([
-                'review' => 'required|string|max:1000',
-                'rating' => 'required|string|max:10',
-
-            ]);
             $token = $request->bearerToken();
-            $user_id = $request->input('user_id');
-            $game_api_id = $request->input('game_api_id');
-            $review_text = $request->input('review');
-            $rating = $request->input('rating');
             if (!$token) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
+
+            $request->validate([
+                'user_id' => 'required|integer',
+                'review' => 'required|string|max:1000',
+                'rating' => 'required|string|max:10',
+                'game_api_id' => 'required|integer',
+            ]);
+            $user_id = $request->input('user_id');
+            $review_text = $request->input('review');
+            $rating = $request->input('rating');
+            $game_api_id = $request->input('game_api_id');
+
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
              //se o token existir, entra
             if ($personalAccessTokens) {
@@ -298,8 +308,14 @@ class ReviewController extends Controller
     //deleta a review
     public function deleteReview(Request $request){
         try{
-
             $token = $request->bearerToken();
+            if (!$token) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+            $request->validate([
+                'user_id' => 'required|integer',
+                'game_api_id' => 'required|integer',
+            ]);
             $user_id = $request->input('user_id');
             $game_api_id = $request->input('game_api_id');
 
