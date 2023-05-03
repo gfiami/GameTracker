@@ -22,138 +22,126 @@
       </div>
       <!-- checar se o user existe -->
       <div class="personnal-info">
-        <img class="profile-image" :src="userImage" alt="" />
         <div class="user-edit-container">
-          <h1 class="username">{{ user.name }}</h1>
-          <div class="check-friend" v-if="!checkOwnProfile && logged">
-            <div class="friends" v-if="friends">
-              <i class="fas fa-gamepad"></i> You and <i>{{ user.name }}</i> are
-              friends!
-            </div>
-            <div class="sent" v-if="sent">
-              <i class="fas fa-user-clock"></i> Friend request sent
-            </div>
-            <div class="received" v-if="received">
-              <i class="fas fa-user-clock"></i> Friend request received
-            </div>
+          <div class="user-info-container">
+            <img class="profile-image" :src="userImage" alt="" />
+            <div class="name-edit-container">
+              <h1 class="username">{{ user.name }}</h1>
+              <router-link
+                v-if="checkOwnProfile"
+                class="edit-profile"
+                to="/profile/edit"
+                ><i class="fas fa-user-edit"></i> Edit Profile</router-link
+              >
+              <div class="check-friend" v-if="!checkOwnProfile && logged">
+                <div class="friends" v-if="friends">
+                  <i class="fas fa-gamepad"></i> You and
+                  <i>{{ user.name }}</i> are friends!
+                </div>
+                <div class="sent" v-if="sent">
+                  <i class="fas fa-user-clock"></i> Friend request sent
+                </div>
+                <div class="received" v-if="received">
+                  <i class="fas fa-user-clock"></i> Friend request received
+                </div>
 
-            <select
-              name=""
-              v-model="profileInteraction"
-              @change="confirmInteraction"
-              class="fa"
-            >
-              <option selected disabled value="..." class="fa">
-                <span class="fa">&#xf4fe;</span>
-                &#x200B;
-                <span id="reset-font">Interact</span>
-              </option>
-              <option v-if="friends" value="remove">Unfriend</option>
-              <option v-if="!friends && !received && !sent" value="add">
-                Add as Friend
-              </option>
-              <option v-if="sent" value="cancel">Cancel Friend Request</option>
-              <option v-if="received" value="decline">
-                Decline Friend Request
-              </option>
-              <option v-if="received" value="accept">
-                Accept Friend Request
-              </option>
-            </select>
-            <div class="confirmations" v-if="showConfirm">
-              <div class="confirm-option" v-if="showAddConfirm">
-                <h3 class="confirm-title">Add Friend</h3>
-                <p class="confirm-text">
-                  Send friend request to {{ user.name }}?
-                </p>
-                <div class="button-container">
-                  <button
-                    class="confirm-button"
-                    @click="profileSelectInteraction"
-                  >
-                    Send
-                  </button>
-                  <button class="cancel-button" @click="cancelConfirm">
-                    Cancel
-                  </button>
-                </div>
-              </div>
-              <div class="confirm-option" v-if="showRemoveConfirm">
-                <h3 class="confirm-title">Remove Friend</h3>
-                <p class="confirm-text">
-                  Remove {{ user.name }} from your friends?
-                </p>
-                <div class="button-container">
-                  <button
-                    class="confirm-button danger"
-                    @click="profileSelectInteraction"
-                  >
-                    Remove
-                  </button>
-                  <button class="cancel-button" @click="cancelConfirm">
-                    Cancel
-                  </button>
-                </div>
-              </div>
-              <div class="confirm-option" v-if="showCancelConfirm">
-                <h3 class="confirm-title">Cancel Friend Request</h3>
-                <p class="confirm-text">
-                  Cancel friend request to {{ user.name }}?
-                </p>
-                <div class="button-container">
-                  <button
-                    class="confirm-button danger"
-                    @click="profileSelectInteraction"
-                  >
+                <select
+                  name=""
+                  v-model="profileInteraction"
+                  @change="confirmInteraction"
+                  class="fa"
+                >
+                  <option selected disabled value="..." class="fa">
+                    <span class="fa">&#xf4fe;</span>
+                    &#x200B;
+                    <span id="reset-font">Interact</span>
+                  </option>
+                  <option v-if="friends" value="remove">Unfriend</option>
+                  <option v-if="!friends && !received && !sent" value="add">
+                    Add as Friend
+                  </option>
+                  <option v-if="sent" value="cancel">
                     Cancel Friend Request
-                  </button>
-                  <button class="cancel-button" @click="cancelConfirm">
-                    Don't Cancel Request
-                  </button>
-                </div>
-              </div>
-              <div class="confirm-option" v-if="showDeclineConfirm">
-                <h3 class="confirm-title">Decline Friend Request</h3>
-                <p class="confirm-text">
-                  Decline friend request from {{ user.name }}?
-                </p>
-                <div class="button-container">
-                  <button
-                    class="confirm-button danger"
-                    @click="profileSelectInteraction"
-                  >
-                    Decline
-                  </button>
-                  <button class="cancel-button" @click="cancelConfirm">
-                    Cancel
-                  </button>
-                </div>
-              </div>
-              <div class="confirm-option" v-if="showAcceptConfirm">
-                <h3 class="confirm-title">Accept Friend Request</h3>
-                <p class="confirm-text">
-                  Accept friend request from {{ user.name }}?
-                </p>
-                <div class="button-container">
-                  <button
-                    class="confirm-button"
-                    @click="profileSelectInteraction"
-                  >
-                    Accept
-                  </button>
-                  <button class="cancel-button" @click="cancelConfirm">
-                    Cancel
-                  </button>
-                </div>
+                  </option>
+                  <option v-if="received" value="decline">
+                    Decline Friend Request
+                  </option>
+                  <option v-if="received" value="accept">
+                    Accept Friend Request
+                  </option>
+                </select>
               </div>
             </div>
           </div>
-          <router-link
-            v-if="checkOwnProfile"
-            class="edit-profile"
-            to="/profile/edit"
-            ><i class="fas fa-user-edit"></i> Edit Profile</router-link
-          >
+        </div>
+      </div>
+
+      <!-- confirmations interaction -->
+      <div class="confirmations" v-if="showConfirm">
+        <div class="confirm-option" v-if="showAddConfirm">
+          <h3 class="confirm-title">Add Friend</h3>
+          <p class="confirm-text">Send friend request to {{ user.name }}?</p>
+          <div class="button-container">
+            <button class="confirm-button" @click="profileSelectInteraction">
+              Send
+            </button>
+            <button class="cancel-button" @click="cancelConfirm">Cancel</button>
+          </div>
+        </div>
+        <div class="confirm-option" v-if="showRemoveConfirm">
+          <h3 class="confirm-title">Remove Friend</h3>
+          <p class="confirm-text">Remove {{ user.name }} from your friends?</p>
+          <div class="button-container">
+            <button
+              class="confirm-button danger"
+              @click="profileSelectInteraction"
+            >
+              Remove
+            </button>
+            <button class="cancel-button" @click="cancelConfirm">Cancel</button>
+          </div>
+        </div>
+        <div class="confirm-option" v-if="showCancelConfirm">
+          <h3 class="confirm-title">Cancel Friend Request</h3>
+          <p class="confirm-text">Cancel friend request to {{ user.name }}?</p>
+          <div class="button-container">
+            <button
+              class="confirm-button danger"
+              @click="profileSelectInteraction"
+            >
+              Cancel Friend Request
+            </button>
+            <button class="cancel-button" @click="cancelConfirm">
+              Don't Cancel Request
+            </button>
+          </div>
+        </div>
+        <div class="confirm-option" v-if="showDeclineConfirm">
+          <h3 class="confirm-title">Decline Friend Request</h3>
+          <p class="confirm-text">
+            Decline friend request from {{ user.name }}?
+          </p>
+          <div class="button-container">
+            <button
+              class="confirm-button danger"
+              @click="profileSelectInteraction"
+            >
+              Decline
+            </button>
+            <button class="cancel-button" @click="cancelConfirm">Cancel</button>
+          </div>
+        </div>
+        <div class="confirm-option" v-if="showAcceptConfirm">
+          <h3 class="confirm-title">Accept Friend Request</h3>
+          <p class="confirm-text">
+            Accept friend request from {{ user.name }}?
+          </p>
+          <div class="button-container">
+            <button class="confirm-button" @click="profileSelectInteraction">
+              Accept
+            </button>
+            <button class="cancel-button" @click="cancelConfirm">Cancel</button>
+          </div>
         </div>
       </div>
       <div class="nav-profile">
@@ -315,7 +303,6 @@ export default {
         this.friends = response.data.friends;
         this.received = response.data.received;
         this.sent = response.data.sent;
-        console.log(this.sent);
         //checar se recebeu amizade para o "accept or deny";
       } catch (error) {
         console.log(error);
@@ -503,7 +490,7 @@ export default {
   },
   async created() {
     await this.getUserInfo();
-    if (this.logged) {
+    if (this.logged && !this.checkOwnProfile) {
       await this.checkFriendship();
     }
   },
@@ -515,6 +502,21 @@ export default {
 </script>
 
 <style scoped>
+.friends,
+.sent,
+.received {
+  font-size: 1.5vh;
+}
+.user-info-container {
+  display: flex;
+}
+.name-edit-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-left: 1vw;
+  width: 80%;
+}
 /* font awesome inside select tag */
 
 .fa {
@@ -639,13 +641,13 @@ select:hover {
 }
 .edit-profile {
   text-decoration: none;
-  width: 10vw;
+  width: fit-content;
   text-align: center;
   background-color: #23272a;
   color: rgba(255, 255, 255, 0.596);
   font-size: 1.7vh;
   font-weight: 300;
-  padding: 0.8vh 0.8vh;
+  padding: 1vh 1vh;
   border-radius: 10px;
   transition: 0.4s;
 }
@@ -654,6 +656,16 @@ select:hover {
 }
 .user-edit-container {
   margin-bottom: 1vh;
+}
+.check-friend {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  align-self: flex-end;
+  background-color: #330066;
+  padding: 1.3vh 1.3vh;
+  border-radius: 12px;
 }
 .loading-user {
   position: fixed;
@@ -731,13 +743,12 @@ select:hover {
     width: 15vw;
   }
   select {
-    width: 15vw;
+    width: 9vw;
   }
   .personnal-info {
     display: flex;
-    flex-direction: row;
     gap: 20px;
-    width: 90%;
+    width: 65%;
     margin: 0 auto;
     margin-top: 30px;
   }

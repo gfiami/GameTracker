@@ -20,6 +20,12 @@
         @goToPage="goToPage"
       />
     </div>
+    <p class="error" v-else-if="currentPageWrong">
+      No games found for page {{ currentPage }}.
+      <button class="page-button" @click="goToPage(totalPages)">
+        Go to Last Page
+      </button>
+    </p>
     <div class="error" v-else-if="!fetched">No games found</div>
   </div>
 </template>
@@ -61,6 +67,9 @@ export default {
     favorite: null,
   },
   computed: {
+    currentPageWrong() {
+      return this.currentPage > this.totalPages && this.totalPages > 0;
+    },
     totalPages() {
       if (this.gameIds !== null && this.gameIds !== undefined)
         return Math.ceil(this.gameIds.length / 18);
@@ -128,6 +137,18 @@ export default {
 </script>
 
 <style scoped>
+.page-button {
+  text-align: center;
+  font-weight: 800;
+  background-color: #23272a;
+  color: #fff;
+  font-size: 1.3vh;
+  margin: 0 0.6vw;
+  border: 1px solid #fff;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 2vh;
+}
 .error {
   width: 70%;
   margin: 0 auto;
