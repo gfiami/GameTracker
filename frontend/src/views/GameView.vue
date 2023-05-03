@@ -22,7 +22,7 @@
           :to="{ path: '/register', query: { redirect: $route.fullPath } }"
           >Register</router-link
         >
-        to track your games.
+        to track your games!
       </p>
     </div>
     <div v-if="loadingGames" class="loading">

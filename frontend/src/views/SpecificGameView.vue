@@ -186,7 +186,7 @@
               :to="{ path: '/register', query: { redirect: $route.fullPath } }"
               >Register</router-link
             >
-            to track your games and write reviews.
+            to track your games and write reviews!
           </p>
         </div>
         <div class="review-container">

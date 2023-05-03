@@ -12,7 +12,7 @@
           :to="{ path: '/register', query: { redirect: $route.fullPath } }"
           >Register</router-link
         >
-        to add new friends!
+        to interact with our community!
       </p>
     </div>
     <div class="explore" v-if="showCommunity">

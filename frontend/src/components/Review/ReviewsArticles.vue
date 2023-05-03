@@ -749,8 +749,9 @@ hr {
   background-color: #161b3a;
   max-width: 100%;
   max-height: 10vh;
-  font-size: 2.2vh;
+  font-size: 2vh;
   text-shadow: 1px 1px #000;
+  text-align: center;
 }
 
 .fa-thumbs-up {
@@ -762,7 +763,10 @@ hr {
 .username {
   display: flex;
   align-items: flex-start;
-  font-size: 2.3vh;
+  font-size: 2.5vh;
+  color: #ff69b4;
+  font-weight: 700;
+  text-shadow: none;
 }
 .personnal-info a {
   display: flex;
@@ -791,7 +795,7 @@ hr {
 }
 .review-text {
   max-width: 100%;
-  font-size: 2.5vh;
+  font-size: 2.3vh;
   text-shadow: 1px 1px #000;
 }
 .game-review-title a {
