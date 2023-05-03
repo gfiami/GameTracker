@@ -39,13 +39,14 @@
 
             <select
               name=""
-              id=""
               v-model="profileInteraction"
               @change="confirmInteraction"
               class="fa"
             >
               <option selected disabled value="..." class="fa">
-                &#xf4fe; Interact
+                <span class="fa">&#xf4fe;</span>
+                &#x200B;
+                <span id="reset-font">Interact</span>
               </option>
               <option v-if="friends" value="remove">Unfriend</option>
               <option v-if="!friends && !received && !sent" value="add">
@@ -515,9 +516,13 @@ export default {
 
 <style scoped>
 /* font awesome inside select tag */
-.font-awesome .fa {
+
+.fa {
   font-family: "Font Awesome 5 Free", Open Sans;
-  font-weight: 501;
+}
+
+#reset-font {
+  font-family: "Nunito", sans-serif;
 }
 /* not logged message tracker */
 .tracker {
@@ -726,7 +731,7 @@ select:hover {
     width: 15vw;
   }
   select {
-    width: 6vw;
+    width: 15vw;
   }
   .personnal-info {
     display: flex;
