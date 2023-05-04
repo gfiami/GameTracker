@@ -246,7 +246,7 @@ export default {
   }
   .image-section-container {
     margin-left: auto;
-    width: 35%;
+    width: 45%;
     margin: 0;
     margin-top: 2vh;
     justify-content: flex-start;
@@ -262,9 +262,12 @@ export default {
   }
 
   .main-container {
+    width: 80vw;
     margin-top: 4vh;
     display: flex;
-    justify-content: space-around;
+    gap: 3vh;
+    align-items: center;
+    justify-content: center;
   }
 }
 </style>
