@@ -795,7 +795,7 @@ hr {
 }
 .review-text {
   max-width: 100%;
-  font-size: 2.3vh;
+  font-size: 1.9vh;
   text-shadow: 1px 1px #000;
 }
 .game-review-title a {
@@ -876,7 +876,7 @@ hr {
   }
   .review-text,
   .rating {
-    font-size: 2.2vh;
+    font-size: 1.9vh;
   }
   .date {
     font-size: 1.8vh;

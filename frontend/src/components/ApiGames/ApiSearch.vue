@@ -48,9 +48,10 @@ export default {
     updateSearch: "",
     updateOrder: "",
   },
-  watch: {
+  /*watch: {
     updateSearch: {
       handler(newValue) {
+        console.log("handler searc " + newValue);
         if (newValue !== "+") {
           this.searchQuery = newValue;
           this.showSearchResults = newValue;
@@ -62,6 +63,8 @@ export default {
     },
     updateOrder: {
       handler(newValue) {
+        console.log("handler order " + newValue);
+
         if (newValue !== "") {
           if (newValue[0] !== "-") {
             this.sortOrder = "";
@@ -75,8 +78,8 @@ export default {
           this.$emit("search", this.searchQuery);
         }
       },
-    },
-  },
+    },*/
+
   data() {
     return {
       sortOrder: "-",
@@ -110,6 +113,45 @@ export default {
       this.orderAndFilter = this.sortOrder + this.filter;
       this.$emit("order", this.orderAndFilter);
     },
+    setNewSearch(newSearch) {
+      this.searchQuery = newSearch;
+      this.showSearchResults = newSearch;
+      this.$emit("search", this.searchQuery);
+      this.orderAndFilter = this.sortOrder + this.filter;
+      this.$emit("order", this.orderAndFilter);
+    },
+    setNewOrder(newOrder) {
+      if (newOrder[0] !== "-") {
+        this.sortOrder = "";
+        this.filter = newOrder;
+      } else {
+        this.sortOrder = "-";
+        this.filter = newOrder.slice(1);
+      }
+      this.orderAndFilter = this.sortOrder + this.filter;
+      this.$emit("order", this.orderAndFilter);
+      this.$emit("search", this.searchQuery);
+    },
+  },
+  mounted() {
+    if (this.$route.fullPath == "/games") {
+      console.log("games");
+      this.sortOrder = "-";
+      this.searchQuery = "";
+      this.orderAndFilter = null;
+      this.showSearchResults = "";
+      this.filter = "added";
+      return false;
+    }
+    //console.log("prop da order: " + this.updateOrder);
+    //console.log("prop de search: " + this.updateSearch);
+    //console.log("na search: " + this.orderAndFilter);
+    if (this.updateSearch !== "+") {
+      this.setNewSearch(this.updateSearch);
+    }
+    if (this.updateOrder !== "") {
+      this.setNewOrder(this.updateOrder);
+    }
   },
 };
 </script>
