@@ -16,7 +16,7 @@ Route::post('/register', [UserController::class, 'register']);
 Route::delete('/logout', [UserController::class, 'logout']); // AUTH
 Route::delete('/logout-general', [UserController::class, 'logoutGeneral']); // AUTH
 Route::put('/edit-username', [UserController::class, 'editUsername']); // AUTH
-
+Route::get('check-token', [UserController::class, 'checkExpiredToken']); // AUTH
 Route::post('/edit-image', [UserController::class, 'editImage']); // AUTH
 //pega informações do usuário que podem ser usadas em diversas páginas
 Route::get('/userinfo/{id}',[UserController::class, 'userInfo']);

@@ -119,7 +119,7 @@ export default {
     logout() {
       this.showMenu = false;
       this.deleteTokenDatabase();
-      this.$store.commit("logout", false);
+      this.$store.commit("logout");
       this.$router.push({
         path: "/",
         query: {

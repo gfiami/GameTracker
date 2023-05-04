@@ -366,6 +366,40 @@ class UserController extends Controller
         }
     }
 
+    public function checkExpiredToken(Request $request){
+        try{
+        $token = $request->bearerToken();
+        //requisição nao enviou token junto
+        if (!$token) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        $request->validate([
+            'user_id' => 'required|integer',
+        ]);
+        $user_id = $request->input('user_id');
 
+        $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
+        if ($personalAccessTokens) {
+            $token_value = explode('|', $token)[1];
+            foreach ($personalAccessTokens as $personalAccessToken) {
+                if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
+                    //if current token is valid
+                    $response = [
+                        'message' => "Authorized",
+                    ];
+                    return response()->json($response);
+                }
+            }
+            $response = [
+                'message' => "Not Authorized",
+            ];
+            return response()->json($response);
+        }else{
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        }catch (\Exception $e) {
+         return response()->json(['Erro ao realizar logout' => $e->getMessage()], 400);
+    }
 
+    }
 }

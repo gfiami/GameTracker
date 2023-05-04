@@ -1,4 +1,5 @@
 import { createStore } from "vuex";
+import axios from "axios";
 
 const store = createStore({
   state() {
@@ -32,11 +33,36 @@ const store = createStore({
 
 //isso aqui é para manter o usuario logado até mesm ose ele der f5, pois essas variaveis iriam se perder...
 //assim conseguiremos recuperar o token e o status logged:
-const currentUserState = localStorage.getItem("userState"); // true se estiver logado
+const currentUserState = localStorage.getItem("user_id"); // true se estiver logado
 
 if (currentUserState) {
   //se o usuario estiver logado, executa o mutation login e seta os valores para "logado"
   store.commit("login");
+  //const validToken = checkToken();
+  checkToken();
 }
+async function checkToken() {
+  const id = store.state.user_id;
+  const personal_token = store.state.personal_token;
 
+  try {
+    const response = await axios.get(
+      `${process.env.VUE_APP_APIURL}check-token`,
+      {
+        params: {
+          user_id: id,
+        },
+        headers: {
+          Authorization: `Bearer ${personal_token}`,
+        },
+      }
+    );
+    const authorized = response.data.message;
+    if (authorized == "Not Authorized") {
+      store.commit("logout");
+    }
+  } catch (error) {
+    console.log(error.data);
+  }
+}
 export default store;
