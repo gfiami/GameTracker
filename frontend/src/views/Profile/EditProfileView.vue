@@ -89,6 +89,8 @@
           <p class="confirm-text">
             Type your email and click the 'Logout' button to confirm.
           </p>
+          <p class="error" v-if="logoutError">*{{ logoutError }}</p>
+
           <input
             v-model="email"
             type="email"
@@ -128,6 +130,7 @@ export default {
       email: null,
       usernameError: null,
       imageError: null,
+      logoutError: null,
       loadingUser: true,
       username: null,
       image: null,
@@ -164,10 +167,13 @@ export default {
     ...mapMutations(["login", "logout"]),
 
     showConfirmLogout() {
+      this.logoutError = null;
       this.logoutConfirm = !this.logoutConfirm;
       this.email = null;
     },
     async logoutGeneral() {
+      this.logoutError = null;
+
       const id = this.$store.state.user_id;
       const personal_token = this.$store.state.personal_token;
       try {
@@ -195,7 +201,13 @@ export default {
           key: this.$route.fullPath,
         });
       } catch (error) {
-        console.log(error.data);
+        const tooMany = error.response.data.message
+          ? "Too Many Attempts, please try again later."
+          : undefined;
+        this.logoutError =
+          error.response.data.incorrectEmail ||
+          error.response.data.logoutError ||
+          tooMany;
       }
     },
     async getUserInfo() {
@@ -207,9 +219,7 @@ export default {
           .then((response) => {
             this.user = response.data.user;
           });
-      } catch (error) {
-        console.log(error.response.data.error);
-      }
+      } catch (error) {}
       this.loadingUser = false;
     },
     async editUsername() {
@@ -246,7 +256,6 @@ export default {
         }, 2000);
       } catch (error) {
         this.username = null;
-        console.log(error.response.data.errors.username);
         this.usernameError = error.response.data.errors.username[0];
       }
     },
@@ -282,7 +291,6 @@ export default {
         }, 2000);
 
         //aqui recebo o que o laravel me retornou
-        console.log(response.data.user);
       } catch (error) {
         if (error.response.data.errors.image == "The image must be an image.") {
           this.imageError = "Your avatar needs to be an image.";
@@ -290,8 +298,6 @@ export default {
         if (error.response.data.errors.image == "The image failed to upload.") {
           this.imageError = "Please upload an image that is smaller than 2 MB.";
         }
-
-        console.log(error.response.data);
       }
       this.image = null;
       this.fileName = "No image selected";
@@ -336,6 +342,7 @@ export default {
 }
 .confirm-text {
   margin: 2vh;
+  text-align: center;
 }
 .confirm-button {
   background: #bc1a3a;

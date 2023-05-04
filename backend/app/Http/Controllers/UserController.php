@@ -338,9 +338,11 @@ class UserController extends Controller
             $user_id = $request->input('user_id');
             $email = $request->input('email');
             $user = User::where('id', $user_id)
-            ->where('email', $email);
-            if(!$user){
-                return response()->json(['error' => 'Bad response'], 400);
+            ->where('email', $email)
+            ->first();
+            Log::info($user);
+            if(empty($user)){
+                return response()->json(['incorrectEmail' => 'Email is not correct.'], 400);
             }
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
             if ($personalAccessTokens) {
@@ -362,7 +364,7 @@ class UserController extends Controller
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
         }catch (\Exception $e) {
-            return response()->json(['Erro ao realizar logout' => $e->getMessage()], 400);
+            return response()->json(['logoutError' => 'Please use a valid email.'], 400);
         }
     }
 

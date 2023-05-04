@@ -14,7 +14,7 @@ use App\Http\Controllers\FriendRequestController;
 Route::post('/signin', [UserController::class, 'signin'])->middleware('throttle:5,1'); //isso serve para permitir apenas 5 tentativas de login por minuto e retorna erro de muitas tentativas 429
 Route::post('/register', [UserController::class, 'register']);
 Route::delete('/logout', [UserController::class, 'logout']); // AUTH
-Route::delete('/logout-general', [UserController::class, 'logoutGeneral']); // AUTH
+Route::delete('/logout-general', [UserController::class, 'logoutGeneral'])->middleware('throttle:5,1'); //isso serve para permitir apenas 5 tentativas de login por minuto e retorna erro de muitas tentativas 429 // AUTH
 Route::put('/edit-username', [UserController::class, 'editUsername']); // AUTH
 Route::get('check-token', [UserController::class, 'checkExpiredToken']); // AUTH
 Route::post('/edit-image', [UserController::class, 'editImage']); // AUTH
