@@ -77,7 +77,6 @@ class UserController extends Controller
                 //por fim aqui vamos mandar a resposta de volta para o VUE
             return response()->json([
                 'message' => 'Your GameTracker account was created successfully!',
-                'user' => $user
             ]);
         // catch (\Throwable $th) serve para pegar TODOS os erros, enquando que o usado(ValidationException $e) foca na validação
 
