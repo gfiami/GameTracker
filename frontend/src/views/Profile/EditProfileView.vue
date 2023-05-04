@@ -490,7 +490,9 @@ export default {
 }
 .custom-upload {
   border-radius: 6px;
-  border: 2px solid #161b3a;
+  border: 2px solid white;
+  background-color: #161b3a;
+
   display: inline-block;
   padding: 6px 12px;
   cursor: pointer;
@@ -500,7 +502,7 @@ export default {
   margin-bottom: 1vh;
 }
 .custom-upload:hover {
-  background-color: #161b3a;
+  background-color: transparent;
   color: white;
 }
 input[type="file"] {
