@@ -242,7 +242,7 @@ export default {
 }
 @media screen and (min-width: 768px) {
   .register {
-    width: 25vw;
+    width: fit-content;
   }
   .image-section-container {
     margin-left: auto;
