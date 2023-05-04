@@ -130,7 +130,7 @@ class UserController extends Controller
 
     //get user info
     public function userInfo($id){
-        $user = User::find($id);
+        $user = User::select('id', 'name', 'image')->find($id);
         if ($user) {
             return response()->json([
                 'user' => $user
