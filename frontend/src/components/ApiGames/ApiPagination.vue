@@ -112,30 +112,7 @@ import axios from "axios";
 export default {
   name: "ApiPagination",
   props: {
-    searchText: null,
-    orderSet: null,
     routeReset: "",
-  },
-  watch: {
-    searchText(newValue, oldValue) {
-      const page = 1;
-      const search = newValue ? newValue : null;
-      const ordering = this.orderSet;
-
-      this.$router.push({
-        path: "/games",
-        query: { page, search, ordering },
-      });
-    },
-    orderSet(newValue, oldValue) {
-      const page = 1;
-      const search = this.searchText ? this.searchText : "+";
-      const ordering = newValue;
-      this.$router.push({
-        path: "/games",
-        query: { page, search, ordering },
-      });
-    },
   },
   data() {
     return {
@@ -185,7 +162,6 @@ export default {
 
     async fetchGames(page, search, order) {
       this.$emit("updateLoading", true);
-
       console.log("Fetching Games");
       const response = await axios.get(
         `${process.env.VUE_APP_APIURL}games/${page}/${search}/${order}`
@@ -197,16 +173,19 @@ export default {
         console.log("No games found");
         this.totalPages = null;
         this.$emit("updateLoading", false);
-        this.$emit("setOrder", order);
-        this.$emit("setSearch", search);
+        console.log(response.data.games);
         this.$emit("gamedata", response.data.games);
         this.$emit("noGameFound", true);
         return false;
       }
-
-      //update searchbar
-      this.$emit("setOrder", order);
-      this.$emit("setSearch", search);
+      if (response.data.games.detail == "Invalid page.") {
+        console.log("Invalid Page");
+        this.totalPages = null;
+        this.$emit("updateLoading", false);
+        this.$emit("gamedata", response.data.games);
+        this.$emit("noGameFound", true);
+        return false;
+      }
 
       //passar variavel gamedata para ser usada(.games .results .count .next . next . previous)
       this.$emit("gamedata", response.data.games);
@@ -215,7 +194,7 @@ export default {
       this.selectedPage = page;
 
       //checa total de páginas para criar botões de páginas
-      this.totalPages = Math.ceil(response.data.games.count / 24);
+      this.totalPages = Math.ceil(response.data.games.count / 18);
       this.nextButton = response.data.games.next;
       this.previousButton = response.data.games.previous;
       this.$emit("updateLoading", false);
@@ -227,12 +206,14 @@ export default {
       if (page < 1 || page > this.totalPages) {
         return;
       }
-      const search = this.searchText ? this.searchText : "+";
-      const ordering = this.orderSet;
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlSearch = urlParams.get("search");
+      const search = urlSearch ? urlSearch : "+";
+      const ordering = urlParams.get("ordering") || "-added";
+
       //ir para topo da página ao carregar novamente
       window.scrollTo(0, 0);
-      //isso aqui serve para atualizar a url da página e permitir mais interação direto com a url
-      //também serve para permitir voltar para a página inicial de games ao clicar na navbar, pois atualize fullpath
+
       this.$router.push({
         path: "/games",
         query: { page, search, ordering },
@@ -243,7 +224,6 @@ export default {
     // pega o valor da página da URL
     const urlParams = new URLSearchParams(window.location.search);
     const page = parseInt(urlParams.get("page")) || 1;
-    console.log(page);
     const search = urlParams.get("search") || "+";
     const ordering = urlParams.get("ordering") || "-added";
     this.fetchGames(page, search, ordering);

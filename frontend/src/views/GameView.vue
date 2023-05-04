@@ -4,12 +4,9 @@
     <!-- @está pegando lá de dentro, : está mandando -->
     <ApiSearch
       v-if="!loadingGames"
-      :key="resetSearch"
       @search="search"
       @order="order"
       :counter="gameinfo.count"
-      :updateSearch="updateSearch"
-      :updateOrder="updateOrder"
     />
     <div class="tracker offline" v-if="!logged && !loadingGames">
       <p class="offline-text">
@@ -28,7 +25,7 @@
     <div v-if="loadingGames" class="loading">
       <Loading />
     </div>
-    <div v-else-if="gameinfo.count !== 0">
+    <div v-else-if="gameinfo.count !== 0 && !game404">
       <GameLayout
         :key="routeReset"
         :user="userId"
@@ -45,10 +42,6 @@
     <ApiPagination
       :key="routeReset"
       @gamedata="gamedata"
-      @setOrder="setOrder"
-      @setSearch="setSearch"
-      :searchText="searchQuery"
-      :orderSet="orderSymbol"
       @updateLoading="updateLoading"
       @noGameFound="noGameFound"
     />
@@ -73,8 +66,6 @@ export default {
       searchQuery: "", //isso pegamos via emit lá do searchbar
       orderSymbol: "-added", //isso pegamos via emit lá do search bar (padrão é -added(popularidade))
       gameinfo: "", //isso pegamos via emit lá do paginations
-      updateOrder: "",
-      updateSearch: "",
       loadingGames: "",
       game404: false,
     };
@@ -107,12 +98,7 @@ export default {
     gamedata(response) {
       this.gameinfo = response;
     },
-    setOrder(order) {
-      this.updateOrder = order;
-    },
-    setSearch(search) {
-      this.updateSearch = search;
-    },
+
     updateLoading(status) {
       this.loadingGames = status;
     },

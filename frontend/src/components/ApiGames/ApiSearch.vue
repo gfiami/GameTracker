@@ -45,26 +45,48 @@ export default {
   props: {
     counter: Number,
     resetSearch: "",
-    updateSearch: "",
-    updateOrder: "",
+    //updateSearch: "",
+    //updateOrder: "",
   },
   /*watch: {
+    "$route.fullPath"(newVal) {
+      if (newVal === "/games") {
+        console.log("games");
+        this.sortOrder = "-";
+        this.searchQuery = "";
+        this.orderAndFilter = null;
+        this.showSearchResults = "";
+        this.filter = "added";
+      }
+    },
     updateSearch: {
-      handler(newValue) {
-        console.log("handler searc " + newValue);
-        if (newValue !== "+") {
+      immediate: true,
+      /*handler(newValue, oldValue) {
+        if (newValue !== "" && newValue !== "+") {
           this.searchQuery = newValue;
           this.showSearchResults = newValue;
-          this.$emit("search", this.searchQuery);
+          console.log("handler updateSearch");
+          console.log(newValue);
+          console.log(oldValue);
+          //this.$emit("search", this.searchQuery);
+
+          //console.log("após emit search");
           this.orderAndFilter = this.sortOrder + this.filter;
-          this.$emit("order", this.orderAndFilter);
+          //this.$emit("order", this.orderAndFilter);
+          const page = 1;
+          const search = newValue; //? newValue : null;
+          const ordering = this.orderAndFilter;
+
+          this.$router.push({
+            path: "/games",
+            query: { page, search, ordering },
+          });
         }
       },
     },
     updateOrder: {
-      handler(newValue) {
-        console.log("handler order " + newValue);
-
+      immediate: true,
+      /*handler(newValue, oldValue) {
         if (newValue !== "") {
           if (newValue[0] !== "-") {
             this.sortOrder = "";
@@ -78,8 +100,8 @@ export default {
           this.$emit("search", this.searchQuery);
         }
       },
-    },*/
-
+    },
+  },*/
   data() {
     return {
       sortOrder: "-",
@@ -98,27 +120,46 @@ export default {
     changeFilter() {
       this.orderAndFilter = this.sortOrder + this.filter;
       this.$emit("order", this.orderAndFilter);
+      //this.sortOrder = this.sortOrder === "" ? "-" : "";
+      //this.orderAndFilter = this.sortOrder + this.filter;
+      //this.showSearchResults = this.searchQuery;
+
+      const page = 1;
+      const search = this.searchQuery;
+      const ordering = this.orderAndFilter;
+      this.$router.push({
+        path: "/games",
+        query: { page, search, ordering },
+      });
     },
+
     changeSortIcon() {
       this.sortOrder = this.sortOrder === "" ? "-" : "";
-
       this.orderAndFilter = this.sortOrder + this.filter;
+      //this.showSearchResults = this.searchQuery;
+
       this.$emit("order", this.orderAndFilter);
+      const page = 1;
+      const search = this.searchQuery;
+      const ordering = this.orderAndFilter;
+      this.$router.push({
+        path: "/games",
+        query: { page, search, ordering },
+      });
     },
     showSearch() {
       //passar search query para a view, pelo search
       this.showSearchResults = this.searchQuery;
+      this.$emit("search", this.searchQuery);
 
-      this.$emit("search", this.searchQuery);
-      this.orderAndFilter = this.sortOrder + this.filter;
-      this.$emit("order", this.orderAndFilter);
-    },
-    setNewSearch(newSearch) {
-      this.searchQuery = newSearch;
-      this.showSearchResults = newSearch;
-      this.$emit("search", this.searchQuery);
-      this.orderAndFilter = this.sortOrder + this.filter;
-      this.$emit("order", this.orderAndFilter);
+      const page = 1;
+      const search = this.searchQuery; //? newValue : null;
+      const ordering = this.orderAndFilter;
+
+      this.$router.push({
+        path: "/games",
+        query: { page, search, ordering },
+      });
     },
     setNewOrder(newOrder) {
       if (newOrder[0] !== "-") {
@@ -134,24 +175,15 @@ export default {
     },
   },
   mounted() {
-    if (this.$route.fullPath == "/games") {
-      console.log("games");
-      this.sortOrder = "-";
-      this.searchQuery = "";
-      this.orderAndFilter = null;
-      this.showSearchResults = "";
-      this.filter = "added";
-      return false;
-    }
-    //console.log("prop da order: " + this.updateOrder);
-    //console.log("prop de search: " + this.updateSearch);
-    //console.log("na search: " + this.orderAndFilter);
-    if (this.updateSearch !== "+") {
-      this.setNewSearch(this.updateSearch);
-    }
-    if (this.updateOrder !== "") {
-      this.setNewOrder(this.updateOrder);
-    }
+    const urlParams = new URLSearchParams(window.location.search);
+    const ordering = urlParams.get("ordering") || "-added";
+    this.setNewOrder(ordering);
+    this.searchQuery = urlParams.get("search") || "";
+    this.searchQuery == "+"
+      ? (this.searchQuery = "")
+      : (this.searchQuery = this.searchQuery);
+
+    this.showSearchResults = this.searchQuery;
   },
 };
 </script>
