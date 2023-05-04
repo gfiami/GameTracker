@@ -107,6 +107,9 @@ export default {
         console.log(error);
         console.log(error.response.data.message); //aqui mostra minha mensagem definida no backend
         console.log(error.response.data.errors); //aqui mostra oque foi errado, caso senha seja invalida ou email invalido
+        if (error.response.data.message == "Too Many Attempts.") {
+          this.error = "Too Many Attempts, please try again later.";
+        }
         if (
           "Login failed, please check your credentials" ==
           error.response.data.message

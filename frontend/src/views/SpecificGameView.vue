@@ -146,11 +146,29 @@
             <i class="fas fa-solid fa-comment editReview"></i>
             <p class="button-legend">Edit review</p>
           </button>
-          <button v-if="showForm" @click="deleteReview()" type="button">
+          <button v-if="showForm" @click="showConfirmDelete" type="button">
             <i class="fas fa-solid fa-comment-slash deleteReview"></i>
             <p class="button-legend">Delete review</p>
           </button>
         </div>
+        <!-- delete review confirmation -->
+        <div class="confirmations" v-if="deleteConfirm">
+          <div class="confirm-option">
+            <h3 class="confirm-title">Delete Review</h3>
+            <p class="confirm-text">
+              Are you sure you want to delete your review?
+            </p>
+            <div class="button-container">
+              <button class="confirm-button" @click="deleteReview()">
+                Delete Review
+              </button>
+              <button class="cancel-button" @click="showConfirmDelete">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- end delete review confirmation -->
 
         <!--Create-->
         <ReviewsForm
@@ -256,6 +274,7 @@ export default {
       fetchNewDataUser: null,
       fetchNewDataAll: null,
       redirect: this.$route.query.redirect,
+      deleteConfirm: false,
     };
   },
   computed: {
@@ -290,6 +309,9 @@ export default {
     await this.gameRequest();
   },
   methods: {
+    showConfirmDelete() {
+      this.deleteConfirm = !this.deleteConfirm;
+    },
     fetchNewData_All(reviews) {
       this.fetchNewDataAll = reviews;
     },
@@ -362,6 +384,7 @@ export default {
         //aqui vai mostrar os erros pra cada uma das validações!
         console.log(error.response.data.errors);
       }
+      this.showConfirmDelete();
     },
     formatReleaseDate() {
       const months = [
@@ -582,6 +605,62 @@ export default {
 </script>
 
 <style scoped>
+/*confirmations */
+.confirmations {
+  position: absolute;
+  background-color: #161b3a;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 998;
+  opacity: 95%;
+}
+.confirm-option {
+  margin: 0 auto;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 50%;
+}
+.confirm-text {
+  margin: 2vh;
+}
+.confirm-button {
+  background: #bc1a3a;
+  color: white;
+  padding: 2vh 2vw;
+  border-radius: 35px;
+  width: 15vw;
+  cursor: pointer;
+  font-size: 1.5vh;
+  font-weight: bolder;
+  border: none;
+  box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.3);
+}
+.confirm-button:hover {
+  background: #f3224b;
+}
+
+.cancel-button {
+  background: rba(255, 255, 255, 0.596);
+  color: #23272a;
+  padding: 2vh 2vw;
+  border-radius: 35px;
+  width: 15vw;
+  cursor: pointer;
+  font-size: 1.5vh;
+  font-weight: bolder;
+  border: none;
+  box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.3);
+}
+.cancel-button:hover {
+  background-color: white;
+}
+/*end confirm buttons */
 .back-route {
   margin-left: 2vw;
   margin-top: 1vh;
@@ -643,7 +722,7 @@ div .offline {
   color: rgba(250, 45, 45, 0.849);
 }
 .deleteReview {
-  color: rgba(128, 19, 19, 0.849);
+  color: rgba(250, 45, 45, 0.849);
 }
 .offline {
   background-color: rgba(0, 0, 0, 0.315);
@@ -759,6 +838,10 @@ img {
 
 /* TELAS MENORES */
 @media screen and (max-width: 768px) {
+  .confirm-button,
+  .cancel-button {
+    width: 35vw;
+  }
   .tracker .offline {
     display: inline;
     margin: 0 auto;

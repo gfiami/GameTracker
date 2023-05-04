@@ -43,8 +43,29 @@
         @updatingReview="updateUserReviews"
         :profileReviews="userReviews"
         :logged="checkOwnProfile"
-        @deleteClicked="deleteProfileReview"
+        @deleteClicked="setVariables"
       />
+      <!-- delete review confirmation -->
+      <div class="confirmations" v-if="deleteConfirm">
+        <div class="confirm-option">
+          <h3 class="confirm-title">Delete Review</h3>
+          <p class="confirm-text">
+            Are you sure you want to delete your review?
+          </p>
+          <div class="button-container">
+            <button
+              class="confirm-button"
+              @click="deleteProfileReview(removeId, gameId)"
+            >
+              Delete Review
+            </button>
+            <button class="cancel-button" @click="showConfirmDelete">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- end delete review confirmation -->
     </div>
   </div>
 </template>
@@ -70,6 +91,9 @@ export default {
       loadingReviews: true,
       user: null,
       redirect: this.$route.query.redirect,
+      deleteConfirm: false,
+      removeId: null,
+      gameId: null,
     };
   },
   computed: {
@@ -87,6 +111,16 @@ export default {
     },
   },
   methods: {
+    setVariables(userId, gameId) {
+      this.removeId = null;
+      this.gameId = null;
+      this.removeId = userId;
+      this.gameId = gameId;
+      this.showConfirmDelete();
+    },
+    showConfirmDelete() {
+      this.deleteConfirm = !this.deleteConfirm;
+    },
     updateUserReviews(reviews) {
       this.userReviews = reviews;
     },
@@ -130,13 +164,19 @@ export default {
             },
           }
         );
+        this.showConfirmDelete();
+        console.log("depois: " + this.deleteConfirm);
         //aqui recebo o que o laravel me retornou
         if (response.data.profileReviews.length == 0) {
           this.userReviews = null;
           return false;
         }
+        console.log(this.deleteConfirm);
+        console.log(this.deleteConfirm);
         this.userReviews = response.data.profileReviews;
       } catch (error) {
+        this.showConfirmDelete();
+
         console.log(error.response.data.message);
         console.log(error.response.data.validation);
         //aqui vai mostrar os erros pra cada uma das validações!
@@ -169,6 +209,62 @@ export default {
 </script>
 
 <style scoped>
+/*confirmations */
+.confirmations {
+  position: absolute;
+  background-color: #161b3a;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 998;
+  opacity: 95%;
+}
+.confirm-option {
+  margin: 0 auto;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 50%;
+}
+.confirm-text {
+  margin: 2vh;
+}
+.confirm-button {
+  background: #bc1a3a;
+  color: white;
+  padding: 2vh 2vw;
+  border-radius: 35px;
+  width: 15vw;
+  cursor: pointer;
+  font-size: 1.5vh;
+  font-weight: bolder;
+  border: none;
+  box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.3);
+}
+.confirm-button:hover {
+  background: #f3224b;
+}
+
+.cancel-button {
+  background: rba(255, 255, 255, 0.596);
+  color: #23272a;
+  padding: 2vh 2vw;
+  border-radius: 35px;
+  width: 15vw;
+  cursor: pointer;
+  font-size: 1.5vh;
+  font-weight: bolder;
+  border: none;
+  box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.3);
+}
+.cancel-button:hover {
+  background-color: white;
+}
+/*end confirm buttons */
 .back-profile {
   margin-left: 2vw;
   margin-top: 1vh;
@@ -225,6 +321,10 @@ hr {
   border: 1px solid rgba(54, 30, 148, 0.9);
 }
 @media screen and (max-width: 768px) {
+  .confirm-button,
+  .cancel-button {
+    width: 35vw;
+  }
   .review-container {
     width: 90%;
     max-width: 90%;

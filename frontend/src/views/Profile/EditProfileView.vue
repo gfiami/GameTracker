@@ -85,7 +85,7 @@
       <div class="confirmations" v-if="logoutConfirm">
         <div class="confirm-option">
           <h3 class="confirm-title">Logout from all devices?</h3>
-          <p class="confirm-text">You will need to login again.</p>
+          <p class="confirm-warn">You will need to login again.</p>
           <p class="confirm-text">
             Type your email and click the 'Logout' button to confirm.
           </p>
@@ -109,6 +109,7 @@
           </div>
         </div>
       </div>
+      <!-- end logout confirmation -->
     </div>
   </div>
 </template>
@@ -333,6 +334,9 @@ export default {
   width: 100%;
   height: 50%;
 }
+.confirm-text {
+  margin: 2vh;
+}
 .confirm-button {
   background: #bc1a3a;
   color: white;
@@ -365,6 +369,7 @@ export default {
   background-color: white;
 }
 /*end confirm buttons */
+
 #logout {
   color: rgba(255, 255, 255, 0.596);
 
@@ -501,6 +506,11 @@ input[type="file"] {
   font-size: 2vh;
   align-self: center;
 }
+#email {
+  width: 60%;
+  padding: 2vh 1.2vw;
+  margin-bottom: 1.3vh;
+}
 .label-container {
   text-align: center;
 }
@@ -512,6 +522,9 @@ input[type="file"] {
 }
 
 @media screen and (min-width: 768px) {
+  #email {
+    width: 20%;
+  }
   .confirm-button,
   .cancel-button {
     width: 15vw;

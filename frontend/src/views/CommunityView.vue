@@ -781,6 +781,9 @@ export default {
   width: 100%;
   height: 50%;
 }
+.confirm-text {
+  margin: 2vh;
+}
 .confirm-button {
   background: #1abc9c;
   color: #23272a;
