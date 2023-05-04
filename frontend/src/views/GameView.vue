@@ -36,12 +36,10 @@
         :games="gameinfo.results"
       />
     </div>
-    <div v-else>
-      <div class="game-doesnt-exist" v-if="game404">
-        <h1>404</h1>
-        <p>No games found</p>
-        <i class="fas fa-book-dead"></i>
-      </div>
+    <div class="game-doesnt-exist" v-else-if="game404">
+      <h1>404</h1>
+      <p>No games found</p>
+      <i class="fas fa-book-dead"></i>
     </div>
 
     <ApiPagination
@@ -170,10 +168,9 @@ div .offline {
 /* game 404 */
 .game-doesnt-exist {
   text-align: center;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  margin: 0 auto;
+  margin-top: 2vh;
+  margin-bottom: 2vh;
   text-shadow: 2px 2px #000;
   padding: 2px;
 }

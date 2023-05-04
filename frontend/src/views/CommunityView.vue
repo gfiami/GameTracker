@@ -980,12 +980,11 @@ div .offline {
 }
 
 .user-doesnt-exist {
+  margin: 0 auto;
   margin-top: 6vh;
+  margin-bottom: 3vh;
   text-align: center;
-  position: absolute;
-  top: 30%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+
   text-shadow: 2px 2px #000;
   padding: 2px;
 }
