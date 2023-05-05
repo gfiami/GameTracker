@@ -83,7 +83,7 @@ class FriendRequestController extends Controller
             $request_to = $request->input('request_to');
 
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
-            if ($personalAccessTokens) {
+            if ($personalAccessTokens->isNotEmpty()) {
                 $token_value = explode('|', $token)[1];
                 foreach ($personalAccessTokens as $personalAccessToken) {
                     if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
@@ -136,7 +136,7 @@ class FriendRequestController extends Controller
             $request_to = $request->input('request_to');
 
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
-            if ($personalAccessTokens) {
+            if ($personalAccessTokens->isNotEmpty()) {
                 $token_value = explode('|', $token)[1];
                 foreach ($personalAccessTokens as $personalAccessToken) {
                     if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
@@ -181,7 +181,7 @@ class FriendRequestController extends Controller
             $sender = $request->input('sender');
 
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
-            if ($personalAccessTokens) {
+            if ($personalAccessTokens->isNotEmpty()) {
                 $token_value = explode('|', $token)[1];
                 foreach ($personalAccessTokens as $personalAccessToken) {
                     if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
@@ -225,9 +225,8 @@ class FriendRequestController extends Controller
             $sender = $request->input('sender');
 
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
-            if ($personalAccessTokens) {
+            if ($personalAccessTokens->isNotEmpty()) {
                 $token_value = explode('|', $token)[1];
-
                 foreach ($personalAccessTokens as $personalAccessToken) {
                     if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
                         $check_friend = FriendRequest::where('user_id', $sender)
@@ -296,7 +295,7 @@ class FriendRequestController extends Controller
             $friend = $request->input('friend');
 
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
-            if ($personalAccessTokens) {
+            if ($personalAccessTokens->isNotEmpty()) {
                 $token_value = explode('|', $token)[1];
                 foreach ($personalAccessTokens as $personalAccessToken) {
                     if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {

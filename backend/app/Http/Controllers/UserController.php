@@ -107,7 +107,7 @@ class UserController extends Controller
 
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
 
-            if ($personalAccessTokens) {
+            if ($personalAccessTokens->isNotEmpty()) {
                 $token_value = explode('|', $token)[1];
                 foreach ($personalAccessTokens as $personalAccessToken) {
                     if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
@@ -228,7 +228,7 @@ class UserController extends Controller
 
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
              //se o token existir, entra
-            if ($personalAccessTokens) {
+             if ($personalAccessTokens->isNotEmpty()) {
                 $token_value = explode('|', $token)[1];
                 foreach ($personalAccessTokens as $personalAccessToken) {
                     if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
@@ -264,7 +264,6 @@ class UserController extends Controller
     //Editar imagem do usuario
     public function editImage(Request $request){
         try{
-            Log::info($request);
             if ($request->has('image')) {
                 $request->validate([
                     'image' => 'required|image|max:2048',
@@ -282,7 +281,7 @@ class UserController extends Controller
             }
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
              //se o token existir, entra
-            if ($personalAccessTokens) {
+             if ($personalAccessTokens->isNotEmpty()) {
                 $token_value = explode('|', $token)[1];
                 foreach ($personalAccessTokens as $personalAccessToken) {
                     if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
@@ -339,12 +338,11 @@ class UserController extends Controller
             $user = User::where('id', $user_id)
             ->where('email', $email)
             ->first();
-            Log::info($user);
             if(empty($user)){
                 return response()->json(['incorrectEmail' => 'Email is not correct.'], 400);
             }
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
-            if ($personalAccessTokens) {
+            if ($personalAccessTokens->isNotEmpty()) {
                 $token_value = explode('|', $token)[1];
                 foreach ($personalAccessTokens as $personalAccessToken) {
                     if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
@@ -380,7 +378,7 @@ class UserController extends Controller
         $user_id = $request->input('user_id');
 
         $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
-        if ($personalAccessTokens) {
+        if ($personalAccessTokens->isNotEmpty()) {
             $token_value = explode('|', $token)[1];
             foreach ($personalAccessTokens as $personalAccessToken) {
                 if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {

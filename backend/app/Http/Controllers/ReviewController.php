@@ -158,7 +158,7 @@ class ReviewController extends Controller
 
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
              //se o token existir, entra
-            if ($personalAccessTokens) {
+             if ($personalAccessTokens->isNotEmpty()) {
                 $token_value = explode('|', $token)[1];
                 foreach ($personalAccessTokens as $personalAccessToken) {
                     if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
@@ -234,7 +234,7 @@ class ReviewController extends Controller
 
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
              //se o token existir, entra
-            if ($personalAccessTokens) {
+             if ($personalAccessTokens->isNotEmpty()) {
                 $token_value = explode('|', $token)[1];
                 foreach ($personalAccessTokens as $personalAccessToken) {
                     if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
@@ -321,7 +321,7 @@ class ReviewController extends Controller
 
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
              //se o token existir, entra
-            if ($personalAccessTokens) {
+             if ($personalAccessTokens->isNotEmpty()) {
                 $token_value = explode('|', $token)[1];
                 foreach ($personalAccessTokens as $personalAccessToken) {
                     if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {

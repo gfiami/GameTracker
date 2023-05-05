@@ -79,7 +79,7 @@ class OwnedGameController extends Controller
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
 
             //se o token existir, entra
-            if ($personalAccessTokens) {
+            if ($personalAccessTokens->isNotEmpty()) {
                 $token_value = explode('|', $token)[1];
                 foreach ($personalAccessTokens as $personalAccessToken) {
                     if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
@@ -143,7 +143,7 @@ class OwnedGameController extends Controller
             //$personalAccessToken = PersonalAccessToken::where('id', $tokenId)->first(); isso tbm
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
 
-            if ($personalAccessTokens) {
+            if ($personalAccessTokens->isNotEmpty()) {
                 $token_value = explode('|', $token)[1];
 
                 foreach ($personalAccessTokens as $personalAccessToken) {
@@ -198,13 +198,16 @@ class OwnedGameController extends Controller
             $user_id = $request->input('user_id');
             $game_api_id = $request->input('game_api_id');
 
+
             //$tokenId = explode('|', $token)[0]; isso era qndo só tinha uma sessão permitida
             $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
-
             //se o token existir, entra
-            if ($personalAccessTokens) {
+            if ($personalAccessTokens->isNotEmpty()) {
+
                 $token_value = explode('|', $token)[1];
+
                 foreach ($personalAccessTokens as $personalAccessToken) {
+
                     if (hash_equals($personalAccessToken->token, hash('sha256', $token_value))) {
                         //caso exista o jogo nos owned, retorna erro
                         $check_owned = OwnedGame::where('user_id', $user_id)
@@ -261,7 +264,7 @@ class OwnedGameController extends Controller
         //$personalAccessToken = PersonalAccessToken::where('id', $tokenId)->first(); isso tbm
         $personalAccessTokens = PersonalAccessToken::where('tokenable_id', $user_id)->get();
 
-        if ($personalAccessTokens) {
+        if ($personalAccessTokens->isNotEmpty()) {
             $token_value = explode('|', $token)[1];
 
             foreach ($personalAccessTokens as $personalAccessToken) {

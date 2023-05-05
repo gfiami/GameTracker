@@ -468,6 +468,7 @@ export default {
     },
     goToPage(page) {
       this.currentPage = page;
+
       let section;
       if (
         this.changeAllReviews !== null &&
@@ -480,6 +481,8 @@ export default {
       }
       const path = this.$route.path;
       const order = this.checkedFilter;
+      this.showingCounter = this.updateShowingCounter();
+
       this.$router.push({
         path: path,
         query: { page, order },
@@ -533,6 +536,7 @@ export default {
       const allReviews = this.changeAllReviews;
       const filter = this.checkedFilter;
       const page = this.currentPage;
+      console.log(this.currentPage);
       const totalPages = this.totalPages;
       const reviewsPerPage = this.reviewsPerPage;
       let allCounter;
