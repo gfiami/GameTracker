@@ -17,6 +17,10 @@ GameTracker is a website for those who are interested in video games, allowing u
 
 ## Demo
 
+
+https://user-images.githubusercontent.com/111646481/236533249-d7afc858-54cf-47d7-9183-8b39fccfb57e.mp4
+
+
 ## Stacks
 
 **Front-end:** Vue
