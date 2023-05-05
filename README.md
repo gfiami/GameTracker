@@ -17,9 +17,7 @@ GameTracker is a website for those who are interested in video games, allowing u
 
 ## Demo
 
-
 https://user-images.githubusercontent.com/111646481/236533249-d7afc858-54cf-47d7-9183-8b39fccfb57e.mp4
-
 
 ## Stacks
 
@@ -33,13 +31,46 @@ To run this project, you will need to add the following environment variables to
 
 **Vue:**
 
-`VUE_APP_APIURL`
+`VUE_APP_APIURL=laravel_server_url/api`
 
-`VUE_APP_IMAGE_URL`
+`VUE_APP_IMAGE_URL=laravel_server_url/images`
 
 **Laravel:**
 
-`RAWG_API_KEY`
+`RAWG_API_KEY=key_provided_by_rawg`
+
+## Installation
+
+### Frontend
+
+```bash
+  git clone https://github.com/gfiami/GameTracker.git
+  cd GameTracker/frontend
+  cp .env.example .env
+  npm install
+```
+
+Edit the .env file
+
+```bash
+    npm run serve
+```
+
+### Backend
+
+```bash
+  cd ../backend
+  composer install
+  php artisan key:generate
+  php artisan migrate
+  cp .env.example .env
+```
+
+Edit the .env file
+
+```bash
+  php artisan serve
+```
 
 ## Color Documentation
 
