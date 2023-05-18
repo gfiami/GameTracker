@@ -394,7 +394,10 @@ class UserController extends Controller
             ];
             return response()->json($response);
         }else{
-            return response()->json(['error' => 'Unauthorized'], 401);
+            $response = [
+                'message' => "Not Authorized",
+            ];
+            return response()->json($response);
         }
         }catch (\Exception $e) {
          return response()->json(['Erro ao realizar logout' => $e->getMessage()], 400);
