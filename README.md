@@ -62,8 +62,8 @@ Edit the .env file
   cd ../backend
   composer install
   php artisan key:generate
-  php artisan migrate
   cp .env.example .env
+  php artisan migrate
 ```
 
 Edit the .env file
